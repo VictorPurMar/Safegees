@@ -1,9 +1,11 @@
-package org.safegees.safegees;
+package org.safegees.safegees.util;
 
 import android.content.Context;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+
+import org.safegees.safegees.R;
 
 import java.util.HashMap;
 import java.util.Map;

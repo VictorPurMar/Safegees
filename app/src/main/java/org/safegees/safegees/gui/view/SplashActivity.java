@@ -1,4 +1,4 @@
-package org.safegees.safegees;
+package org.safegees.safegees.gui.view;
 
 import android.content.Intent;
 import android.os.Bundle;
