@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity
     static double LAT = -32;
     static double LON = 151;
     int ZOOM = 1;
-    static float MAX_ZOOM = 5.99F;
+    public static float MAX_ZOOM = 9F;
     SupportMapFragment mapFragment;
     private GoogleMap mMap;
     private Marker mCurrLocation;
@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //The floating button will be used to update content if exists internet connection
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,6 +80,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        //The drawer Layout is the Lateral menu
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -146,10 +148,13 @@ public class MainActivity extends AppCompatActivity
             // adding fragment to relative layout by using layout id
             //getSupportFragmentManager().beginTransaction().add(R.id.map, fg).commit();
             getSupportFragmentManager().beginTransaction().add(R.id.map, fg).addToBackStack("profile").commit();
+            mapFragment.onPause();
 
 
         } else if (id == R.id.nav_gallery) {
+
             super.onBackPressed();
+            mapFragment.onResume();
 
         } else if (id == R.id.nav_slideshow) {
 
