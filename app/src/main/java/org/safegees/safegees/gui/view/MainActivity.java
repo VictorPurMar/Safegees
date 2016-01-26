@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 
 import org.safegees.safegees.R;
+import org.safegees.safegees.gui.fragment.NewsFragment;
 import org.safegees.safegees.gui.fragment.ProfileUserFragment;
 import org.safegees.safegees.maps.CustomMapTileProvider;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -42,7 +44,7 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GoogleMap.OnCameraChangeListener, GoogleMap.OnMapLoadedCallback, ProfileUserFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GoogleMap.OnCameraChangeListener, GoogleMap.OnMapLoadedCallback, ProfileUserFragment.OnFragmentInteractionListener, NewsFragment.OnFragmentInteractionListener {
 
 
     static double LAT = -32;
@@ -98,6 +100,7 @@ public class MainActivity extends AppCompatActivity
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
     }
 
     @Override
@@ -107,6 +110,7 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         }
     }
 
@@ -145,24 +149,89 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
             Fragment fg = ProfileUserFragment.newInstance();
-            // adding fragment to relative layout by using layout id
-            //getSupportFragmentManager().beginTransaction().add(R.id.map, fg).commit();
-            getSupportFragmentManager().beginTransaction().add(R.id.map, fg).addToBackStack("profile").commit();
+            Fragment acFrag = getActiveFragment();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+            if (getSupportFragmentManager().getBackStackEntryCount() != 0){
+                getSupportFragmentManager().popBackStack();
+            }else{
+                transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
+
+            }
+            transaction.replace(R.id.map, fg).addToBackStack("profile");
+            transaction.commit();
             mapFragment.onPause();
 
-
         } else if (id == R.id.nav_gallery) {
-
-            super.onBackPressed();
+            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
+                //transaction.remove(getActiveFragment());
+                getSupportFragmentManager().popBackStack();
+                transaction.commit();
+                //super.onBackPressed();
+            }
             mapFragment.onResume();
 
         } else if (id == R.id.nav_slideshow) {
+            Fragment fg = NewsFragment.newInstance();
+            Fragment acFrag = getActiveFragment();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+            if (getSupportFragmentManager().getBackStackEntryCount() != 0){
+                getSupportFragmentManager().popBackStack();
+            }else{
+                transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
+
+            }
+            transaction.replace(R.id.map, fg).addToBackStack("profile");
+            transaction.commit();
+            mapFragment.onPause();
 
         } else if (id == R.id.nav_manage) {
+            Fragment fg = ProfileUserFragment.newInstance();
+            Fragment acFrag = getActiveFragment();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+            if (getSupportFragmentManager().getBackStackEntryCount() != 0){
+                getSupportFragmentManager().popBackStack();
+            }else{
+                transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
+
+            }
+            transaction.replace(R.id.map, fg).addToBackStack("profile");
+            transaction.commit();
+            mapFragment.onPause();
 
         } else if (id == R.id.nav_share) {
+            Fragment fg = ProfileUserFragment.newInstance();
+            Fragment acFrag = getActiveFragment();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+            if (getSupportFragmentManager().getBackStackEntryCount() != 0){
+                getSupportFragmentManager().popBackStack();
+            }else{
+                transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
+
+            }
+            transaction.replace(R.id.map, fg).addToBackStack("profile");
+            transaction.commit();
+            mapFragment.onPause();
 
         } else if (id == R.id.nav_send) {
+        Fragment fg = ProfileUserFragment.newInstance();
+            Fragment acFrag = getActiveFragment();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+            if (getSupportFragmentManager().getBackStackEntryCount() != 0){
+                getSupportFragmentManager().popBackStack();
+            }else{
+                transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
+
+            }
+            transaction.replace(R.id.map, fg).addToBackStack("profile");
+            transaction.commit();
+            mapFragment.onPause();
 
         }
 
@@ -297,6 +366,14 @@ public class MainActivity extends AppCompatActivity
 
     public void onFragmentInteraction(Uri uri){
         //you can leave it empty
+    }
+
+    public Fragment getActiveFragment() {
+        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+            return null;
+        }
+        String tag = getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount() - 1).getName();
+        return (Fragment) getSupportFragmentManager().findFragmentByTag(tag);
     }
 
 }
