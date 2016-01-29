@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity
     static double LAT = -32;
     static double LON = 151;
     int ZOOM = 1;
-    public static float MAX_ZOOM = 9F;
+    public static float MAX_ZOOM = 1F;
     SupportMapFragment mapFragment;
     private GoogleMap mMap;
     private Marker mCurrLocation;
@@ -66,6 +66,9 @@ public class MainActivity extends AppCompatActivity
      */
     private GoogleApiClient client;
 
+    public static void setMaxZoom(float maxZoom){
+        if (MAX_ZOOM < maxZoom) MAX_ZOOM = maxZoom;
+    }
 
 
     @Override
@@ -80,7 +83,7 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Future update data process", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -114,6 +117,7 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            mapFragment.onResume();
         }
     }
 

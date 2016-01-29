@@ -17,7 +17,6 @@ public class CustomMapTileProvider implements TileProvider {
     private static final int TILE_HEIGHT = 256;
     private static final int BUFFER_SIZE = 16 * 1024;
     private AssetManager mAssets;
-    Tile previousTile;
 
     public CustomMapTileProvider(AssetManager assets) {
         mAssets = assets;
@@ -31,11 +30,10 @@ public class CustomMapTileProvider implements TileProvider {
             image = readTileImage(x, y, zoom);
         if (image != null){
             //If no image modify the MainActivity MAX_ZOOM
-            MainActivity.MAX_ZOOM = zoom+0.9F;
-            //Return empty tile
-            this.previousTile =  NO_TILE;
+            MainActivity.setMaxZoom(zoom+0.99F);
         }
-        return image == null ? this.previousTile : new Tile(TILE_WIDTH, TILE_HEIGHT, image);
+
+        return image == null ? NO_TILE : new Tile(TILE_WIDTH, TILE_HEIGHT, image);
     }
 
 
