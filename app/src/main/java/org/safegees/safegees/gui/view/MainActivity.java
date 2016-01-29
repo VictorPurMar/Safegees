@@ -5,7 +5,10 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 
 import org.safegees.safegees.R;
+import org.safegees.safegees.gui.fragment.AddContactFragment;
+import org.safegees.safegees.gui.fragment.ContactsFragment;
 import org.safegees.safegees.gui.fragment.NewsFragment;
+import org.safegees.safegees.gui.fragment.ProfileContactFragment;
 import org.safegees.safegees.gui.fragment.ProfileUserFragment;
 import org.safegees.safegees.maps.CustomMapTileProvider;
 import android.os.Bundle;
@@ -44,7 +47,7 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GoogleMap.OnCameraChangeListener, GoogleMap.OnMapLoadedCallback, ProfileUserFragment.OnFragmentInteractionListener, NewsFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GoogleMap.OnCameraChangeListener, GoogleMap.OnMapLoadedCallback, ProfileUserFragment.OnFragmentInteractionListener, NewsFragment.OnFragmentInteractionListener, ContactsFragment.OnFragmentInteractionListener, AddContactFragment.OnFragmentInteractionListener, ProfileContactFragment.OnFragmentInteractionListener  {
 
 
     static double LAT = -32;
@@ -147,7 +150,7 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_profile) {
             Fragment fg = ProfileUserFragment.newInstance();
             Fragment acFrag = getActiveFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -162,7 +165,24 @@ public class MainActivity extends AppCompatActivity
             transaction.commit();
             mapFragment.onPause();
 
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_contacts) {
+
+            Fragment fg = ContactsFragment.newInstance();
+            Fragment acFrag = getActiveFragment();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+            if (getSupportFragmentManager().getBackStackEntryCount() != 0){
+                getSupportFragmentManager().popBackStack();
+            }else{
+                transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
+
+            }
+            transaction.replace(R.id.map, fg).addToBackStack("contacts");
+            transaction.commit();
+            mapFragment.onPause();
+
+        } else if (id == R.id.nav_map) {
+
             if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
@@ -173,7 +193,7 @@ public class MainActivity extends AppCompatActivity
             }
             mapFragment.onResume();
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_news) {
             Fragment fg = NewsFragment.newInstance();
             Fragment acFrag = getActiveFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -188,38 +208,8 @@ public class MainActivity extends AppCompatActivity
             transaction.commit();
             mapFragment.onPause();
 
-        } else if (id == R.id.nav_manage) {
-            Fragment fg = ProfileUserFragment.newInstance();
-            Fragment acFrag = getActiveFragment();
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-            if (getSupportFragmentManager().getBackStackEntryCount() != 0){
-                getSupportFragmentManager().popBackStack();
-            }else{
-                transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
-
-            }
-            transaction.replace(R.id.map, fg).addToBackStack("profile");
-            transaction.commit();
-            mapFragment.onPause();
-
-        } else if (id == R.id.nav_share) {
-            Fragment fg = ProfileUserFragment.newInstance();
-            Fragment acFrag = getActiveFragment();
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-            if (getSupportFragmentManager().getBackStackEntryCount() != 0){
-                getSupportFragmentManager().popBackStack();
-            }else{
-                transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
-
-            }
-            transaction.replace(R.id.map, fg).addToBackStack("profile");
-            transaction.commit();
-            mapFragment.onPause();
-
-        } else if (id == R.id.nav_send) {
-        Fragment fg = ProfileUserFragment.newInstance();
+        } else if (id == R.id.nav_add_people) {
+            Fragment fg = AddContactFragment.newInstance();
             Fragment acFrag = getActiveFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 

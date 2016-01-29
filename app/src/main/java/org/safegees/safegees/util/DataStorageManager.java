@@ -1,5 +1,5 @@
 /**
- * Memory Manager
+ * Data Storage Manager
  *
  * This class allows to store in Shared Preferences memory some kind of data.
  * This was made to store String, int, boolean, and long values with a String key as identificator
@@ -13,11 +13,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-public class MemoryManager {
+public class DataStorageManager {
     private SharedPreferences config;
     private SharedPreferences.Editor configEditor;
 
-    public MemoryManager(Activity _activity) {
+    public DataStorageManager(Activity _activity) {
         config =  _activity.getPreferences(Context.MODE_PRIVATE);
         configEditor = config.edit();
     }
