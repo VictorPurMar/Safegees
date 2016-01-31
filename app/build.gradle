@@ -8,8 +8,8 @@ android {
         applicationId "org.safegees.safegees"
         minSdkVersion 9
         targetSdkVersion 23
-        versionCode 8
-        versionName "0.17"
+        versionCode 9
+        versionName "0.18"
     }
     buildTypes {
         release {
@@ -26,6 +26,7 @@ dependencies {
     compile 'com.android.support:design:23.1.1'
     compile 'com.google.android.gms:play-services:8.4.0'
     compile 'com.android.support:support-v4:23.1.1'
+    compile group: 'org.apache.httpcomponents' , name: 'httpclient-android' , version: '4.3.5.1'
 }
 
 

@@ -28,4 +28,38 @@
         completions."
     </string>
 
+    //CONNECTION STRINGS/////////////////////////////////////////////////
+    //URL
+    <string name="WEB_BASE">https://safegees.appspot.com/v1/</string>
+    <string name="GET_POSITION">user/position/</string>
+    <string name="GET_LOGIN">user/login</string>
+    <string name="SET_POSITION">user/position</string>
+    <string name="OWN_REGISTER">user/</string>
+    <string name="AUTHORIZE_USER">user/authorized/</string>
+    <string name="GET_POINTS_OF_INTEREST">map</string>
+
+
+    //POST keys
+    <string name="KEY_HEADER_AUTHORIZED">auth</string>
+    <string name="POST_KEY_BODY_EMAIL">email</string>
+    <string name="POST_KEY_BODY_PASSWORD">password</string>
+    <string name="POST_KEY_BODY_AUTHORIZED_EMAIL">authorized_email</string>
+    <string name="POST_KEY_BODY_POSITION">position</string>
+
+    <!-- Connection controller messages (get - post) -->
+    <string name="FRIENDS_JSON">friends</string>
+    <string name="POINTS_OF_INTEREST">organitations</string>
+    <string name="IS_LOGED">isLoged</string>
+    <string name="USER_NAME">user_name</string>
+    <string name="USER_PASSWORD">user_password</string>
+
+
+    //TEST
+    <string name="TEST_USER_NAME">alvaro@gmail.com</string>
+    <string name="TEST_USER_PASSWORD">das</string>
+
+    /////////////////////////////////////////////////////////////////////
+
+
+
 </resources>
