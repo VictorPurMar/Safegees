@@ -35,14 +35,16 @@ package org.safegees.safegees.util;
 //  GET
 //  Url: https://safegees.appspot.com/v1/map/
 //  -----------------------
+//  6. See if user is registered
+//  POST
+//  Url: https://safegees.appspot.com/v1/user/login/
+//
+//
 
 
-import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by victor on 30/1/16.
@@ -72,41 +74,65 @@ public class SafegeesConnectionController {
 
 
 
-    public String getPointsOfInterest(){
+    public void getPointsOfInterest(){
         String url = WEB_BASE+GET_POINTS_OF_INTEREST;
         HttpUrlConnection httpUrlConnection = new HttpUrlConnection();
         String response = null;
         HashMap<String, String> mp = new HashMap<String, String>();
         //mp.put(TEST_USER_NAME, TEST_USER_PASSWORD);
+        response = new HttpUrlConnection().performGetCall(url, mp, null);
+        Log.i("RESPONSE",response);
+    }
+
+    public void getContactsData(){
+        String url = WEB_BASE+GET_POSITION;
+        HttpUrlConnection httpUrlConnection = new HttpUrlConnection();
+        String response = null;
+        HashMap<String, String> mp = new HashMap<String, String>();
+        String auth = TEST_USER_NAME+":"+TEST_USER_PASSWORD;
+        response = new HttpUrlConnection().performGetCall(url, mp, auth);
+        Log.i("RESPONSE",response);
+    }
+
+    public boolean checkLogging(String user, String password){
+        String url = WEB_BASE+GET_LOGIN;
+        HttpUrlConnection httpUrlConnection = new HttpUrlConnection();
+        String response = null;
+        HashMap<String, String> mp = new HashMap<String, String>();
+        mp.put("email",user);
+        mp.put("password", password);
+        String auth = user+":"+password;
+        response = new HttpUrlConnection().performPostCall(url, mp, auth);
+
+        if (response != null){
+            Log.i("RESPONSE",response);
+            return true;
+        }else{
+            Log.e("LOGGIN","No logged");
+            return false;
+        }
+    }
+
+    public boolean userRegister(String user, String password){
+        String url = WEB_BASE+OWN_REGISTER;
+        HttpUrlConnection httpUrlConnection = new HttpUrlConnection();
+        String response = null;
+        HashMap<String, String> mp = new HashMap<String, String>();
+        mp.put("email",user);
+        mp.put("password", password);
+        String auth = user+":"+password;
         response = new HttpUrlConnection().performPostCall(url, mp, null);
-        Log.i("RESPONSE",response);
-        return response;
+
+        if (response != null){
+            Log.i("RESPONSE",response);
+            return true;
+        }else{
+            Log.e("REGISTER","Not registered");
+            return false;
+        }
     }
 
-    public String getContactsData(){
-        String url = WEB_BASE+GET_POSITION;
-        HttpUrlConnection httpUrlConnection = new HttpUrlConnection();
-        String response = null;
-        HashMap<String, String> mp = new HashMap<String, String>();
-        String auth = TEST_USER_NAME+":"+TEST_USER_PASSWORD;
-        response = new HttpUrlConnection().performPostCall(url, mp, auth);
-        Log.i("RESPONSE",response);
-        return response;
-    }
 
-    /*
-    public String getContactsData(){
-        String url = WEB_BASE+GET_POSITION;
-        HttpUrlConnection httpUrlConnection = new HttpUrlConnection();
-        String response = null;
-        HashMap<String, String> mp = new HashMap<String, String>();
-        //mp.put(TEST_USER_NAME+":"+TEST_USER_NAME, KEY_HEADER_AUTHORIZED);
-        String auth = TEST_USER_NAME+":"+TEST_USER_PASSWORD;
-        response = new HttpUrlConnection().performPostCall(url, mp, auth);
-        Log.i("RESPONSE",response);
-        return response;
-    }
-    */
 
 
 
