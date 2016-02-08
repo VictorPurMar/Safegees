@@ -45,6 +45,9 @@ package org.safegees.safegees.util;
 import android.content.Context;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.safegees.safegees.R;
 import org.safegees.safegees.gui.view.SplashActivity;
 
@@ -86,7 +89,10 @@ public class SafegeesConnectionManager {
         //mp.put(TEST_USER_NAME, TEST_USER_PASSWORD);
         response = new HttpUrlConnection().performGetCall(url, mp, null);
         //Store the response in conf preferences with key : contacts_data_mailfromuser
-        SplashActivity.DATA_STORAGE.putString(context.getResources().getString(R.string.KEY_POINTS_OF_INTEREST), response);
+        if (this.isJSONValid(response)) {
+            //Store the response in conf preferences with key : contacts_data_mailfromuser
+            SplashActivity.DATA_STORAGE.putString(context.getResources().getString(R.string.KEY_POINTS_OF_INTEREST), response);
+        }
     }
 
     public void getContactsData(Context context, String userEmail, String password){
@@ -97,8 +103,10 @@ public class SafegeesConnectionManager {
         String auth = userEmail+":"+password;
         response = new HttpUrlConnection().performGetCall(url, mp, auth);
 
-        //Store the response in conf preferences with key : contacts_data_mailfromuser
-        SplashActivity.DATA_STORAGE.putString(context.getResources().getString(R.string.KEY_CONTACTS_DATA) + "_" + userEmail, response);
+        if (this.isJSONValid(response)) {
+            //Store the response in conf preferences with key : contacts_data_mailfromuser
+            SplashActivity.DATA_STORAGE.putString(context.getResources().getString(R.string.KEY_CONTACTS_DATA) + "_" + userEmail, response);
+        }
     }
 
     public boolean updateUserPosition(Context context){
@@ -182,6 +190,21 @@ public class SafegeesConnectionManager {
             Log.e("REGISTER","Not registered");
             return false;
         }
+    }
+
+    public boolean isJSONValid(String test) {
+        try {
+            new JSONObject(test);
+        } catch (JSONException ex) {
+            // edited, to include @Arthur's comment
+            // e.g. in case JSONArray is valid as well...
+            try {
+                new JSONArray(test);
+            } catch (JSONException ex1) {
+                return false;
+            }
+        }
+        return true;
     }
 
 

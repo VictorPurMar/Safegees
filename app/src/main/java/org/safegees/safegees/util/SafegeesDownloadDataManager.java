@@ -62,8 +62,9 @@ public class SafegeesDownloadDataManager {
                     it.remove(); // avoids a ConcurrentModificationException
                 }
 
-
                 scc.getPointsOfInterest(this.context);
+                String generalData = SplashActivity.DATA_STORAGE.getString(this.context.getResources().getString(R.string.KEY_POINTS_OF_INTEREST));
+                Log.i("GENERAL_DATA", "Data:" + generalData);
             } catch (Exception e) {
                 return false;
             }
