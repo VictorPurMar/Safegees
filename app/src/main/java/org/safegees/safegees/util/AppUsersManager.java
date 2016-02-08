@@ -18,7 +18,7 @@ public class AppUsersManager {
 
     public static boolean putUserAndKey(Context context, String userMail, String password){
         Map<String, String> appUsersMap = new HashMap<String, String>();
-        String appUsers = SplashActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.APP_USERS));
+        String appUsers = SplashActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_APP_USERS));
         if (appUsers != null && !appUsers.equals("")){
             String[] appUsersArray = appUsers.split(USER_SEPARATOR);
 
@@ -37,17 +37,17 @@ public class AppUsersManager {
                 appUsersString = appUsersString + pair.getKey() + USER_KEY_SEPARATOR + pair.getValue()+USER_SEPARATOR;
                 it.remove(); // avoids a ConcurrentModificationException
             }
-            SplashActivity.DATA_STORAGE.putString(context.getResources().getString(R.string.APP_USERS),appUsersString);
+            SplashActivity.DATA_STORAGE.putString(context.getResources().getString(R.string.KEY_APP_USERS),appUsersString);
 
         }else{
-            SplashActivity.DATA_STORAGE.putString(context.getResources().getString(R.string.APP_USERS), userMail + USER_KEY_SEPARATOR + password + USER_SEPARATOR);
+            SplashActivity.DATA_STORAGE.putString(context.getResources().getString(R.string.KEY_APP_USERS), userMail + USER_KEY_SEPARATOR + password + USER_SEPARATOR);
         }
         return true;
     }
 
     public static String getUserPassword(Context context, String userMail){
         Map<String, String> appUsersMap = new HashMap<String, String>();
-        String appUsers = SplashActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.APP_USERS));
+        String appUsers = SplashActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_APP_USERS));
         if (appUsers != null){
             String[] appUsersArray = appUsers.split(USER_SEPARATOR);
 
@@ -68,6 +68,21 @@ public class AppUsersManager {
             return true;
         }
         return false;
+    }
+
+    public static Map<String, String> getAppUsersMap(Context context){
+        Map<String, String> appUsersMap = new HashMap<String, String>();
+        String appUsers = SplashActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_APP_USERS));
+        if (appUsers != null && !appUsers.equals("")) {
+            String[] appUsersArray = appUsers.split(USER_SEPARATOR);
+            for (int i = 0; i < appUsersArray.length; i++) {
+                String[] userAndkey = appUsersArray[i].split(USER_KEY_SEPARATOR);
+                String uMail = userAndkey[0];
+                String uPassword = userAndkey[1];
+                appUsersMap.put(uMail, uPassword);
+            }
+        }
+        return appUsersMap;
     }
 
 }

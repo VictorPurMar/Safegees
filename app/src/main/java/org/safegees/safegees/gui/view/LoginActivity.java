@@ -5,6 +5,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.AsyncTask;
@@ -25,14 +26,7 @@ import android.widget.TextView;
 import org.safegees.safegees.R;
 import org.safegees.safegees.util.AppUsersManager;
 import org.safegees.safegees.util.Connectivity;
-import org.safegees.safegees.util.DataStorageManager;
 import org.safegees.safegees.util.SafegeesConnectionManager;
-
-import java.util.Dictionary;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * A login screen that offers login via email/password.
@@ -242,12 +236,12 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener{
      */
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
-        private final Activity parentActivity;
+        private Context context;
         private final String mEmail;
         private final String mPassword;
 
-        UserLoginTask(Activity parentActivity, String email, String password) {
-            this.parentActivity = parentActivity;
+        UserLoginTask(Context context, String email, String password) {
+            this.context = context;
             this. mEmail = email;
             this.mPassword = password;
         }
@@ -260,7 +254,7 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener{
             try {
                 // Simulate network access.
                 SafegeesConnectionManager scc = new SafegeesConnectionManager();
-                isRegistered = scc.checkLogging(mEmail, mPassword);
+                isRegistered = scc.checkLogging(this.mEmail, this.mPassword);
             } catch (Exception e) {
                 return false;
             }
@@ -275,13 +269,13 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener{
             showProgress(false);
             if (success) {
                 //Save the user mail and password as active user data
-                SplashActivity.DATA_STORAGE.putString(getResources().getString(R.string.USER_MAIL), mEmail);
-                SplashActivity.DATA_STORAGE.putString(getResources().getString(R.string.USER_PASSWORD), mPassword);
+                SplashActivity.DATA_STORAGE.putString(getResources().getString(R.string.KEY_USER_MAIL), mEmail);
+                SplashActivity.DATA_STORAGE.putString(getResources().getString(R.string.KEY_USER_PASSWORD), mPassword);
 
                 //Add the user and password to App Users
-                AppUsersManager.putUserAndKey(this.parentActivity, mEmail, mPassword);
+                AppUsersManager.putUserAndKey(this.context, mEmail, mPassword);
 
-                Log.i("APP_USERS", SplashActivity.DATA_STORAGE.getString(getResources().getString(R.string.APP_USERS)));
+                Log.i("APP_USERS", SplashActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_APP_USERS)));
 
 
                 Intent returnIntent = new Intent();

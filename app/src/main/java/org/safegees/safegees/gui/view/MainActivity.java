@@ -12,18 +12,14 @@ import org.safegees.safegees.gui.fragment.NewsFragment;
 import org.safegees.safegees.gui.fragment.ProfileContactFragment;
 import org.safegees.safegees.gui.fragment.ProfileUserFragment;
 import org.safegees.safegees.maps.CustomMapTileProvider;
-import org.safegees.safegees.util.DataStorageManager;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.MenuInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -46,8 +42,6 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.TileOverlayOptions;
-
-import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity
@@ -149,11 +143,11 @@ public class MainActivity extends AppCompatActivity
 
     private void closeSession() {
         //Delete user password and mail
-        SplashActivity.DATA_STORAGE.putString(getResources().getString(R.string.USER_PASSWORD), "");
-        SplashActivity.DATA_STORAGE.putString(getResources().getString(R.string.USER_MAIL), "");
+        SplashActivity.DATA_STORAGE.putString(getResources().getString(R.string.KEY_USER_PASSWORD), "");
+        SplashActivity.DATA_STORAGE.putString(getResources().getString(R.string.KEY_USER_MAIL), "");
         //Restart application
         Intent i = getBaseContext().getPackageManager()
-                .getLaunchIntentForPackage( getBaseContext().getPackageName() );
+                .getLaunchIntentForPackage(getBaseContext().getPackageName());
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
         finish();

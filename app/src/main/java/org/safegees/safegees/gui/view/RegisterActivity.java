@@ -1,6 +1,7 @@
 package org.safegees.safegees.gui.view;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -75,12 +76,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
      */
     public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
 
-        private final Activity parentActivity;
+        private Context context;
         private final String mEmail;
         private final String mPassword;
 
-        UserRegisterTask(Activity parentActivity, String email, String password) {
-            this.parentActivity = parentActivity;
+        UserRegisterTask(Context context, String email, String password) {
+            this.context = context;
             this.mEmail = email;
             this.mPassword = password;
         }
@@ -93,7 +94,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             try {
                 // Simulate network access.
                 SafegeesConnectionManager scc = new SafegeesConnectionManager();
-                isRegistered = scc.userRegister(mEmail, mPassword);
+                isRegistered = scc.userRegister(this.mEmail, this.mPassword);
             } catch (Exception e) {
                 return false;
             }
@@ -106,12 +107,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         protected void onPostExecute(final Boolean success) {
 
             if (success) {
-                Toast.makeText(parentActivity, "Registration success!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this.context, "Registration success!", Toast.LENGTH_SHORT).show();
                 Intent returnIntent = new Intent();
                 setResult(Activity.RESULT_OK, returnIntent);
                 finish();
             } else {
-                Toast.makeText(parentActivity, "Registration Error! Try again.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this.context, "Registration Error! Try again.", Toast.LENGTH_SHORT).show();
             }
         }
 
