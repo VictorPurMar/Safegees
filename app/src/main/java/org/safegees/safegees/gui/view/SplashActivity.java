@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import org.safegees.safegees.R;
 import org.safegees.safegees.util.DataStorageManager;
 import org.safegees.safegees.util.SafegeesDownloadDataManager;
 
@@ -20,16 +21,15 @@ import org.safegees.safegees.util.SafegeesDownloadDataManager;
 
             DATA_STORAGE = new DataStorageManager(this);
 
-            SafegeesDownloadDataManager sddm = new SafegeesDownloadDataManager();
-            sddm.run();
+            if(DATA_STORAGE.getString(getResources().getString(R.string.USER_MAIL)) != null && DATA_STORAGE.getString(getResources().getString(R.string.USER_MAIL)).length()>0){
+                launchMainActivity();
+            }else{
+                //Start the loggin for result
+                Intent loginInt = new Intent(this, LoginActivity.class);
+                startActivityForResult(loginInt, 1);
+            }
 
-            launchMainActivity();
 
-            /*
-            //Start the loggin for result
-            Intent loginInt = new Intent(this, LoginActivity.class);
-            startActivityForResult(loginInt, 1);
-            */
 
 
         }

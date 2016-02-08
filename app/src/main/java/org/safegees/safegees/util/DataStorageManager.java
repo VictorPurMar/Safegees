@@ -42,7 +42,6 @@ public class DataStorageManager {
         configEditor.commit();
     }
 
-
     public String getString(String key) {
         return config.getString(key, "");
     }

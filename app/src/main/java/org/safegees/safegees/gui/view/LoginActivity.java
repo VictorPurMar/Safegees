@@ -1,5 +1,6 @@
 package org.safegees.safegees.gui.view;
 
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
@@ -11,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,8 +23,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import org.safegees.safegees.R;
+import org.safegees.safegees.util.AppUsersManager;
+import org.safegees.safegees.util.Connectivity;
 import org.safegees.safegees.util.DataStorageManager;
 import org.safegees.safegees.util.SafegeesConnectionManager;
+
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * A login screen that offers login via email/password.
@@ -78,8 +88,8 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener{
         mProgressView = findViewById(R.id.login_progress);
 
 
-        Button registerButton = (Button) findViewById(R.id.register_button);
-        registerButton.setOnClickListener(this);
+        this.registerButton = (Button) findViewById(R.id.register_button);
+        this.registerButton.setOnClickListener(this);
     }
 
     @Override
@@ -146,11 +156,26 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener{
             // form field with an error.
             focusView.requestFocus();
         } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            showProgress(true);
-            mAuthTask = new UserLoginTask(this, email, password);
-            mAuthTask.execute((Void) null);
+            //If connexion exists, check login online
+            if(Connectivity.isNetworkAvaiable(this)) {
+                // Show a progress spinner, and kick off a background task to
+                // perform the user login attempt.
+                showProgress(true);
+                mAuthTask = new UserLoginTask(this, email, password);
+                mAuthTask.execute((Void) null);
+            //In other case check user and password offline
+            }else{
+                //If user is stored and password matches launch the activity
+                if(AppUsersManager.isPasswordMatch(this, email,password)){
+                    Intent returnIntent = new Intent();
+                    setResult(Activity.RESULT_OK,returnIntent);
+                    finish();
+                //In other case show the error
+                }else{
+                    mPasswordView.setError(getString(R.string.error_incorrect_password));
+                    mPasswordView.requestFocus();
+                }
+            }
         }
     }
 
@@ -249,9 +274,15 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener{
             mAuthTask = null;
             showProgress(false);
             if (success) {
-                DataStorageManager dsm = new DataStorageManager(parentActivity);
-                dsm.putString(getString(R.string.USER_NAME), mEmail);
-                dsm.putString(getString(R.string.USER_PASSWORD), mPassword);
+                //Save the user mail and password as active user data
+                SplashActivity.DATA_STORAGE.putString(getResources().getString(R.string.USER_MAIL), mEmail);
+                SplashActivity.DATA_STORAGE.putString(getResources().getString(R.string.USER_PASSWORD), mPassword);
+
+                //Add the user and password to App Users
+                AppUsersManager.putUserAndKey(this.parentActivity, mEmail, mPassword);
+
+                Log.i("APP_USERS", SplashActivity.DATA_STORAGE.getString(getResources().getString(R.string.APP_USERS)));
+
 
                 Intent returnIntent = new Intent();
                 setResult(Activity.RESULT_OK,returnIntent);

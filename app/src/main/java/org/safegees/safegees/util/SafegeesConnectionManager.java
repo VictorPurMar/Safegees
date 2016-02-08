@@ -94,7 +94,6 @@ public class SafegeesConnectionManager {
         String auth = TEST_USER_NAME+":"+TEST_USER_PASSWORD;
         response = new HttpUrlConnection().performGetCall(url, mp, auth);
         Log.i("RESPONSE",response);
-        SplashActivity.DATA_STORAGE;
     }
 
     public boolean updateUserPosition(String user, String password){

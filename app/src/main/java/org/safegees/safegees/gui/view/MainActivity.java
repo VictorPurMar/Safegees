@@ -1,6 +1,7 @@
 package org.safegees.safegees.gui.view;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 
@@ -11,6 +12,8 @@ import org.safegees.safegees.gui.fragment.NewsFragment;
 import org.safegees.safegees.gui.fragment.ProfileContactFragment;
 import org.safegees.safegees.gui.fragment.ProfileUserFragment;
 import org.safegees.safegees.maps.CustomMapTileProvider;
+import org.safegees.safegees.util.DataStorageManager;
+
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -20,6 +23,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MenuInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -133,14 +137,26 @@ public class MainActivity extends AppCompatActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()) {
+            case R.id.action_close_session:
+                closeSession();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
 
-        return super.onOptionsItemSelected(item);
+    }
+
+    private void closeSession() {
+        //Delete user password and mail
+        SplashActivity.DATA_STORAGE.putString(getResources().getString(R.string.USER_PASSWORD), "");
+        SplashActivity.DATA_STORAGE.putString(getResources().getString(R.string.USER_MAIL), "");
+        //Restart application
+        Intent i = getBaseContext().getPackageManager()
+                .getLaunchIntentForPackage( getBaseContext().getPackageName() );
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
+        finish();
     }
 
     @Override
@@ -369,5 +385,11 @@ public class MainActivity extends AppCompatActivity
         String tag = getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount() - 1).getName();
         return (Fragment) getSupportFragmentManager().findFragmentByTag(tag);
     }
+
+
+
+
+
+
 
 }

@@ -51,8 +51,9 @@
     <string name="FRIENDS_JSON">friends</string>
     <string name="POINTS_OF_INTEREST">organitations</string>
     <string name="IS_LOGED">isLoged</string>
-    <string name="USER_NAME">user_name</string>
+    <string name="USER_MAIL">user_mail</string>
     <string name="USER_PASSWORD">user_password</string>
+    <string name="APP_USERS">app_users</string>
 
 
     //TEST
