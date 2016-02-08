@@ -9,55 +9,35 @@ import java.util.ArrayList;
  */
 public class User {
     private String name;
+    private String surname;
     private String email;
     private String password;
     private String imagePath;
+    private String phoneNumber;
     private String bio;
     private LatLng position;
     private ArrayList <Contact> contacts;
     private ArrayList <AllowedContact> allowedContacts;
 
-    public User(String name, String email, String password, String imagePath, String bio, LatLng position, ArrayList<Contact> contacts, ArrayList<AllowedContact> allowedContacts) {
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.imagePath = imagePath;
-        this.bio = bio;
-        this.position = position;
-        this.contacts = contacts;
+    public User(ArrayList<AllowedContact> allowedContacts, String bio, ArrayList<Contact> contacts, String email, String imagePath, String name, String password, String phoneNumber, LatLng position, String surname) {
         this.allowedContacts = allowedContacts;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
+        this.bio = bio;
+        this.contacts = contacts;
         this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getImagePath() {
-        return imagePath;
-    }
-
-    public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
+        this.name = name;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+        this.position = position;
+        this.surname = surname;
+    }
+
+    public ArrayList<AllowedContact> getAllowedContacts() {
+        return allowedContacts;
+    }
+
+    public void setAllowedContacts(ArrayList<AllowedContact> allowedContacts) {
+        this.allowedContacts = allowedContacts;
     }
 
     public String getBio() {
@@ -68,14 +48,6 @@ public class User {
         this.bio = bio;
     }
 
-    public LatLng getPosition() {
-        return position;
-    }
-
-    public void setPosition(LatLng position) {
-        this.position = position;
-    }
-
     public ArrayList<Contact> getContacts() {
         return contacts;
     }
@@ -84,11 +56,75 @@ public class User {
         this.contacts = contacts;
     }
 
-    public ArrayList<AllowedContact> getAllowedContacts() {
-        return allowedContacts;
+    public String getEmail() {
+        return email;
     }
 
-    public void setAllowedContacts(ArrayList<AllowedContact> allowedContacts) {
-        this.allowedContacts = allowedContacts;
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public LatLng getPosition() {
+        return position;
+    }
+
+    public void setPosition(LatLng position) {
+        this.position = position;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+
+        return email.equals(user.email);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return email.hashCode();
     }
 }
