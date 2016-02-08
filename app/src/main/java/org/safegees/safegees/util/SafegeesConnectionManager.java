@@ -44,12 +44,14 @@ package org.safegees.safegees.util;
 
 import android.util.Log;
 
+import org.safegees.safegees.gui.view.SplashActivity;
+
 import java.util.HashMap;
 
 /**
  * Created by victor on 30/1/16.
  */
-public class SafegeesConnectionController {
+public class SafegeesConnectionManager {
 
     //URL
     static String WEB_BASE = "https://safegees.appspot.com/v1/";
@@ -92,6 +94,25 @@ public class SafegeesConnectionController {
         String auth = TEST_USER_NAME+":"+TEST_USER_PASSWORD;
         response = new HttpUrlConnection().performGetCall(url, mp, auth);
         Log.i("RESPONSE",response);
+        SplashActivity.DATA_STORAGE;
+    }
+
+    public boolean updateUserPosition(String user, String password){
+        String url = WEB_BASE + SET_POSITION; HttpUrlConnection httpUrlConnection = new HttpUrlConnection();
+        String response = null;
+        HashMap<String, String> mp = new HashMap<String, String>();
+        mp.put("email",user);
+        mp.put("password", password);
+        String auth = user+":"+password;
+        response = new HttpUrlConnection().performPostCall(url, mp, auth);
+        if (response != null){
+            Log.i("RESPONSE",response);
+            return true;
+        }else{
+            Log.e("LOGGIN","No logged");
+            return false;
+        }
+
     }
 
     public boolean checkLogging(String user, String password){
@@ -122,6 +143,25 @@ public class SafegeesConnectionController {
         mp.put("password", password);
         String auth = user+":"+password;
         response = new HttpUrlConnection().performPostCall(url, mp, null);
+
+        if (response != null){
+            Log.i("RESPONSE",response);
+            return true;
+        }else{
+            Log.e("REGISTER","Not registered");
+            return false;
+        }
+    }
+
+
+    public boolean addNewContact(String user, String password, String contactEmail){
+        String url = WEB_BASE+AUTHORIZE_USER;
+        HttpUrlConnection httpUrlConnection = new HttpUrlConnection();
+        String response = null;
+        HashMap<String, String> mp = new HashMap<String, String>();
+        mp.put(POST_KEY_BODY_AUTHORIZED_EMAIL,contactEmail);
+        String auth = user+":"+password;
+        response = new HttpUrlConnection().performPostCall(url, mp, auth);
 
         if (response != null){
             Log.i("RESPONSE",response);

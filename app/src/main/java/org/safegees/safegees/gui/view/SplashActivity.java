@@ -2,32 +2,34 @@ package org.safegees.safegees.gui.view;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.StrictMode;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.widget.Toast;
 
-import org.safegees.safegees.util.SafegeesConnectionController;
-
-import java.io.IOException;
+import org.safegees.safegees.util.DataStorageManager;
+import org.safegees.safegees.util.SafegeesDownloadDataManager;
 
 /**
  * Created by victor on 25/12/15.
  */
     public class SplashActivity extends AppCompatActivity {
+    public static DataStorageManager DATA_STORAGE;
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 
+            DATA_STORAGE = new DataStorageManager(this);
 
+            SafegeesDownloadDataManager sddm = new SafegeesDownloadDataManager();
+            sddm.run();
+
+            launchMainActivity();
+
+            /*
             //Start the loggin for result
             Intent loginInt = new Intent(this, LoginActivity.class);
             startActivityForResult(loginInt, 1);
-
+            */
 
 
         }
@@ -52,6 +54,11 @@ import java.io.IOException;
 
         if (requestCode == 1) {
             if(resultCode == Activity.RESULT_OK){
+
+
+                SafegeesDownloadDataManager sddm = new SafegeesDownloadDataManager();
+                sddm.run();
+
                 launchMainActivity();
             }
             if (resultCode == Activity.RESULT_CANCELED) {

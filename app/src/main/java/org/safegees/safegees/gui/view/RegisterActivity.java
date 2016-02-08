@@ -11,8 +11,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import org.safegees.safegees.R;
-import org.safegees.safegees.util.DataStorageManager;
-import org.safegees.safegees.util.SafegeesConnectionController;
+import org.safegees.safegees.util.SafegeesConnectionManager;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -93,7 +92,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             boolean isRegistered = false;
             try {
                 // Simulate network access.
-                SafegeesConnectionController scc = new SafegeesConnectionController();
+                SafegeesConnectionManager scc = new SafegeesConnectionManager();
                 isRegistered = scc.userRegister(mEmail, mPassword);
             } catch (Exception e) {
                 return false;

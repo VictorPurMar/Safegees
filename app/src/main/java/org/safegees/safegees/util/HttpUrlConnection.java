@@ -1,6 +1,5 @@
 package org.safegees.safegees.util;
 
-import android.util.Base64;
 import android.util.Log;
 
 import org.apache.http.HttpResponse;
@@ -14,20 +13,11 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.net.ssl.HttpsURLConnection;
 
 
 /**
@@ -75,7 +65,7 @@ public class HttpUrlConnection {
         HttpPost httpPost = new HttpPost(requestURL);
 
         try {
-             httpPost.setEntity(new StringEntity(getPostDataString(postDataParams)));
+             httpPost.setEntity(new StringEntity(getDataString(postDataParams)));
              httpPost.setHeader("Accept", "application/json");
              httpPost.setHeader("Content-type", "application/x-www-form-urlencoded; charset=UTF-8");
             //Add the auth header
@@ -102,7 +92,7 @@ public class HttpUrlConnection {
     }
 
 
-    private String getPostDataString(HashMap<String, String> params) throws UnsupportedEncodingException {
+    private String getDataString(HashMap<String, String> params) throws UnsupportedEncodingException {
         StringBuilder result = new StringBuilder();
         boolean first = true;
         for(Map.Entry<String, String> entry : params.entrySet()){
