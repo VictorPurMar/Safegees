@@ -2,7 +2,6 @@ package org.safegees.safegees.model;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import java.text.DateFormat;
 import java.util.Date;
 
 /**
@@ -13,19 +12,22 @@ public class POI {
     private LatLng position;
     private String name;
     private String description;
-    private String image_path;
-    private Date post_date;
-    private Date exiration_date;
+    private String imagePath;
+    private Date postDate;
+    private Date expirationDate;
     private String author;                       //Posibility to develope: all the orgs included a a list. With photo and bio.
+    private String category;
 
-    public POI(LatLng position, String name, String description, String image_path, Date post_date, Date exiration_date, String author) {
-        this.position = position;
-        this.name = name;
-        this.description = description;
-        this.image_path = image_path;
-        this.post_date = post_date;
-        this.exiration_date = exiration_date;
+
+    public POI(String author, String category, String description, Date expirationDate, String imagePath, String name, LatLng position, Date postDate) {
         this.author = author;
+        this.category = category;
+        this.description = description;
+        this.expirationDate = expirationDate;
+        this.imagePath = imagePath;
+        this.name = name;
+        this.position = position;
+        this.postDate = postDate;
     }
 
     public String getAuthor() {
@@ -36,6 +38,14 @@ public class POI {
         this.author = author;
     }
 
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -44,20 +54,20 @@ public class POI {
         this.description = description;
     }
 
-    public Date getExiration_date() {
-        return exiration_date;
+    public Date getExpirationDate() {
+        return expirationDate;
     }
 
-    public void setExiration_date(Date exiration_date) {
-        this.exiration_date = exiration_date;
+    public void setExpirationDate(Date expirationDate) {
+        this.expirationDate = expirationDate;
     }
 
-    public String getImage_path() {
-        return image_path;
+    public String getImagePath() {
+        return imagePath;
     }
 
-    public void setImage_path(String image_path) {
-        this.image_path = image_path;
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     public String getName() {
@@ -76,12 +86,26 @@ public class POI {
         this.position = position;
     }
 
-    public Date getPost_date() {
-        return post_date;
+    public Date getPostDate() {
+        return postDate;
     }
 
-    public void setPost_date(Date post_date) {
-        this.post_date = post_date;
+    public void setPostDate(Date postDate) {
+        this.postDate = postDate;
+    }
+
+    @Override
+    public String toString() {
+        return "POI{" +
+                "author='" + author + '\'' +
+                ", position=" + position +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", imagePath='" + imagePath + '\'' +
+                ", postDate=" + postDate +
+                ", expirationDate=" + expirationDate +
+                ", category='" + category + '\'' +
+                '}';
     }
 }
 

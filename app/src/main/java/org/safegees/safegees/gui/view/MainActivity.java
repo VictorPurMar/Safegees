@@ -12,6 +12,7 @@ import org.safegees.safegees.gui.fragment.NewsFragment;
 import org.safegees.safegees.gui.fragment.ProfileContactFragment;
 import org.safegees.safegees.gui.fragment.ProfileUserFragment;
 import org.safegees.safegees.maps.CustomMapTileProvider;
+import org.safegees.safegees.util.SafegeesDAO;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -29,6 +30,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -104,6 +106,8 @@ public class MainActivity extends AppCompatActivity
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
+        Toast.makeText(this, SafegeesDAO.getInstance(this).getPois().toString(), Toast.LENGTH_LONG).show();
 
     }
 

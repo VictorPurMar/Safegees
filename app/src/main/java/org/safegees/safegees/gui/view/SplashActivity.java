@@ -11,6 +11,7 @@ import org.safegees.safegees.R;
 import org.safegees.safegees.util.AppUsersManager;
 import org.safegees.safegees.util.Connectivity;
 import org.safegees.safegees.util.DataStorageManager;
+import org.safegees.safegees.util.SafegeesDAO;
 import org.safegees.safegees.util.SafegeesDownloadDataManager;
 
 import java.util.Iterator;
@@ -29,6 +30,8 @@ import java.util.Map;
             DATA_STORAGE = new DataStorageManager(this);
 
             if(DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)) != null && DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)).length()>0){
+                downloadData();
+                buildObjects();
                 launchMainActivity();
             }else{
                 //Start the loggin for result
@@ -62,31 +65,38 @@ import java.util.Map;
         if (requestCode == 1) {
             if(resultCode == Activity.RESULT_OK){
 
-            if (Connectivity.isNetworkAvaiable(this)){
-                //Download data
-                SafegeesDownloadDataManager sddm = new SafegeesDownloadDataManager();
-                sddm.run(this);
-            }else{
-                //Show the log if no connection
-                Map<String,String> appUsersMap = AppUsersManager.getAppUsersMap(this);
-                Iterator it = appUsersMap.entrySet().iterator();
-                while (it.hasNext()) {
-                    Map.Entry pair = (Map.Entry)it.next();
-                    String userMail =  (String) pair.getKey();
-                    String contactsData = SplashActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_CONTACTS_DATA)+"_"+userMail);
-                    Log.i("CONTACTS_DATA", "User:" + userMail + "    Data:" + contactsData);
-                    it.remove(); // avoids a ConcurrentModificationException
-                }
-                String generalData = SplashActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_POINTS_OF_INTEREST));
-                Log.i("GENERAL_DATA", "Data:" + generalData);
-            }
-
-
+                downloadData();
+                buildObjects();
                 launchMainActivity();
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
             }
         }
+    }
+
+    private void buildObjects() {
+        SafegeesDAO sDao = SafegeesDAO.getInstance(this);
+    }
+
+    private void downloadData() {
+        if (Connectivity.isNetworkAvaiable(this)){
+            //Download data
+            SafegeesDownloadDataManager sddm = new SafegeesDownloadDataManager();
+            sddm.run(this);
+        }
+
+        //Show the log if no connection
+        Map<String,String> appUsersMap = AppUsersManager.getAppUsersMap(this);
+        Iterator it = appUsersMap.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            String userMail =  (String) pair.getKey();
+            String contactsData = SplashActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_CONTACTS_DATA)+"_"+userMail);
+            Log.i("CONTACTS_DATA", "User:" + userMail + "    Data:" + contactsData);
+            it.remove(); // avoids a ConcurrentModificationException
+        }
+        String generalData = SplashActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_POINTS_OF_INTEREST));
+        Log.i("GENERAL_DATA", "Data:" + generalData);
     }
 }

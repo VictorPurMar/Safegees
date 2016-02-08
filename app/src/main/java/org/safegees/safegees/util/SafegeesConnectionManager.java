@@ -67,18 +67,6 @@ public class SafegeesConnectionManager {
     static String AUTHORIZE_USER = "user/authorized/";
     static String GET_POINTS_OF_INTEREST = "map";
 
-    //POST keys
-    static String KEY_HEADER_AUTHORIZED = "auth";
-    static String POST_KEY_BODY_EMAIL = "email";
-    static String POST_KEY_BODY_PASSWORD = "password";
-    static String POST_KEY_BODY_AUTHORIZED_EMAIL = "authorized_email";
-    static String POST_KEY_BODY_POSITION = "position";
-
-    //TEST
-    static String TEST_USER_NAME = "alvaro@gmail.com";
-    static String TEST_USER_PASSWORD = "das";
-
-
 
 
     public void getPointsOfInterest(Context context){
@@ -179,7 +167,7 @@ public class SafegeesConnectionManager {
         HttpUrlConnection httpUrlConnection = new HttpUrlConnection();
         String response = null;
         HashMap<String, String> mp = new HashMap<String, String>();
-        mp.put(POST_KEY_BODY_AUTHORIZED_EMAIL,contactEmail);
+        mp.put( context.getResources().getString(R.string.POST_KEY_BODY_AUTHORIZED_EMAIL),contactEmail);
         String auth = user+":"+password;
         response = new HttpUrlConnection().performPostCall(url, mp, auth);
 
