@@ -1,12 +1,33 @@
+/**
+ *   MainActivity.java
+ *
+ *   This class is the base Activity interact activity in the application
+ *   Contains Top and Lateral Menu as fragments
+ *   And displays the navigation Map that is the main value of the app
+ *
+ *
+ *   Copyright (C) 2016  Victor Purcallas <vpurcallas@gmail.com>
+ *
+ *   Safegees is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   Safegees is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with ARcowabungaproject.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
 package org.safegees.safegees.gui.view;
 
 import android.Manifest;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 
 import org.safegees.safegees.R;
@@ -20,6 +41,7 @@ import org.safegees.safegees.model.Contact;
 import org.safegees.safegees.model.POI;
 import org.safegees.safegees.util.Connectivity;
 import org.safegees.safegees.util.SafegeesDAO;
+import org.safegees.safegees.util.SafegeesDownloadDataManager;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -37,7 +59,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -61,19 +82,13 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GoogleMap.OnCameraChangeListener, GoogleMap.OnMapLoadedCallback, ProfileUserFragment.OnFragmentInteractionListener, NewsFragment.OnFragmentInteractionListener, ContactsFragment.OnFragmentInteractionListener, AddContactFragment.OnFragmentInteractionListener, ProfileContactFragment.OnFragmentInteractionListener  {
 
 
-    static double LAT = -32;
-    static double LON = 151;
-    int ZOOM = 1;
-    public static float MAX_ZOOM = 1F;
-    SupportMapFragment mapFragment;
+    private SupportMapFragment mapFragment;
     private GoogleMap mMap;
-    private Marker mCurrLocation;
-    private static MainActivity instance;
+    private SafegeesDAO sDAO;
+    private FloatingActionButton floatingUpdateButton;
 
-    public static MainActivity getInstance(){
-        return instance;
-    }
-
+    private static MainActivity instance;           //Singleton
+    private static float MAX_ZOOM = 1F;             //This MaxZoom can change depending the max depth of stored tile Maps
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -81,17 +96,36 @@ public class MainActivity extends AppCompatActivity
      */
     private GoogleApiClient client;
 
-    public static void setMaxZoom(float maxZoom){
-        if (MAX_ZOOM < maxZoom) MAX_ZOOM = maxZoom;
+    //---------------------------------
+    // Singleton
+    //---------------------------------
+
+    public static MainActivity getInstance(){
+        return instance;
     }
 
+    //---------------------------------
+    // Android Basic
+    //---------------------------------
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        sDAO = SafegeesDAO.getInstance(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        this.floatingUpdateButton = (FloatingActionButton) findViewById(R.id.fab);
+        this.floatingUpdateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Updating data", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                MainActivity.getInstance().update();
+            }
+        });
 
         if(Connectivity.isNetworkAvaiable(this)) {
             showUpdateFloatingButton();
@@ -121,23 +155,45 @@ public class MainActivity extends AppCompatActivity
         instance = this;
     }
 
-    public void showUpdateFloatingButton(){
-        //The floating button will be used to update content if exists internet connection
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Future update data process", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        fab.show();
+    //Starts the google api connecting to client
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Maps Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://org.safegees.safegees/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
     }
 
-    public void hideUpdateFloatingButton(){
-        //The floating button will be used to update content if exists internet connection
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.hide();
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Maps Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://org.safegees.safegees/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
     }
 
     @Override
@@ -151,6 +207,15 @@ public class MainActivity extends AppCompatActivity
             mapFragment.onResume();
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        instance = null;
+        SafegeesDAO.close();
+    }
+
+    // Top App Menu
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -174,23 +239,12 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void closeSession() {
-        //Delete user password and mail
-        SplashActivity.DATA_STORAGE.putString(getResources().getString(R.string.KEY_USER_PASSWORD), "");
-        SplashActivity.DATA_STORAGE.putString(getResources().getString(R.string.KEY_USER_MAIL), "");
-        //Restart application
-        Intent i = getBaseContext().getPackageManager()
-                .getLaunchIntentForPackage(getBaseContext().getPackageName());
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(i);
-        finish();
-    }
+    //---------------------------------
+    // Override
+    //---------------------------------
 
-    @Override
-    public void onMapLoaded() {
-        Log.e("MAP LOADING", "Loading");
-    }
 
+    //GOOGLE MAPS API
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -276,8 +330,11 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
-    //Fix maximun zoom
+    //GOOGLE MAPS API
+    /**
+     * Check if MAX ZOOM is passed to fix it updating the camera
+     * @param cameraPosition
+     */
     @Override
     public void onCameraChange(CameraPosition cameraPosition) {
         if (cameraPosition.zoom > MAX_ZOOM){
@@ -286,6 +343,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    //GOOGLE MAPS API
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -295,16 +353,10 @@ public class MainActivity extends AppCompatActivity
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
-
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-        mMap = googleMap;
-        mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
-        //Set custom tiles
-        mMap.addTileOverlay(new TileOverlayOptions().tileProvider(new CustomMapTileProvider(getResources().getAssets())));
-        mMap.setOnCameraChangeListener(this);
+        buildMap(googleMap);
         // map is a GoogleMap object
 
 
@@ -316,111 +368,27 @@ public class MainActivity extends AppCompatActivity
         } else {
             Log.i("PERMISSION", "No User Location Enabled");
         }
-
-        ArrayList<POI> pois = SafegeesDAO.getInstance(this).getPois();
-        for (int i = 0 ; i < pois.size() ; i++){
-            POI poi = pois.get(i);
-            mMap.addMarker(new MarkerOptions().position(poi.getPosition()).title(poi.getName()).snippet(poi.getDescription()).alpha(0.7f).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-        }
-
-        ArrayList<Contact> contacts = SafegeesDAO.getInstance(this).getContacts();
-        for (int i = 0 ; i < contacts.size() ; i++){
-            Contact contact = contacts.get(i);
-            if (contact.getPosition() != null && contact.getLast_connection_date()!=null)mMap.addMarker(new MarkerOptions().position(contact.getPosition()).title(contact.getEmail()).snippet(contact.getLast_connection_date().toString()).alpha(0.7f).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
-            else if (contact.getPosition() !=null)mMap.addMarker(new MarkerOptions().position(contact.getPosition()).title(contact.getEmail()).alpha(0.7f).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
-        }
-
-
+        //Add markers
+        this.refreshPointsInMap();
         //Toast.makeText(this, SafegeesDAO.getInstance(this).getPois().toString(), Toast.LENGTH_LONG).show();
 
-
-
-        // Add a marker in Sydney and move the camera
-        //LatLng sydney = new LatLng(-34, 151);
-        //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
-
-
-    private void setUpMap() {
-        CameraUpdate upd = CameraUpdateFactory.newLatLngZoom(new LatLng(LAT, LON), ZOOM);
-        mMap.moveCamera(upd);
-    }
-
-    /**
-     * Fixing tile's y index (reversing order)
-     */
-    private int fixYCoordinate(int y, int zoom) {
-        int size = 1 << zoom; // size = 2^zoom
-        return size - 1 - y;
-    }
-
-//    @Override
-//    public void onLocationChanged(Location location) {
-//
-//        //remove previous current location marker and add new one at current position
-//            if (mCurrLocation != null) {
-//                mCurrLocation.remove();
-//
-//            }
-//            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-//            MarkerOptions markerOptions = new MarkerOptions();
-//            markerOptions.position(latLng);
-//            markerOptions.title("Current Position");
-//            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-//            mCurrLocation = mMap.addMarker(markerOptions);
-//
-//            Toast.makeText(this, "Location Changed", Toast.LENGTH_SHORT).show();
-//
-//            //If you only need one location, unregister the listener
-//            //LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-//
-//    }
-
+    //GOOGLE MAPS API
     @Override
-    public void onStart() {
-        super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "Maps Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app deep link URI is correct.
-                Uri.parse("android-app://org.safegees.safegees/http/host/path")
-        );
-        AppIndex.AppIndexApi.start(client, viewAction);
+    public void onMapLoaded() {
+        //Log.i("MAP LOADING", "Loading");
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
+    //---------------------------------
+    // Public
+    //---------------------------------
 
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "Maps Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app deep link URI is correct.
-                Uri.parse("android-app://org.safegees.safegees/http/host/path")
-        );
-        AppIndex.AppIndexApi.end(client, viewAction);
-        client.disconnect();
-    }
-
+    //Fragment interface necesary method
     public void onFragmentInteraction(Uri uri){
         //you can leave it empty
     }
 
+    //Fragment interface necesary method
     public Fragment getActiveFragment() {
         if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
             return null;
@@ -429,10 +397,141 @@ public class MainActivity extends AppCompatActivity
         return (Fragment) getSupportFragmentManager().findFragmentByTag(tag);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        instance = null;
-        SafegeesDAO.close();
+    /**
+     * Refresh the GoogleMap mMap
+     * First rebuild the sDao where the objects where loaded
+     * Second clears the map
+     * Third build the mMap with the local Tiles
+     * Fourth add Markers to the map
+     */
+    public void refrehMap(){
+        //Rebuild objects in DAO
+        SafegeesDAO sDao = SafegeesDAO.refreshInstance(this);
+        //Clear the map
+        this.mMap.clear();
+        //Build mMap with local Tiles
+        buildMap(this.mMap);
+        //Add markers
+        this.refreshPointsInMap();
     }
+
+    /**
+     * Floating button show
+     * Called by NetworkStateReceiver
+     */
+    public void showUpdateFloatingButton(){
+        this.floatingUpdateButton.show();
+    }
+
+    /**
+     * Floating button hide
+     * Called by NetworkStateReceiver
+     */
+    public void hideUpdateFloatingButton(){
+        //The floating button will be used to update content if exists internet connection
+        floatingUpdateButton.hide();
+    }
+
+    /**
+     * It will called by CustomMapTileProvider to stablish the Max Zoom depending the map depth avaiablility
+     * @param maxZoom float with the max zoom depth
+     */
+    public static void setMaxZoom(float maxZoom){
+        if (MAX_ZOOM < maxZoom) MAX_ZOOM = maxZoom;
+    }
+
+
+
+    //---------------------------------
+    // Private
+    //---------------------------------
+
+    /**
+     * Updates the data
+     * Download new data with SafegeesDownloadDataManager this method calls MainActivity build method when is finished
+     */
+    private void update(){
+            if (Connectivity.isNetworkAvaiable(this)){
+                //Download data
+                SafegeesDownloadDataManager sddm = new SafegeesDownloadDataManager();
+                sddm.run(this);
+            }
+
+            /*
+            //Only for DEVELOPE
+            //Show the log if no connection
+            Map<String,String> appUsersMap = AppUsersManager.getAppUsersMap(this);
+            Iterator it = appUsersMap.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry)it.next();
+                String userMail =  (String) pair.getKey();
+                String contactsData = SplashActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_CONTACTS_DATA)+"_"+userMail);
+                Log.i("CONTACTS_DATA", "User:" + userMail + "    Data:" + contactsData);
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+            String generalData = SplashActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_POINTS_OF_INTEREST));
+            Log.i("GENERAL_DATA", "Data:" + generalData);
+            */
+    }
+
+
+    /**
+     * Clossed the session
+     * Delete the active UserEmail and Password and relauch the app
+     */
+    private void closeSession() {
+        //Delete user password and mail
+        SplashActivity.DATA_STORAGE.putString(getResources().getString(R.string.KEY_USER_PASSWORD), "");
+        SplashActivity.DATA_STORAGE.putString(getResources().getString(R.string.KEY_USER_MAIL), "");
+        //Restart application
+        Intent i = getBaseContext().getPackageManager()
+                .getLaunchIntentForPackage(getBaseContext().getPackageName());
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
+        finish();
+    }
+
+    /**
+     * Build the Gooogle Map with local Tiles (Using CustomMapTileProvider)
+     * @param googleMap
+     */
+    private void buildMap(GoogleMap googleMap) {
+        mMap = googleMap;
+        mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
+        //Set custom tiles
+        mMap.addTileOverlay(new TileOverlayOptions().tileProvider(new CustomMapTileProvider(getResources().getAssets())));
+        mMap.setOnCameraChangeListener(this);
+    }
+
+    /**
+     * Get the points from DAO (SafeggeesDAO) and set the markers on Map
+     */
+    private void refreshPointsInMap(){
+        if(this.sDAO != null) {
+            ArrayList<POI> pois = this.sDAO.getPois();
+            for (int i = 0; i < pois.size(); i++) {
+                POI poi = pois.get(i);
+                this.mMap.addMarker(new MarkerOptions().position(poi.getPosition()).title(poi.getName()).snippet(poi.getDescription()).alpha(0.7f).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+            }
+
+            ArrayList<Contact> contacts = this.sDAO.getContacts();
+            for (int i = 0; i < contacts.size(); i++) {
+                Contact contact = contacts.get(i);
+                if (contact.getPosition() != null && contact.getLast_connection_date() != null)
+                    this.mMap.addMarker(new MarkerOptions().position(contact.getPosition()).title(contact.getEmail()).snippet(contact.getLast_connection_date().toString()).alpha(0.7f).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+                else if (contact.getPosition() != null)
+                    this.mMap.addMarker(new MarkerOptions().position(contact.getPosition()).title(contact.getEmail()).alpha(0.7f).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+            }
+        }
+    }
+
+    /**
+     * Fixing tile's y index (reversing order)
+     */
+    /**
+    private int fixYCoordinate(int y, int zoom) {
+        int size = 1 << zoom; // size = 2^zoom
+        return size - 1 - y;
+    }
+     */
 }

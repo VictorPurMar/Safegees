@@ -1,11 +1,11 @@
 package org.safegees.safegees.util;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import org.safegees.safegees.gui.view.MainActivity;
+import org.safegees.safegees.gui.view.SplashActivity;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -70,8 +70,18 @@ public class SafegeesDownloadDataManager {
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
             if (success) {
-
+                //If the download was on splash
+                //When de download is finished, launch the app
+                if(this.context.getClass().equals(SplashActivity.class)){
+                    SplashActivity splashActivity =  (SplashActivity) this.context;
+                    splashActivity.launchTheApp();
+                }else if(this.context.getClass().equals(MainActivity.class)){
+                    MainActivity mainActivity =  (MainActivity) this.context;
+                    mainActivity.refrehMap();
+                }
             } else {
+                //When de download is finished, launch the app
+
 
             }
         }

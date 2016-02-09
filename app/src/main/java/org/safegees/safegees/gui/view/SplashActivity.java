@@ -31,8 +31,6 @@ import java.util.Map;
 
             if(DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)) != null && DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)).length()>0){
                 downloadData();
-                buildObjects();
-                launchMainActivity();
             }else{
                 //Start the loggin for result
                 Intent loginInt = new Intent(this, LoginActivity.class);
@@ -66,13 +64,16 @@ import java.util.Map;
             if(resultCode == Activity.RESULT_OK){
 
                 downloadData();
-                buildObjects();
-                launchMainActivity();
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
             }
         }
+    }
+
+    public void launchTheApp(){
+        buildObjects();
+        launchMainActivity();
     }
 
     private void buildObjects() {

@@ -41,6 +41,12 @@ public class SafegeesDAO {
         return instance;
     }
 
+    public static SafegeesDAO refreshInstance(Context context){
+        instance = null;
+        instance = new SafegeesDAO(context);
+        return instance;
+    }
+
 
     private void run() {
         this.pois = this.getPoisArray();
