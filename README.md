@@ -12,7 +12,8 @@ Safegees conforma conjunto de herramientas que permiten a un usuario que inicia 
 
 LICENCIA
 ========
-El proyecto Safegees está bajo Licencia GNU General Public License V3
+El proyecto Safegees está bajo Licencia GNU General Public License V3.
+
 La marca Safegees esta bajo Copyright (C) 2015
 
 
