@@ -71,7 +71,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 
@@ -253,7 +252,7 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_profile) {
             Fragment fg = ProfileUserFragment.newInstance();
-            Fragment acFrag = getActiveFragment();
+            //Fragment acFrag = getActiveFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
             if (getSupportFragmentManager().getBackStackEntryCount() != 0){
@@ -269,7 +268,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_contacts) {
 
             Fragment fg = ContactsFragment.newInstance();
-            Fragment acFrag = getActiveFragment();
+            //Fragment acFrag = getActiveFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
             if (getSupportFragmentManager().getBackStackEntryCount() != 0){
@@ -296,7 +295,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_news) {
             Fragment fg = NewsFragment.newInstance();
-            Fragment acFrag = getActiveFragment();
+            //Fragment acFrag = getActiveFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
             if (getSupportFragmentManager().getBackStackEntryCount() != 0){
@@ -311,7 +310,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_add_people) {
             Fragment fg = AddContactFragment.newInstance();
-            Fragment acFrag = getActiveFragment();
+            //Fragment acFrag = getActiveFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
             if (getSupportFragmentManager().getBackStackEntryCount() != 0){
@@ -330,6 +329,7 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
     //GOOGLE MAPS API
     /**
      * Check if MAX ZOOM is passed to fix it updating the camera
@@ -388,6 +388,7 @@ public class MainActivity extends AppCompatActivity
         //you can leave it empty
     }
 
+    /**
     //Fragment interface necesary method
     public Fragment getActiveFragment() {
         if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
@@ -396,6 +397,7 @@ public class MainActivity extends AppCompatActivity
         String tag = getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount() - 1).getName();
         return (Fragment) getSupportFragmentManager().findFragmentByTag(tag);
     }
+     **/
 
     /**
      * Refresh the GoogleMap mMap
@@ -406,7 +408,7 @@ public class MainActivity extends AppCompatActivity
      */
     public void refrehMap(){
         //Rebuild objects in DAO
-        SafegeesDAO sDao = SafegeesDAO.refreshInstance(this);
+        SafegeesDAO.refreshInstance(this);
         //Clear the map
         this.mMap.clear();
         //Build mMap with local Tiles
