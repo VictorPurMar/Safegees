@@ -12,9 +12,18 @@ Safegees conforma conjunto de herramientas que permiten a un usuario que inicia 
 
 LICENCIA
 ========
-El proyecto Safegees está bajo Licencia GNU General Public License V3.
-
+El proyecto Safegees está bajo Licencia GNU General Public License V3
 La marca Safegees esta bajo Copyright (C) 2015
+
+CONTACTO
+=========
+
+Para cualquier consulta sobre el proyecto puede ponerse en contacto con cualquiera de sus miembros:
+
+Víctor Purcallas <vpurcallas@gmail.com>
+Álvaro Abella Bascarán <alvaroabascar@gmail.com>
+Gerard Martí Tarragó <gerardmt22@gmail.com>
+Guillem Hernandez <guillehego@gmail.com>
 
 
 Enlaces de interés
@@ -68,5 +77,3 @@ Crear un canal de comunicación con los refugiados, para aportar consejos, suces
 Estudiar cómo funcionan los flujos de refugiados (de modo anónimo y seguro).
 
 Tanto la app como la web tratará de ser lo más sencillas tanto funcional como visualmente, para facilitar el uso a todos los usuarios (también tecnófobos)
-
-
