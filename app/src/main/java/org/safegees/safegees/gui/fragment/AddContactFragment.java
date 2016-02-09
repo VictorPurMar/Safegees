@@ -31,6 +31,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 
 import org.safegees.safegees.R;
 
@@ -51,6 +53,9 @@ public class AddContactFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private Button btnAddContact;
+    private EditText emailField;
 
     private OnFragmentInteractionListener mListener;
 
@@ -90,6 +95,21 @@ public class AddContactFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_add_contact, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        this.btnAddContact = (Button) view.findViewById(R.id.btn_add_contact);
+        btnAddContact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String email = emailField.getText().toString();
+
+            }
+        });
+        this.emailField = (EditText) view.findViewById(R.id.email_field);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

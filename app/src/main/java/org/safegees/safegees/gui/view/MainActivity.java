@@ -28,6 +28,19 @@ package org.safegees.safegees.gui.view;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.LightingColorFilter;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 
 import org.safegees.safegees.R;
@@ -59,6 +72,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -68,6 +82,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -88,7 +103,7 @@ public class MainActivity extends AppCompatActivity
 
     private static MainActivity instance;           //Singleton
     private static float MAX_ZOOM = 1F;             //This MaxZoom can change depending the max depth of stored tile Maps
-
+    private static float INIT_ZOOM = 4.5F;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -356,9 +371,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
+        //Build the Map
         buildMap(googleMap);
-        // map is a GoogleMap object
-
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -371,6 +385,9 @@ public class MainActivity extends AppCompatActivity
         //Add markers
         this.refreshPointsInMap();
         //Toast.makeText(this, SafegeesDAO.getInstance(this).getPois().toString(), Toast.LENGTH_LONG).show();
+
+        //First time stablish the initial Zoom Level
+        this.setUpMap();
 
     }
     //GOOGLE MAPS API
@@ -508,23 +525,81 @@ public class MainActivity extends AppCompatActivity
     /**
      * Get the points from DAO (SafeggeesDAO) and set the markers on Map
      */
-    private void refreshPointsInMap(){
-        if(this.sDAO != null) {
+    private void refreshPointsInMap() {
+        if (this.sDAO != null) {
             ArrayList<POI> pois = this.sDAO.getPois();
             for (int i = 0; i < pois.size(); i++) {
                 POI poi = pois.get(i);
-                this.mMap.addMarker(new MarkerOptions().position(poi.getPosition()).title(poi.getName()).snippet(poi.getDescription()).alpha(0.7f).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+
+                int px = getResources().getDimensionPixelSize(R.dimen.map_dot_marker_size);
+                Bitmap mDotMarkerBitmap = Bitmap.createBitmap(px, px, Bitmap.Config.ARGB_8888);
+                Paint paint = new Paint();
+                ColorFilter filter = new PorterDuffColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
+                paint.setColorFilter(filter);
+                Canvas canvas = new Canvas(mDotMarkerBitmap);
+                canvas.drawBitmap(mDotMarkerBitmap, 0, 0, paint);
+                Drawable shape = getResources().getDrawable(R.drawable.ic_add_location_black_24dp);
+                shape.setBounds(0, 0, mDotMarkerBitmap.getWidth(), mDotMarkerBitmap.getHeight());
+                shape.draw(canvas);
+
+                this.mMap.addMarker(new MarkerOptions().position(poi.getPosition()).title(poi.getName()).snippet(poi.getDescription()).alpha(0.9f).icon(BitmapDescriptorFactory.fromBitmap(mDotMarkerBitmap)));
             }
 
             ArrayList<Contact> contacts = this.sDAO.getContacts();
             for (int i = 0; i < contacts.size(); i++) {
                 Contact contact = contacts.get(i);
+
+                int px = getResources().getDimensionPixelSize(R.dimen.map_dot_marker_size);
+                Bitmap mDotMarkerBitmap = Bitmap.createBitmap(px, px, Bitmap.Config.ARGB_8888);
+
+
+                Paint paint = new Paint();
+                ColorFilter filter = new PorterDuffColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
+                paint.setColorFilter(filter);
+
+                Canvas canvas = new Canvas(mDotMarkerBitmap);
+                canvas.drawBitmap(mDotMarkerBitmap, 0, 0, paint);
+                Drawable shape = getResources().getDrawable(R.drawable.ic_person_pin_circle_black_24dp);
+                shape.setBounds(0, 0, mDotMarkerBitmap.getWidth(), mDotMarkerBitmap.getHeight());
+                shape.draw(canvas);
+
+
                 if (contact.getPosition() != null && contact.getLast_connection_date() != null)
-                    this.mMap.addMarker(new MarkerOptions().position(contact.getPosition()).title(contact.getEmail()).snippet(contact.getLast_connection_date().toString()).alpha(0.7f).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+                    this.mMap.addMarker(new MarkerOptions().position(contact.getPosition()).title(contact.getEmail()).snippet(contact.getLast_connection_date().toString()).alpha(1f).icon(BitmapDescriptorFactory.fromBitmap(mDotMarkerBitmap)));
                 else if (contact.getPosition() != null)
-                    this.mMap.addMarker(new MarkerOptions().position(contact.getPosition()).title(contact.getEmail()).alpha(0.7f).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+                    this.mMap.addMarker(new MarkerOptions().position(contact.getPosition()).title(contact.getEmail()).alpha(1f).icon(BitmapDescriptorFactory.fromBitmap(mDotMarkerBitmap)));
             }
+
+
         }
+    }
+
+    /**
+     * Stablish the ZoomLevel as INIT_ZOOM and move Camera
+     */
+    private void setUpMap() {
+        LatLng latLng = this.getUserLocation();
+        if (latLng == null) {
+            CameraUpdate upd = CameraUpdateFactory.newLatLngZoom(mMap.getCameraPosition().target, INIT_ZOOM);
+            mMap.moveCamera(upd);
+        }else{
+            //Move the camera to user position with init zoom
+            CameraUpdate upd = CameraUpdateFactory.newLatLngZoom(latLng, INIT_ZOOM);
+            mMap.moveCamera(upd);
+        }
+    }
+
+    private void changeBitmapColor(Bitmap sourceBitmap, ImageView image, int color) {
+
+        Bitmap resultBitmap = Bitmap.createBitmap(sourceBitmap, 0, 0,
+                sourceBitmap.getWidth() - 1, sourceBitmap.getHeight() - 1);
+        Paint p = new Paint();
+        ColorFilter filter = new LightingColorFilter(color, 1);
+        p.setColorFilter(filter);
+        image.setImageBitmap(resultBitmap);
+
+        Canvas canvas = new Canvas(resultBitmap);
+        canvas.drawBitmap(resultBitmap, 0, 0, p);
     }
 
     /**
@@ -536,4 +611,28 @@ public class MainActivity extends AppCompatActivity
         return size - 1 - y;
     }
      */
+
+    /**
+     * Get Coarse Location if permission is granted
+     * @return latLng LatLong with the position
+     */
+    private LatLng getUserLocation() {
+        // Get the location manager
+        LocationManager locationManager = (LocationManager)
+                getSystemService(LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        String bestProvider = locationManager.getBestProvider(criteria, false);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            Location location = locationManager.getLastKnownLocation(bestProvider);
+            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+            return latLng;
+        }else if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            Location location = locationManager.getLastKnownLocation(bestProvider);
+            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+            return latLng;
+        }
+        return null;
+    }
 }
