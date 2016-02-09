@@ -1,8 +1,12 @@
 package org.safegees.safegees.gui.view;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 
 import org.safegees.safegees.R;
@@ -13,6 +17,7 @@ import org.safegees.safegees.gui.fragment.ProfileContactFragment;
 import org.safegees.safegees.gui.fragment.ProfileUserFragment;
 import org.safegees.safegees.maps.CustomMapTileProvider;
 import org.safegees.safegees.model.POI;
+import org.safegees.safegees.util.Connectivity;
 import org.safegees.safegees.util.SafegeesDAO;
 
 import android.os.Bundle;
@@ -62,7 +67,11 @@ public class MainActivity extends AppCompatActivity
     SupportMapFragment mapFragment;
     private GoogleMap mMap;
     private Marker mCurrLocation;
+    private static MainActivity instance;
 
+    public static MainActivity getInstance(){
+        return instance;
+    }
 
 
     /**
@@ -83,15 +92,17 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //The floating button will be used to update content if exists internet connection
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Future update data process", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        if(Connectivity.isNetworkAvaiable(this)) {
+            //The floating button will be used to update content if exists internet connection
+            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Snackbar.make(view, "Future update data process", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+            });
+        }
 
         //The drawer Layout is the Lateral menu
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -112,7 +123,26 @@ public class MainActivity extends AppCompatActivity
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
+        instance = this;
+    }
 
+    public void showUpdate(){
+        //The floating button will be used to update content if exists internet connection
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Future update data process", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+        fab.show();
+    }
+
+    public void hideUpdate(){
+        //The floating button will be used to update content if exists internet connection
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.hide();
     }
 
     @Override
