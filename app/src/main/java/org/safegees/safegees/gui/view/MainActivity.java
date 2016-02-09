@@ -16,6 +16,7 @@ import org.safegees.safegees.gui.fragment.NewsFragment;
 import org.safegees.safegees.gui.fragment.ProfileContactFragment;
 import org.safegees.safegees.gui.fragment.ProfileUserFragment;
 import org.safegees.safegees.maps.CustomMapTileProvider;
+import org.safegees.safegees.model.Contact;
 import org.safegees.safegees.model.POI;
 import org.safegees.safegees.util.Connectivity;
 import org.safegees.safegees.util.SafegeesDAO;
@@ -93,15 +94,9 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         if(Connectivity.isNetworkAvaiable(this)) {
-            //The floating button will be used to update content if exists internet connection
-            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Snackbar.make(view, "Future update data process", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                }
-            });
+            showUpdateFloatingButton();
+        }else{
+            hideUpdateFloatingButton();
         }
 
         //The drawer Layout is the Lateral menu
@@ -126,7 +121,7 @@ public class MainActivity extends AppCompatActivity
         instance = this;
     }
 
-    public void showUpdate(){
+    public void showUpdateFloatingButton(){
         //The floating button will be used to update content if exists internet connection
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -139,7 +134,7 @@ public class MainActivity extends AppCompatActivity
         fab.show();
     }
 
-    public void hideUpdate(){
+    public void hideUpdateFloatingButton(){
         //The floating button will be used to update content if exists internet connection
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.hide();
@@ -328,6 +323,13 @@ public class MainActivity extends AppCompatActivity
             mMap.addMarker(new MarkerOptions().position(poi.getPosition()).title(poi.getName()).snippet(poi.getDescription()).alpha(0.7f).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
         }
 
+        ArrayList<Contact> contacts = SafegeesDAO.getInstance(this).getContacts();
+        for (int i = 0 ; i < contacts.size() ; i++){
+            Contact contact = contacts.get(i);
+            if (contact.getPosition() != null && contact.getLast_connection_date()!=null)mMap.addMarker(new MarkerOptions().position(contact.getPosition()).title(contact.getEmail()).snippet(contact.getLast_connection_date().toString()).alpha(0.7f).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+            else if (contact.getPosition() !=null)mMap.addMarker(new MarkerOptions().position(contact.getPosition()).title(contact.getEmail()).alpha(0.7f).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+        }
+
 
         //Toast.makeText(this, SafegeesDAO.getInstance(this).getPois().toString(), Toast.LENGTH_LONG).show();
 
@@ -427,10 +429,10 @@ public class MainActivity extends AppCompatActivity
         return (Fragment) getSupportFragmentManager().findFragmentByTag(tag);
     }
 
-
-
-
-
-
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        instance = null;
+        SafegeesDAO.close();
+    }
 }

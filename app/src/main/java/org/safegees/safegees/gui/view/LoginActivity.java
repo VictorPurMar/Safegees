@@ -161,6 +161,10 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener{
             }else{
                 //If user is stored and password matches launch the activity
                 if(AppUsersManager.isPasswordMatch(this, email,password)){
+                    //Save the user mail and password as active user data
+                    SplashActivity.DATA_STORAGE.putString(getResources().getString(R.string.KEY_USER_MAIL), email);
+                    SplashActivity.DATA_STORAGE.putString(getResources().getString(R.string.KEY_USER_PASSWORD), password);
+
                     Intent returnIntent = new Intent();
                     setResult(Activity.RESULT_OK,returnIntent);
                     finish();

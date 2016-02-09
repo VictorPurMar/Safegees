@@ -44,10 +44,50 @@ public class SafegeesDAO {
 
     private void run() {
         this.pois = this.getPoisArray();
+        this.contacts = this.getContactsArray();
+    }
+
+    private ArrayList<Contact> getContactsArray() {
+        this.contacts = new ArrayList<Contact>();
+        String contactsData = SplashActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_CONTACTS_DATA) + "_" + SplashActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_MAIL)));
+        JSONArray jsonArray = null;
+        try {
+            jsonArray = new JSONArray(contactsData);
+            Log.i("JSON CONTACTS", jsonArray.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        if (jsonArray != null && jsonArray.length() > 0){
+            for (int i = 0 ; i < jsonArray.length() ; i++){
+                try {
+                    JSONObject json = (JSONObject) jsonArray.get(i);
+                    String stringPosition = json.getString("position");
+                    LatLng position = getLatLngFromStringPosition(stringPosition);
+                    String dateLastPositionString = json.getString("date_last_position");
+                    Date dateLastPosition = null;
+                    if (dateLastPositionString != null && !dateLastPositionString.equals(""))dateLastPosition = getDateAddedFromStringDate(dateLastPositionString);
+                    String name = json.getString("name");
+                    String surname = json.getString("surname");
+                    String phone = json.getString("telephone");
+                    String email = json.getString("email");
+
+                    //Null values because are not implemented on server yet
+                    Contact contact = new Contact(null,email,null,dateLastPosition,position,name,phone,surname);
+                    this.contacts.add(contact);
+                }catch(Exception e){
+                    Log.e("Caused:", e.getCause().toString());
+                }
+            }
+
+        }
+
+        return this.contacts;
     }
 
     private ArrayList<POI> getPoisArray() {
-
+        this.pois = new ArrayList<POI>();
         String poisData = SplashActivity.DATA_STORAGE.getString(this.context.getString(R.string.KEY_POINTS_OF_INTEREST));
         JSONArray jsonArray = null;
         try {
@@ -124,6 +164,10 @@ public class SafegeesDAO {
 
     public ArrayList<POI> getPois() {
         return pois;
+    }
+
+    public static void close(){
+        instance = null;
     }
 
 }

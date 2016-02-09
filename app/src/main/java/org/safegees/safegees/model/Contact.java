@@ -3,6 +3,8 @@ package org.safegees.safegees.model;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.Date;
+
 /**
  * Created by victor on 2/1/16.
  */
@@ -14,15 +16,15 @@ public class Contact {
     private String email;
     private String image_path;
     private String bio;
-    private LatLng location;
-    private double last_connection_date; //millis
+    private LatLng position;
+    private Date last_connection_date; //millis
 
-    public Contact(String bio, String email, String image_path, double last_connection_date, LatLng location, String name, String phoneNumber, String surname) {
+    public Contact(String bio, String email, String image_path, Date last_connection_date, LatLng position, String name, String phoneNumber, String surname) {
         this.bio = bio;
         this.email = email;
         this.image_path = image_path;
         this.last_connection_date = last_connection_date;
-        this.location = location;
+        this.position = position;
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.surname = surname;
@@ -52,20 +54,20 @@ public class Contact {
         this.image_path = image_path;
     }
 
-    public double getLast_connection_date() {
+    public Date getLast_connection_date() {
         return last_connection_date;
     }
 
-    public void setLast_connection_date(double last_connection_date) {
+    public void setLast_connection_date(Date last_connection_date) {
         this.last_connection_date = last_connection_date;
     }
 
-    public LatLng getLocation() {
-        return location;
+    public LatLng getPosition() {
+        return position;
     }
 
-    public void setLocation(LatLng location) {
-        this.location = location;
+    public void setPosition(LatLng location) {
+        this.position = location;
     }
 
     public String getName() {
@@ -99,17 +101,7 @@ public class Contact {
 
         Contact contact = (Contact) o;
 
-        if (Double.compare(contact.last_connection_date, last_connection_date) != 0) return false;
-        if (name != null ? !name.equals(contact.name) : contact.name != null) return false;
-        if (surname != null ? !surname.equals(contact.surname) : contact.surname != null)
-            return false;
-        if (phoneNumber != null ? !phoneNumber.equals(contact.phoneNumber) : contact.phoneNumber != null)
-            return false;
-        if (!email.equals(contact.email)) return false;
-        if (image_path != null ? !image_path.equals(contact.image_path) : contact.image_path != null)
-            return false;
-        if (bio != null ? !bio.equals(contact.bio) : contact.bio != null) return false;
-        return !(location != null ? !location.equals(contact.location) : contact.location != null);
+        return email.equals(contact.email);
 
     }
 
