@@ -16,6 +16,7 @@ LA APP ANDROID
 
 La app de Android está siendo desarrollada por Victor Purcallas Marchesi <vpurcallas@gmail.com>
 Tiene licencia GNU General Public License V3
+Copyright (C) 2016  Victor Purcallas <vpurcallas@gmail.com>
 
 Actualmente se encuentra en fase alpha en Google Play. Se puede descargar la app en desarrollo en:
 https://play.google.com/store/apps/details?id=org.safegees.safegees
