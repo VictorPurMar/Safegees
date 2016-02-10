@@ -32,12 +32,14 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.LightingColorFilter;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -57,6 +59,7 @@ import org.safegees.safegees.util.SafegeesDAO;
 import org.safegees.safegees.util.SafegeesDownloadDataManager;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -479,7 +482,7 @@ public class MainActivity extends AppCompatActivity
             /*
             //Only for DEVELOPE
             //Show the log if no connection
-            Map<String,String> appUsersMap = AppUsersManager.getAppUsersMap(this);
+            Map<String,String> appUsersMap = DataQuequesManager.getAppUsersMap(this);
             Iterator it = appUsersMap.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry pair = (Map.Entry)it.next();
@@ -530,48 +533,47 @@ public class MainActivity extends AppCompatActivity
             ArrayList<POI> pois = this.sDAO.getPois();
             for (int i = 0; i < pois.size(); i++) {
                 POI poi = pois.get(i);
-
-                int px = getResources().getDimensionPixelSize(R.dimen.map_dot_marker_size);
-                Bitmap mDotMarkerBitmap = Bitmap.createBitmap(px, px, Bitmap.Config.ARGB_8888);
-                Paint paint = new Paint();
-                ColorFilter filter = new PorterDuffColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
-                paint.setColorFilter(filter);
-                Canvas canvas = new Canvas(mDotMarkerBitmap);
-                canvas.drawBitmap(mDotMarkerBitmap, 0, 0, paint);
-                Drawable shape = getResources().getDrawable(R.drawable.ic_add_location_black_24dp);
-                shape.setBounds(0, 0, mDotMarkerBitmap.getWidth(), mDotMarkerBitmap.getHeight());
-                shape.draw(canvas);
-
-                this.mMap.addMarker(new MarkerOptions().position(poi.getPosition()).title(poi.getName()).snippet(poi.getDescription()).alpha(0.9f).icon(BitmapDescriptorFactory.fromBitmap(mDotMarkerBitmap)));
+                Bitmap bitmap = getBitmap(R.drawable.ic_add_location_black_24dp);
+                this.mMap.addMarker(new MarkerOptions().position(poi.getPosition()).title(poi.getName()).snippet(poi.getDescription()).alpha(0.9f).icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
             }
 
             ArrayList<Contact> contacts = this.sDAO.getContacts();
             for (int i = 0; i < contacts.size(); i++) {
                 Contact contact = contacts.get(i);
-
-                int px = getResources().getDimensionPixelSize(R.dimen.map_dot_marker_size);
-                Bitmap mDotMarkerBitmap = Bitmap.createBitmap(px, px, Bitmap.Config.ARGB_8888);
-
-
-                Paint paint = new Paint();
-                ColorFilter filter = new PorterDuffColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
-                paint.setColorFilter(filter);
-
-                Canvas canvas = new Canvas(mDotMarkerBitmap);
-                canvas.drawBitmap(mDotMarkerBitmap, 0, 0, paint);
-                Drawable shape = getResources().getDrawable(R.drawable.ic_person_pin_circle_black_24dp);
-                shape.setBounds(0, 0, mDotMarkerBitmap.getWidth(), mDotMarkerBitmap.getHeight());
-                shape.draw(canvas);
-
-
+                Bitmap bitmap = getBitmap(R.drawable.ic_person_pin_circle_black_24dp);
                 if (contact.getPosition() != null && contact.getLast_connection_date() != null)
-                    this.mMap.addMarker(new MarkerOptions().position(contact.getPosition()).title(contact.getEmail()).snippet(contact.getLast_connection_date().toString()).alpha(1f).icon(BitmapDescriptorFactory.fromBitmap(mDotMarkerBitmap)));
+                    this.mMap.addMarker(new MarkerOptions().position(contact.getPosition()).title(contact.getEmail()).snippet(contact.getLast_connection_date().toString()).alpha(1f).icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
                 else if (contact.getPosition() != null)
-                    this.mMap.addMarker(new MarkerOptions().position(contact.getPosition()).title(contact.getEmail()).alpha(1f).icon(BitmapDescriptorFactory.fromBitmap(mDotMarkerBitmap)));
+                    this.mMap.addMarker(new MarkerOptions().position(contact.getPosition()).title(contact.getEmail()).alpha(1f).icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
             }
 
 
         }
+    }
+
+    @NonNull
+    private Bitmap getBitmap(int drawable) {
+        Bitmap bitmap;
+        int px = getResources().getDimensionPixelOffset(R.dimen.map_dot_marker_size);
+        bitmap = Bitmap.createBitmap(px, px, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        Drawable shape = getResources().getDrawable(drawable);
+        shape.setBounds(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        shape.draw(canvas);
+        return bitmap;
+    }
+
+    private Paint paintSurface() {
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        paint.setDither(true);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeJoin(Paint.Join.MITER);
+        paint.setStrokeCap(Paint.Cap.SQUARE);
+        paint.setColor(Color.RED);
+        paint.setStrokeWidth(16);
+        paint.setAlpha(100);
+        return paint;
     }
 
     /**
@@ -587,19 +589,6 @@ public class MainActivity extends AppCompatActivity
             CameraUpdate upd = CameraUpdateFactory.newLatLngZoom(latLng, INIT_ZOOM);
             mMap.moveCamera(upd);
         }
-    }
-
-    private void changeBitmapColor(Bitmap sourceBitmap, ImageView image, int color) {
-
-        Bitmap resultBitmap = Bitmap.createBitmap(sourceBitmap, 0, 0,
-                sourceBitmap.getWidth() - 1, sourceBitmap.getHeight() - 1);
-        Paint p = new Paint();
-        ColorFilter filter = new LightingColorFilter(color, 1);
-        p.setColorFilter(filter);
-        image.setImageBitmap(resultBitmap);
-
-        Canvas canvas = new Canvas(resultBitmap);
-        canvas.drawBitmap(resultBitmap, 0, 0, p);
     }
 
     /**
@@ -618,20 +607,24 @@ public class MainActivity extends AppCompatActivity
      */
     private LatLng getUserLocation() {
         // Get the location manager
-        LocationManager locationManager = (LocationManager)
-                getSystemService(LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        String bestProvider = locationManager.getBestProvider(criteria, false);
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            Location location = locationManager.getLastKnownLocation(bestProvider);
-            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-            return latLng;
-        }else if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            Location location = locationManager.getLastKnownLocation(bestProvider);
-            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-            return latLng;
+        try {
+            LocationManager locationManager = (LocationManager)
+                    getSystemService(LOCATION_SERVICE);
+            Criteria criteria = new Criteria();
+            String bestProvider = locationManager.getBestProvider(criteria, false);
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Location location = locationManager.getLastKnownLocation(bestProvider);
+                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                return latLng;
+            } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Location location = locationManager.getLastKnownLocation(bestProvider);
+                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                return latLng;
+            }
+        }catch (Exception e){
+            return null;
         }
         return null;
     }

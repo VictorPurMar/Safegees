@@ -54,6 +54,7 @@
     <string name="KEY_USER_MAIL">user_mail</string>
     <string name="KEY_USER_PASSWORD">user_password</string>
     <string name="KEY_APP_USERS">app_users</string>
+    <string name="KEY_ADD_USERS">add_users</string>
 
 
     //TEST

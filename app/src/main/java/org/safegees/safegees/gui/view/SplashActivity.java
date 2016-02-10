@@ -28,10 +28,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.safegees.safegees.R;
-import org.safegees.safegees.util.AppUsersManager;
+import org.safegees.safegees.util.DataQuequesManager;
 import org.safegees.safegees.util.Connectivity;
 import org.safegees.safegees.util.DataStorageManager;
 import org.safegees.safegees.util.SafegeesDAO;
@@ -111,7 +110,7 @@ import java.util.Map;
         }
 
         //Show the log if no connection
-        Map<String,String> appUsersMap = AppUsersManager.getAppUsersMap(this);
+        Map<String,String> appUsersMap = DataQuequesManager.getAppUsersMap(this);
         Iterator it = appUsersMap.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();

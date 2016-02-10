@@ -66,7 +66,7 @@ public class SafegeesDownloadDataManager {
             // TODO: attempt authentication against a network service.
 
                 SafegeesConnectionManager scc = new SafegeesConnectionManager();
-                Map<String,String> appUsersMap = AppUsersManager.getAppUsersMap(this.context);
+                Map<String,String> appUsersMap = DataQuequesManager.getAppUsersMap(this.context);
 
                 //Get and store contacts data from all the app users
                 Iterator it = appUsersMap.entrySet().iterator();
