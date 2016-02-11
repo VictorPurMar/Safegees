@@ -29,6 +29,8 @@ import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import org.safegees.safegees.gui.view.MainActivity;
 import org.safegees.safegees.gui.view.SplashActivity;
 
@@ -40,10 +42,12 @@ import java.util.Map;
  */
 public class ShareDataController {
     private static DownloadAndSendTasks dAndSTask = null;
-    private static SendAddContactTask sTask = null;
+    private static SendAddContactTask addContactTask = null;
+    private static SendUserPosition sendUPosTask = null;
     private Context context;
     private String userEmail;
     private String contactToAdd;
+    private LatLng latLng;
 
 
     public void run(Context context) {
@@ -56,8 +60,16 @@ public class ShareDataController {
         this.context = context;
         this.userEmail = userMail;
         this.contactToAdd = contactToAdd;
-        sTask = new SendAddContactTask(this.context, this.userEmail, this.contactToAdd);
-        sTask.execute((Void) null);
+        addContactTask = new SendAddContactTask(this.context, this.userEmail, this.contactToAdd);
+        addContactTask.execute((Void) null);
+    }
+
+    public void sendUserPosition(Context context, String userMail, LatLng latLng) {
+        this.context = context;
+        this.userEmail = userMail;
+        this.latLng = latLng;
+        sendUPosTask = new SendUserPosition(this.context, this.userEmail, this.latLng);
+        sendUPosTask.execute((Void) null);
     }
 
     /**
@@ -193,7 +205,7 @@ public class ShareDataController {
         protected void onPostExecute(final Boolean success) {
 
 
-            sTask = null;
+            addContactTask = null;
             if (success) {
                 Toast toast = Toast.makeText(context, this.contactToAdd + " was added correctly", Toast.LENGTH_LONG);
                 toast.setGravity(Gravity.CENTER, 0, 0);
@@ -215,10 +227,62 @@ public class ShareDataController {
 
         @Override
         protected void onCancelled() {
-            sTask = null;;
+            addContactTask = null;;
         }
 
 
+    }
+
+
+    /**
+     * Represents an asynchronous login/registration task used to authenticate
+     * the user.
+     */
+    public class SendUserPosition extends AsyncTask<Void, Void, Boolean> {
+        private Context context;
+        private String userEmail;
+        private LatLng latLng;
+
+
+        public SendUserPosition(Context context, String userEmail, LatLng latLng) {
+            this.context = context;
+            this.userEmail = userEmail;
+            this.latLng = latLng;
+
+
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            // TODO: attempt authentication against a network service.
+
+            SafegeesConnectionManager scc = new SafegeesConnectionManager();
+
+            if (Connectivity.isNetworkAvaiable(this.context)) {
+                String userPassword = DataQuequesManager.getUserPassword(this.context, this.userEmail);
+                String latLongString = this.latLng.latitude+":"+this.latLng.longitude;
+                return (scc.updateUserPosition(this.context, this.userEmail, userPassword,latLongString));
+            }
+            return false;
+        }
+
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+
+
+            sendUPosTask = null;
+            if (success) {
+               Log.i("UPDATE_POSITION", "The position was updated correctly");
+            } else {
+                Log.i("UPDATE_POSITION", "The position wasn't updated correctly");
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            sendUPosTask = null;;
+        }
     }
 
 

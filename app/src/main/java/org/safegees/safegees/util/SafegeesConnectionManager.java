@@ -121,17 +121,16 @@ public class SafegeesConnectionManager {
         }
     }
 
-    public boolean updateUserPosition(Context context){
+    public boolean updateUserPosition(Context context, String userEmail, String userPassword, String position){
         //Get user password and data from storage
-        String user = SplashActivity.DATA_STORAGE.getString(context.getString(R.string.KEY_USER_MAIL));
-        String password = SplashActivity.DATA_STORAGE.getString(context.getString(R.string.KEY_USER_PASSWORD));
+        //String user = SplashActivity.DATA_STORAGE.getString(context.getString(R.string.KEY_USER_MAIL));
+        //String password = SplashActivity.DATA_STORAGE.getString(context.getString(R.string.KEY_USER_PASSWORD));
 
         String url = WEB_BASE + SET_POSITION; HttpUrlConnection httpUrlConnection = new HttpUrlConnection();
         String response = null;
         HashMap<String, String> mp = new HashMap<String, String>();
-        mp.put("email",user);
-        mp.put("password", password);
-        String auth = user+":"+password;
+        mp.put("position",position);
+        String auth = userEmail+":"+userPassword;
         response = new HttpUrlConnection().performPostCall(context, url, mp, auth);
         if (response != null){
             Log.i("RESPONSE",response);

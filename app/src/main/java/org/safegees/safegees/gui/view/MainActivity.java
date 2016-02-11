@@ -537,8 +537,6 @@ public class MainActivity extends AppCompatActivity
                 else if (contact.getPosition() != null)
                     this.mMap.addMarker(new MarkerOptions().position(contact.getPosition()).title(contact.getEmail()).alpha(1f).icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
             }
-
-
         }
     }
 
@@ -576,6 +574,11 @@ public class MainActivity extends AppCompatActivity
             CameraUpdate upd = CameraUpdateFactory.newLatLngZoom(mMap.getCameraPosition().target, INIT_ZOOM);
             mMap.moveCamera(upd);
         }else{
+            //TEST
+            //Send user position
+            ShareDataController sdc = new ShareDataController();
+            sdc.sendUserPosition(this, SplashActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)), latLng);
+
             //Move the camera to user position with init zoom
             CameraUpdate upd = CameraUpdateFactory.newLatLngZoom(latLng, INIT_ZOOM);
             mMap.moveCamera(upd);
