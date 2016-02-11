@@ -1,7 +1,20 @@
 /**
  *   DataQuequesManager.java
  *
- *   Future class description
+ *   This class manages the queques of the app.
+ *   Transform the string data to standarized JSONS to store and manage the data.
+ *   Also convert the jsons in Map class to be used easely by other classes.
+ *
+ *   Queque 1: App Users Queque
+ *   This queque stores the user and password of all the acounts added to the app
+ *   to allow to use the app also ofline. Simulating a close session and login activity
+ *   with the stored passowrds
+ *
+ *   Queque 2: Add Contacts Queque
+ *   This queque store the non sended add contacts, with the mail of the contact to add
+ *   and with the email from the user that makes the request.
+ *   This allows to store and use this queque when the internet is avaiable.
+ *
  *
  *
  *   Copyright (C) 2016  Victor Purcallas <vpurcallas@gmail.com>
@@ -33,6 +46,7 @@ import org.safegees.safegees.R;
 import org.safegees.safegees.gui.view.SplashActivity;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -73,7 +87,7 @@ public class DataQuequesManager {
             SplashActivity.DATA_STORAGE.putString(context.getResources().getString(KEY_APP_USER_JSON), userMail + USER_KEY_SEPARATOR + password + FIELD_SEPARATOR);
         }
         return true;
-        */
+         */
 
         String appUsers = SplashActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_APP_USERS));
         if (appUsers != null && !appUsers.equals("")){
@@ -85,9 +99,9 @@ public class DataQuequesManager {
                 value.put(KEY_JSON_USER_EMAIL, userMail);
                 value.put(KEY_JSON_USER_PASSWORD, password);
                 ja.put(value);
-
+                json = new JSONObject();
+                json.put(KEY_JSON_APP_USERS_TITLE, ja);
                 Log.i("JSON_OBJECT_APP", json.toString());
-
                 SplashActivity.DATA_STORAGE.putString(context.getResources().getString(KEY_APP_USER_JSON), json.toString());
 
             } catch (JSONException e) {
@@ -103,15 +117,14 @@ public class DataQuequesManager {
                 ja.put(value);
                 JSONObject json = new JSONObject();
                 json.put(KEY_JSON_APP_USERS_TITLE, ja);
-
                 Log.i("JSON_OBJECT_APP_NEW", json.toString());
-
                 SplashActivity.DATA_STORAGE.putString(context.getResources().getString(KEY_APP_USER_JSON), json.toString());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
         return true;
+
     }
 
 
@@ -134,15 +147,31 @@ public class DataQuequesManager {
 
     public static Map<String, String> getAppUsersMap(Context context){
 
+    /*
+        Map<String, String> appUsersMap = new HashMap<String, String>();
+        String appUsers = SplashActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_APP_USERS));
+        if (appUsers != null && !appUsers.equals("")) {
+            String[] appUsersArray = appUsers.split(FIELD_SEPARATOR);
+            for (int i = 0; i < appUsersArray.length; i++) {
+                String[] userAndkey = appUsersArray[i].split(USER_KEY_SEPARATOR);
+                String uMail = userAndkey[0];
+                String uPassword = userAndkey[1];
+                appUsersMap.put(uMail, uPassword);
+            }
+        }
+        return appUsersMap;
+
+    */
+
         Map<String, String> appUsersMap = new HashMap<String, String>();
         String appUsers = SplashActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_APP_USERS));
         try {
             JSONObject json = new JSONObject(appUsers);
-            JSONArray ja = json.getJSONArray(KEY_JSON_ADD_USERS_TITLE);
+            JSONArray ja = json.getJSONArray(KEY_JSON_APP_USERS_TITLE);
             for(int i = 0; i<ja.length(); i++){
                 JSONObject value= ja.getJSONObject(i);
                 String uMail = value.getString(KEY_JSON_USER_EMAIL);
-                String uPassword = value.getString(KEY_JSON_CONTACT_TO_ADD);
+                String uPassword = value.getString(KEY_JSON_USER_PASSWORD);
                 appUsersMap.put(uMail, uPassword);
             }
 
@@ -150,8 +179,9 @@ public class DataQuequesManager {
             e.printStackTrace();
         }
 
-        Log.i("JSON_APP_CONTACTS_MAP_QUEQUE", appUsersMap.toString());
+        Log.i("JSON_APP_QUEQUE", appUsersMap.toString());
         return appUsersMap;
+
     }
 
 
@@ -214,7 +244,7 @@ public class DataQuequesManager {
             e.printStackTrace();
         }
 
-        Log.i("JSON_ADD_CONTACTS_MAP_QUEQUE", addContactMap.toString());
+        Log.i("JSON_ADD_QUEQUE", addContactMap.toString());
         return addContactMap;
     }
 
@@ -246,8 +276,6 @@ public class DataQuequesManager {
         }
         return true;
     }
-
-
 
 
 }

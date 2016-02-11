@@ -81,10 +81,6 @@ import java.util.Map;
 
                 }
             }
-
-
-
-
         }
 
         public void launchMainActivity(){
@@ -131,6 +127,7 @@ import java.util.Map;
         sddm.run(this);
 
 
+        /*
         //Show the log if no connection
         Map<String,String> appUsersMap = DataQuequesManager.getAppUsersMap(this);
         Iterator it = appUsersMap.entrySet().iterator();
@@ -143,5 +140,6 @@ import java.util.Map;
         }
         String generalData = SplashActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_POINTS_OF_INTEREST));
         Log.i("GENERAL_DATA", "Data:" + generalData);
+        */
     }
 }
