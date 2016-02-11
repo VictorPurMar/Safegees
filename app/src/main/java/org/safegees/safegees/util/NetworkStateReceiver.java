@@ -37,7 +37,11 @@ public class NetworkStateReceiver extends BroadcastReceiver {
 
     public void onReceive(Context context, Intent intent) {
         Log.d("Network", "Network connectivity change");
-        if(Connectivity.isNetworkAvaiable(context))MainActivity.getInstance().showUpdateFloatingButton();
-        else MainActivity.getInstance().hideUpdateFloatingButton();
+        if(Connectivity.isNetworkAvaiable(context)) {
+            if (MainActivity.getInstance() != null) MainActivity.getInstance().showUpdateFloatingButton();
+        }
+        else {
+            if (MainActivity.getInstance() != null)MainActivity.getInstance().hideUpdateFloatingButton();
+        }
     }
 }

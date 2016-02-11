@@ -78,14 +78,17 @@ public class ShareDataController {
 
             SafegeesConnectionManager scc = new SafegeesConnectionManager();
 
-            //Get and store the contacts data from all the app users queque
-            getAppUsersData(scc);
+            if (Connectivity.isNetworkAvaiable(this.context)) {
 
-            //Send all the Add Contacts Queque fields
-            sendAddContactsQueque(scc);
+                //Get and store the contacts data from all the app users queque
+                getAppUsersData(scc);
 
-            //Get general data (POI)
-            scc.getPointsOfInterest(this.context);
+                //Send all the Add Contacts Queque fields
+                sendAddContactsQueque(scc);
+
+                //Get general data (POI)
+                scc.getPointsOfInterest(this.context);
+            }
 
             // TODO: register the new account here.
             return true;

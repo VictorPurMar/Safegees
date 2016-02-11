@@ -24,10 +24,14 @@
 package org.safegees.safegees.gui.view;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
+import android.widget.Toast;
 
 import org.safegees.safegees.R;
 import org.safegees.safegees.util.DataQuequesManager;
@@ -46,7 +50,7 @@ import java.util.Map;
     public static DataStorageManager DATA_STORAGE;
 
         @Override
-        protected void onCreate(Bundle savedInstanceState) {
+        protected void onCreate(final Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 
             DATA_STORAGE = new DataStorageManager(this);
@@ -54,9 +58,28 @@ import java.util.Map;
             if(DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)) != null && DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)).length()>0){
                 shareDataWithServer();
             }else{
-                //Start the loggin for result
-                Intent loginInt = new Intent(this, LoginActivity.class);
-                startActivityForResult(loginInt, 1);
+
+                if (Connectivity.isNetworkAvaiable(this)) {
+                    //Start the loggin for result
+                    Intent loginInt = new Intent(this, LoginActivity.class);
+                    startActivityForResult(loginInt, 1);
+                }else{
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage("You must  be connected to interet before the first use")
+                            .setCancelable(false)
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    Intent i = getBaseContext().getPackageManager()
+                                            .getLaunchIntentForPackage( getBaseContext().getPackageName() );
+                                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    startActivity(i);
+                                    //finish();
+                                }
+                            });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+
+                }
             }
 
 
@@ -103,11 +126,10 @@ import java.util.Map;
     }
 
     private void shareDataWithServer() {
-        if (Connectivity.isNetworkAvaiable(this)){
-            //Download data
-            ShareDataController sddm = new ShareDataController();
-            sddm.run(this);
-        }
+        //Download data
+        ShareDataController sddm = new ShareDataController();
+        sddm.run(this);
+
 
         //Show the log if no connection
         Map<String,String> appUsersMap = DataQuequesManager.getAppUsersMap(this);
