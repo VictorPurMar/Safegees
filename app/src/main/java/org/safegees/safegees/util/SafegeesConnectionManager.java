@@ -67,6 +67,7 @@ package org.safegees.safegees.util;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -98,7 +99,7 @@ public class SafegeesConnectionManager {
         String response = null;
         HashMap<String, String> mp = new HashMap<String, String>();
         //mp.put(TEST_USER_NAME, TEST_USER_PASSWORD);
-        response = new HttpUrlConnection().performGetCall(url, mp, null);
+        response = new HttpUrlConnection().performGetCall(context, url, mp, null);
         //Store the response in conf preferences with key : contacts_data_mailfromuser
         if (this.isJSONValid(response)) {
             //Store the response in conf preferences with key : contacts_data_mailfromuser
@@ -112,7 +113,7 @@ public class SafegeesConnectionManager {
         String response = null;
         HashMap<String, String> mp = new HashMap<String, String>();
         String auth = userEmail+":"+password;
-        response = new HttpUrlConnection().performGetCall(url, mp, auth);
+        response = new HttpUrlConnection().performGetCall(context, url, mp, auth);
 
         if (this.isJSONValid(response)) {
             //Store the response in conf preferences with key : contacts_data_mailfromuser
@@ -131,7 +132,7 @@ public class SafegeesConnectionManager {
         mp.put("email",user);
         mp.put("password", password);
         String auth = user+":"+password;
-        response = new HttpUrlConnection().performPostCall(url, mp, auth);
+        response = new HttpUrlConnection().performPostCall(context, url, mp, auth);
         if (response != null){
             Log.i("RESPONSE",response);
             return true;
@@ -142,7 +143,7 @@ public class SafegeesConnectionManager {
 
     }
 
-    public boolean checkLogging(String user, String password){
+    public boolean checkLogging(Context context, String user, String password){
         String url = WEB_BASE+GET_LOGIN;
         HttpUrlConnection httpUrlConnection = new HttpUrlConnection();
         String response = null;
@@ -150,7 +151,7 @@ public class SafegeesConnectionManager {
         mp.put("email",user);
         mp.put("password", password);
         String auth = user+":"+password;
-        response = new HttpUrlConnection().performPostCall(url, mp, auth);
+        response = new HttpUrlConnection().performPostCall(context, url, mp, auth);
 
         if (response != null){
             Log.i("RESPONSE",response);
@@ -161,7 +162,7 @@ public class SafegeesConnectionManager {
         }
     }
 
-    public boolean userRegister(String user, String password){
+    public boolean userRegister(Context context, String user, String password){
         String url = WEB_BASE+OWN_REGISTER;
         HttpUrlConnection httpUrlConnection = new HttpUrlConnection();
         String response = null;
@@ -169,7 +170,7 @@ public class SafegeesConnectionManager {
         mp.put("email",user);
         mp.put("password", password);
         String auth = user+":"+password;
-        response = new HttpUrlConnection().performPostCall(url, mp, null);
+        response = new HttpUrlConnection().performPostCall(context, url, mp, null);
 
         if (response != null){
             Log.i("RESPONSE",response);
@@ -181,24 +182,24 @@ public class SafegeesConnectionManager {
     }
 
 
-    public boolean addNewContact(Context context, String contactEmail){
+    public boolean addNewContact(Context context, String userMail, String userPassword, String contactEmail){
         String url = WEB_BASE+AUTHORIZE_USER;
         //Get user password and data from storage
-        String user = SplashActivity.DATA_STORAGE.getString(context.getString(R.string.KEY_USER_MAIL));
-        String password = SplashActivity.DATA_STORAGE.getString(context.getString(R.string.KEY_USER_PASSWORD));
+        //String user = SplashActivity.DATA_STORAGE.getString(context.getString(R.string.KEY_USER_MAIL));
+        //String password = SplashActivity.DATA_STORAGE.getString(context.getString(R.string.KEY_USER_PASSWORD));
 
         HttpUrlConnection httpUrlConnection = new HttpUrlConnection();
         String response = null;
         HashMap<String, String> mp = new HashMap<String, String>();
         mp.put( context.getResources().getString(R.string.POST_KEY_BODY_AUTHORIZED_EMAIL),contactEmail);
-        String auth = user+":"+password;
-        response = new HttpUrlConnection().performPostCall(url, mp, auth);
+        String auth = userMail+":"+userPassword;
+        response = new HttpUrlConnection().performPostCall(context, url, mp, auth);
 
         if (response != null){
-            Log.i("RESPONSE",response);
+            Log.i("RESPONSE", response);
             return true;
         }else{
-            Log.e("REGISTER","Not registered");
+            Log.e("ADD_CONTACT","Contact not added");
             return false;
         }
     }

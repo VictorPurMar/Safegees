@@ -35,6 +35,8 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import org.safegees.safegees.R;
+import org.safegees.safegees.gui.view.SplashActivity;
+import org.safegees.safegees.util.ShareDataController;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -105,8 +107,13 @@ public class AddContactFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                String email = emailField.getText().toString();
-
+                String emailToAdd = emailField.getText().toString();
+                String userEmail =  SplashActivity.DATA_STORAGE.getString(getContext().getString(R.string.KEY_USER_MAIL));
+                //Add the contact
+                ShareDataController sssdc = new ShareDataController();
+                sssdc.addContact(getContext(), userEmail, emailToAdd);
+                //clear the text
+                emailField.setText("");
             }
         });
         this.emailField = (EditText) view.findViewById(R.id.email_field);

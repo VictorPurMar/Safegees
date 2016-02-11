@@ -23,7 +23,9 @@
 
 package org.safegees.safegees.util;
 
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -51,7 +53,7 @@ public class HttpUrlConnection {
     private static final int CONNECTION_TIMEOUT = 150000;
 
 
-    public String performGetCall(String requestURL,
+    public String performGetCall(Context context, String requestURL,
                                  HashMap<String, String> postDataParams, String userCredentials) {
 
         DefaultHttpClient httpclient = new DefaultHttpClient();
@@ -69,7 +71,7 @@ public class HttpUrlConnection {
             if (statusLine.getStatusCode() == 200) {
                 responseStr = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
             }else{
-                Log.e("GET ERROR" , "Error from Server");
+                Log.e("GET ERROR" , response.getStatusLine().toString());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -78,7 +80,7 @@ public class HttpUrlConnection {
 
     }
 
-    public String performPostCall(String requestURL,
+    public String performPostCall(Context context, String requestURL,
                                  HashMap<String, String> postDataParams, String userCredentials) {
 
         DefaultHttpClient httpclient = new DefaultHttpClient();
@@ -88,7 +90,8 @@ public class HttpUrlConnection {
         HttpPost httpPost = new HttpPost(requestURL);
 
         try {
-             httpPost.setEntity(new StringEntity(getDataString(postDataParams)));
+            String postDataParamsString = getDataString(postDataParams);
+             httpPost.setEntity(new StringEntity(postDataParamsString));
              httpPost.setHeader("Accept", "application/json");
              httpPost.setHeader("Content-type", "application/x-www-form-urlencoded; charset=UTF-8");
             //Add the auth header
@@ -105,7 +108,7 @@ public class HttpUrlConnection {
             if (statusLine.getStatusCode() == 200  || statusLine.getStatusCode() == 201) {
                 responseStr = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
             }else{
-                Log.e("GET ERROR" , "Error from Server");
+                Log.e("POST ERROR", response.getStatusLine().toString());
             }
         } catch (IOException e) {
             e.printStackTrace();

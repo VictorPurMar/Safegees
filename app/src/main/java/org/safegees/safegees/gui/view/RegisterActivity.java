@@ -117,7 +117,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             try {
                 // Simulate network access.
                 SafegeesConnectionManager scc = new SafegeesConnectionManager();
-                isRegistered = scc.userRegister(this.mEmail, this.mPassword);
+                isRegistered = scc.userRegister(this.context, this.mEmail, this.mPassword);
             } catch (Exception e) {
                 return false;
             }

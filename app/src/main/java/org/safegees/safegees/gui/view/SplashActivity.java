@@ -34,7 +34,7 @@ import org.safegees.safegees.util.DataQuequesManager;
 import org.safegees.safegees.util.Connectivity;
 import org.safegees.safegees.util.DataStorageManager;
 import org.safegees.safegees.util.SafegeesDAO;
-import org.safegees.safegees.util.SafegeesDownloadDataManager;
+import org.safegees.safegees.util.ShareDataController;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -52,7 +52,7 @@ import java.util.Map;
             DATA_STORAGE = new DataStorageManager(this);
 
             if(DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)) != null && DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)).length()>0){
-                downloadData();
+                shareDataWithServer();
             }else{
                 //Start the loggin for result
                 Intent loginInt = new Intent(this, LoginActivity.class);
@@ -85,7 +85,7 @@ import java.util.Map;
         if (requestCode == 1) {
             if(resultCode == Activity.RESULT_OK){
 
-                downloadData();
+                shareDataWithServer();
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
@@ -102,10 +102,10 @@ import java.util.Map;
         SafegeesDAO sDao = SafegeesDAO.getInstance(this);
     }
 
-    private void downloadData() {
+    private void shareDataWithServer() {
         if (Connectivity.isNetworkAvaiable(this)){
             //Download data
-            SafegeesDownloadDataManager sddm = new SafegeesDownloadDataManager();
+            ShareDataController sddm = new ShareDataController();
             sddm.run(this);
         }
 

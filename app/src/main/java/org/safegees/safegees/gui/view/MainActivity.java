@@ -28,18 +28,11 @@ package org.safegees.safegees.gui.view;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.LightingColorFilter;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ShapeDrawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -56,7 +49,7 @@ import org.safegees.safegees.model.Contact;
 import org.safegees.safegees.model.POI;
 import org.safegees.safegees.util.Connectivity;
 import org.safegees.safegees.util.SafegeesDAO;
-import org.safegees.safegees.util.SafegeesDownloadDataManager;
+import org.safegees.safegees.util.ShareDataController;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -75,7 +68,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -85,7 +77,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -426,7 +417,7 @@ public class MainActivity extends AppCompatActivity
      * Third build the mMap with the local Tiles
      * Fourth add Markers to the map
      */
-    public void refrehMap(){
+    public void refreshMap(){
         //Rebuild objects in DAO
         SafegeesDAO.refreshInstance(this);
         //Clear the map
@@ -470,12 +461,12 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * Updates the data
-     * Download new data with SafegeesDownloadDataManager this method calls MainActivity build method when is finished
+     * Download new data with ShareDataController this method calls MainActivity build method when is finished
      */
     private void update(){
             if (Connectivity.isNetworkAvaiable(this)){
                 //Download data
-                SafegeesDownloadDataManager sddm = new SafegeesDownloadDataManager();
+                ShareDataController sddm = new ShareDataController();
                 sddm.run(this);
             }
 

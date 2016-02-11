@@ -281,7 +281,7 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener{
             try {
                 // Simulate network access.
                 SafegeesConnectionManager scc = new SafegeesConnectionManager();
-                isRegistered = scc.checkLogging(this.mEmail, this.mPassword);
+                isRegistered = scc.checkLogging(this.context, this.mEmail, this.mPassword);
             } catch (Exception e) {
                 return false;
             }

@@ -192,17 +192,17 @@ public class ShareDataController {
 
             sTask = null;
             if (success) {
-                Toast toast = Toast.makeText(context, "The contact was added correctly", Toast.LENGTH_LONG);
+                Toast toast = Toast.makeText(context, this.contactToAdd + " was added correctly", Toast.LENGTH_LONG);
                 toast.setGravity(Gravity.CENTER, 0, 0);
                 toast.show();
             } else {
                     if (!Connectivity.isNetworkAvaiable(this.context)) {
-                        Toast toast = Toast.makeText(context, "No internet connection. The contact will be stored and sended when do you have internet and update the app", Toast.LENGTH_LONG);
+                        Toast toast = Toast.makeText(context, "No internet connection. The contact "+ this.contactToAdd  +" will be stored and sended when do you have internet and update the app", Toast.LENGTH_LONG);
                         toast.setGravity(Gravity.CENTER, 0, 0);
                         toast.show();
                         DataQuequesManager.putUserAndKeyInAddUserQueque(this.context, userEmail, contactToAdd);
                     }else{
-                        Toast toast = Toast.makeText(context, "The contact isn't registered at Safegges and cant be added. ", Toast.LENGTH_LONG);
+                        Toast toast = Toast.makeText(context, "The contact "+ this.contactToAdd +" isn't registered at Safegges and cant be added. ", Toast.LENGTH_LONG);
                         toast.setGravity(Gravity.CENTER , 0, 0);
                         toast.show();
                     }
