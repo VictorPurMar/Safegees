@@ -25,6 +25,7 @@ package org.safegees.safegees.util;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
@@ -98,12 +99,32 @@ public class ShareDataController {
                 //Send all the Add Contacts Queque fields
                 sendAddContactsQueque(scc);
 
+                //Send all the User Positions Queque
+                sendUserPositionsQueque(scc);
+
                 //Get general data (POI)
                 scc.getPointsOfInterest(this.context);
             }
 
             // TODO: register the new account here.
             return true;
+        }
+
+        private void sendUserPositionsQueque(SafegeesConnectionManager scc) {
+            Map<String, String> userPositionsMap = DataQuequesManager.getUserPositionsMap(this.context);
+            Iterator it = userPositionsMap.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry) it.next();
+                String userMail = (String) pair.getKey();
+                String userPosition = (String) pair.getValue();
+                String userPassword = DataQuequesManager.getUserPassword(context, userMail);
+                try {
+                    scc.updateUserPosition(this.context, userMail, userPassword, userPosition);
+                } catch (Exception e) {
+                    Log.e("UPDATE_USER_POSITION", e.getMessage());
+                }
+                it.remove(); // avoids a ConcurrentModificationException
+            }
         }
 
         private void sendAddContactsQueque(SafegeesConnectionManager scc) {
@@ -260,7 +281,7 @@ public class ShareDataController {
 
             if (Connectivity.isNetworkAvaiable(this.context)) {
                 String userPassword = DataQuequesManager.getUserPassword(this.context, this.userEmail);
-                String latLongString = this.latLng.latitude+":"+this.latLng.longitude;
+                String latLongString = this.latLng.latitude+","+this.latLng.longitude;
                 return (scc.updateUserPosition(this.context, this.userEmail, userPassword,latLongString));
             }
             return false;
