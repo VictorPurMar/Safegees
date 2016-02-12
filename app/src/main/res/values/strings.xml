@@ -55,6 +55,7 @@
     <string name="KEY_USER_PASSWORD">user_password</string>
     <string name="KEY_APP_USERS">app_users</string>
     <string name="KEY_ADD_USERS">add_users</string>
+    <string name="KEY_USER_POSITIONS">user_position</string>
 
 
     //TEST

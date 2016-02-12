@@ -48,6 +48,7 @@ import org.safegees.safegees.maps.CustomMapTileProvider;
 import org.safegees.safegees.model.Contact;
 import org.safegees.safegees.model.POI;
 import org.safegees.safegees.util.Connectivity;
+import org.safegees.safegees.util.DataQuequesManager;
 import org.safegees.safegees.util.SafegeesDAO;
 import org.safegees.safegees.util.ShareDataController;
 
@@ -578,6 +579,9 @@ public class MainActivity extends AppCompatActivity
             //Send user position
             ShareDataController sdc = new ShareDataController();
             sdc.sendUserPosition(this, SplashActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)), latLng);
+            //The server is defined in this way
+            String userPosition = latLng.latitude + ","+latLng.longitude;
+            DataQuequesManager.putUserPositionInPositionsQueque(this,SplashActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)),userPosition);
 
             //Move the camera to user position with init zoom
             CameraUpdate upd = CameraUpdateFactory.newLatLngZoom(latLng, INIT_ZOOM);

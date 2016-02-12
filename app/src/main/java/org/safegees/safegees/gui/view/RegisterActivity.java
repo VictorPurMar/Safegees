@@ -63,7 +63,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         password2 = (EditText) this.findViewById(R.id.password_re);
         phone = (EditText) this.findViewById(R.id.phone);
         bio = (EditText) this.findViewById(R.id.bio);
-        register = (Button) this.findViewById(R.id.register_button);
+        register = (Button) this.findViewById(R.id.buton_send_register);
 
         register.setOnClickListener(this);
     }
