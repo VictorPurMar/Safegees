@@ -29,37 +29,30 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.Gravity;
-import android.widget.Toast;
 
 import org.safegees.safegees.R;
-import org.safegees.safegees.util.DataQuequesManager;
 import org.safegees.safegees.util.Connectivity;
-import org.safegees.safegees.util.DataStorageManager;
+import org.safegees.safegees.util.StorageDataManager;
 import org.safegees.safegees.util.SafegeesDAO;
 import org.safegees.safegees.util.ShareDataController;
-
-import java.util.Iterator;
-import java.util.Map;
+import org.safegees.safegees.util.StoredDataQuequesManager;
 
 /**
  * Created by victor on 25/12/15.
  */
     public class SplashActivity extends AppCompatActivity {
-    public static DataStorageManager DATA_STORAGE;
+    public static StorageDataManager DATA_STORAGE;
 
         @Override
         protected void onCreate(final Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 
-            DATA_STORAGE = new DataStorageManager(this);
+            DATA_STORAGE = new StorageDataManager(this);
 
             if(DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)) != null && DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)).length()>0){
                 shareDataWithServer();
             }else{
-
-                if (Connectivity.isNetworkAvaiable(this)) {
+                if (Connectivity.isNetworkAvaiable(this) || StoredDataQuequesManager.getAppUsersMap(this).size() != 0) {
                     //Start the loggin for result
                     Intent loginInt = new Intent(this, LoginActivity.class);
                     startActivityForResult(loginInt, 1);
@@ -129,7 +122,7 @@ import java.util.Map;
 
         /*
         //Show the log if no connection
-        Map<String,String> appUsersMap = DataQuequesManager.getAppUsersMap(this);
+        Map<String,String> appUsersMap = StoredDataQuequesManager.getAppUsersMap(this);
         Iterator it = appUsersMap.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();
