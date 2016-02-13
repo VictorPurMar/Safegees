@@ -47,7 +47,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import org.safegees.safegees.R;
-import org.safegees.safegees.util.DataQuequesManager;
+import org.safegees.safegees.util.StoredDataQuequesManager;
 import org.safegees.safegees.util.Connectivity;
 import org.safegees.safegees.util.SafegeesConnectionManager;
 
@@ -183,7 +183,7 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener{
             //In other case check user and password offline
             }else{
                 //If user is stored and password matches launch the activity
-                if(DataQuequesManager.isPasswordMatch(this, email, password)){
+                if(StoredDataQuequesManager.isPasswordMatch(this, email, password)){
                     //Save the user mail and password as active user data
                     SplashActivity.DATA_STORAGE.putString(getResources().getString(R.string.KEY_USER_MAIL), email);
                     SplashActivity.DATA_STORAGE.putString(getResources().getString(R.string.KEY_USER_PASSWORD), password);
@@ -300,7 +300,7 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener{
                 SplashActivity.DATA_STORAGE.putString(getResources().getString(R.string.KEY_USER_PASSWORD), mPassword);
 
                 //Add the user and password to App Users
-                DataQuequesManager.putUserAndKeyInAppUserQueque(this.context, mEmail, mPassword);
+                StoredDataQuequesManager.putUserAndKeyInAppUserQueque(this.context, mEmail, mPassword);
 
                 Log.i("APP_USERS", SplashActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_APP_USERS)));
 

@@ -106,7 +106,8 @@ public class HttpUrlConnection {
             response = httpclient.execute(httpPost);
             StatusLine statusLine = response.getStatusLine();
             if (statusLine.getStatusCode() == 200  || statusLine.getStatusCode() == 201) {
-                responseStr = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
+                //responseStr = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
+                responseStr = statusLine.getReasonPhrase();
             }else{
                 Log.e("POST ERROR", response.getStatusLine().toString());
             }

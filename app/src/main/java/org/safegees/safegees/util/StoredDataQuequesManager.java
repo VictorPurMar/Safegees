@@ -70,7 +70,7 @@ public class StoredDataQuequesManager {
     public static String getUserPassword(Context context, String userMail){
         Map<String, String> appUsersMap = StoredDataQuequesManager.getAppUsersMap(context);
         if (appUsersMap != null){
-            Log.i("getUserPassword",userMail+":::"+appUsersMap.get(userMail));
+            Log.i("getUserPassword",userMail+" "+appUsersMap.get(userMail));
             return appUsersMap.get(userMail);
         }
         return null;
@@ -92,17 +92,18 @@ public class StoredDataQuequesManager {
 
     public static boolean putUserPositionInPositionsQueque(Context context, String userMail, String userPosition){
         String storedJSONStringKEY = context.getResources().getString(R.string.KEY_USER_POSITIONS);
-        String jsonResourceKey = context.getResources().getString(KEY_ADD_USER_JSON);
+        String jsonResourceKey = context.getResources().getString(KEY_USER_POSITION_JSON);
         return putInStorageJSON(userMail, userPosition, storedJSONStringKEY, jsonResourceKey, KEY_JSON_USER_POSITION_TITLE, KEY_JSON_USER_EMAIL, KEY_JSON_USER_POSITION, true);
     }
 
     public static boolean putUserAndKeyInAddUserQueque(Context context, String userMail, String emailForAdd){
         String storedJSONStringKEY = context.getResources().getString(R.string.KEY_ADD_USERS);
-        String jsonResourceKey = context.getResources().getString(KEY_USER_POSITION_JSON);
+        String jsonResourceKey = context.getResources().getString(KEY_ADD_USER_JSON);
         return putInStorageJSON(userMail, emailForAdd, storedJSONStringKEY, jsonResourceKey, KEY_JSON_ADD_USERS_TITLE, KEY_JSON_USER_EMAIL, KEY_JSON_CONTACT_TO_ADD, false);
     }
 
     private static boolean putInStorageJSON(String userMail, String userValue, String storedJSONStringKEY, String jsonResourceKey, String jsonTitle_key, String jsonUserEmailKey, String jsonUserValueKey, boolean substituteStoredFieldByUserEmail) {
+        boolean isAdded = false;
         String JSONStoredString = SplashActivity.DATA_STORAGE.getString(storedJSONStringKEY);
         if (JSONStoredString != null && !JSONStoredString.equals("")){
             try {
@@ -121,7 +122,7 @@ public class StoredDataQuequesManager {
                 json.put(jsonTitle_key, ja);
                 Log.i("JSON_OBJECT_STORED", "KEY:" + jsonResourceKey + " JSON:" + json.toString());
                 SplashActivity.DATA_STORAGE.putString(jsonResourceKey, json.toString());
-                return true;
+                isAdded = true;
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -138,12 +139,12 @@ public class StoredDataQuequesManager {
                 json.put(jsonTitle_key, ja);
                 Log.i("JSON_OBJECT_STORED", "KEY:" + jsonResourceKey + " JSON:" + json.toString());
                 SplashActivity.DATA_STORAGE.putString(jsonResourceKey, json.toString());
-                return true;
+                isAdded = true;
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        return false;
+        return isAdded;
     }
 
     public static boolean removeAppUserFromQueque(Context context, String userMail, String userPassword){
@@ -165,6 +166,7 @@ public class StoredDataQuequesManager {
     }
 
     private static boolean removeFromStoredQuequeByTwoValues(String userMail, String userValue, String storedJSON, String jsonResourceKey, String storedJSONTitle, String userMailJSONKey, String valueJSONKey) {
+        boolean isRemoved = false;
         if (storedJSON != null && !storedJSON.equals("")){
             try {
 
@@ -184,16 +186,17 @@ public class StoredDataQuequesManager {
                 json.put(storedJSONTitle, ja);
                 Log.i("JSON_OBJECT_REMOVE", "Removed user:" + userMail + " and contact:" + userValue + " with RESULT JSON:" + json.toString());
                 SplashActivity.DATA_STORAGE.putString(jsonResourceKey, json.toString());
-                return true;
+                isRemoved =  true;
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        return false;
+        return isRemoved;
     }
 
     private static boolean removeFromStoredQuequeByValue(String userValue, String storedJSON, String jsonResourceKey, String storedJSONTitle, String valueJSONKey) {
+        boolean isRemoved = false;
         if (storedJSON != null && !storedJSON.equals("")){
             try {
 
@@ -208,15 +211,15 @@ public class StoredDataQuequesManager {
                 ja = newJa;
                 json = new JSONObject();
                 json.put(storedJSONTitle, ja);
-                Log.i("JSON_OBJECT_REMOVE", "Removed by value:" + userValue  + " with RESULT JSON:" + json.toString());
+                Log.i("JSON_OBJECT_REMOVE", "Removed by value:" + userValue + " with RESULT JSON:" + json.toString());
                 SplashActivity.DATA_STORAGE.putString(jsonResourceKey, json.toString());
-                return true;
+                isRemoved =  true;
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        return false;
+        return isRemoved;
     }
 
     public static Map<String, String> getAppUsersMap(Context context){

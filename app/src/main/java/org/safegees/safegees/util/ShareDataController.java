@@ -25,7 +25,6 @@ package org.safegees.safegees.util;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
@@ -111,13 +110,13 @@ public class ShareDataController {
         }
 
         private void sendUserPositionsQueque(SafegeesConnectionManager scc) {
-            Map<String, String> userPositionsMap = DataQuequesManager.getUserPositionsMap(this.context);
+            Map<String, String> userPositionsMap = StoredDataQuequesManager.getUserPositionsMap(this.context);
             Iterator it = userPositionsMap.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry pair = (Map.Entry) it.next();
                 String userMail = (String) pair.getKey();
                 String userPosition = (String) pair.getValue();
-                String userPassword = DataQuequesManager.getUserPassword(context, userMail);
+                String userPassword = StoredDataQuequesManager.getUserPassword(context, userMail);
                 try {
                     scc.updateUserPosition(this.context, userMail, userPassword, userPosition);
                 } catch (Exception e) {
@@ -129,16 +128,16 @@ public class ShareDataController {
 
         private void sendAddContactsQueque(SafegeesConnectionManager scc) {
 
-            Map<String, String> adContactsMap = DataQuequesManager.getAddContactsMapQueque(this.context);
+            Map<String, String> adContactsMap = StoredDataQuequesManager.getAddContactsMapQueque(this.context);
             Iterator it = adContactsMap.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry pair = (Map.Entry) it.next();
                 String userMail = (String) pair.getKey();
                 String contactEmail = (String) pair.getValue();
-                String userPassword = DataQuequesManager.getUserPassword(context, userMail);
+                String userPassword = StoredDataQuequesManager.getUserPassword(context, userMail);
                 try {
                     if (scc.addNewContact(this.context, userMail, userPassword, contactEmail)) {
-                        DataQuequesManager.removeContactToAddInQueque(this.context, userMail, contactEmail);
+                        StoredDataQuequesManager.removeContactToAddInQueque(this.context, userMail, contactEmail);
                     }
                 } catch (Exception e) {
                     Log.e("GetContactsData", e.getMessage());
@@ -150,7 +149,7 @@ public class ShareDataController {
 
 
         private void getAppUsersData(SafegeesConnectionManager scc) {
-            Map<String, String> appUsersMap = DataQuequesManager.getAppUsersMap(this.context);
+            Map<String, String> appUsersMap = StoredDataQuequesManager.getAppUsersMap(this.context);
 
             //Get and store contacts data from all the app users
             Iterator it = appUsersMap.entrySet().iterator();
@@ -214,7 +213,7 @@ public class ShareDataController {
             // TODO: attempt authentication against a network service.
 
             SafegeesConnectionManager scc = new SafegeesConnectionManager();
-            String userPassword = DataQuequesManager.getUserPassword(context, this.userEmail);
+            String userPassword = StoredDataQuequesManager.getUserPassword(context, this.userEmail);
             if (Connectivity.isNetworkAvaiable(this.context)) {
                 return scc.addNewContact(this.context, userEmail, userPassword, contactToAdd);
             }else{
@@ -236,7 +235,7 @@ public class ShareDataController {
                         Toast toast = Toast.makeText(context, "No internet connection. The contact "+ this.contactToAdd  +" will be stored and sended when do you have internet and update the app", Toast.LENGTH_LONG);
                         toast.setGravity(Gravity.CENTER, 0, 0);
                         toast.show();
-                        DataQuequesManager.putUserAndKeyInAddUserQueque(this.context, userEmail, contactToAdd);
+                        StoredDataQuequesManager.putUserAndKeyInAddUserQueque(this.context, userEmail, contactToAdd);
                     }else{
                         Toast toast = Toast.makeText(context, "The contact "+ this.contactToAdd +" isn't registered at Safegges and cant be added. ", Toast.LENGTH_LONG);
                         toast.setGravity(Gravity.CENTER , 0, 0);
@@ -280,7 +279,7 @@ public class ShareDataController {
             SafegeesConnectionManager scc = new SafegeesConnectionManager();
 
             if (Connectivity.isNetworkAvaiable(this.context)) {
-                String userPassword = DataQuequesManager.getUserPassword(this.context, this.userEmail);
+                String userPassword = StoredDataQuequesManager.getUserPassword(this.context, this.userEmail);
                 String latLongString = this.latLng.latitude+","+this.latLng.longitude;
                 return (scc.updateUserPosition(this.context, this.userEmail, userPassword,latLongString));
             }

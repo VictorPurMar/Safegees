@@ -48,7 +48,7 @@ import org.safegees.safegees.maps.CustomMapTileProvider;
 import org.safegees.safegees.model.Contact;
 import org.safegees.safegees.model.POI;
 import org.safegees.safegees.util.Connectivity;
-import org.safegees.safegees.util.DataQuequesManager;
+import org.safegees.safegees.util.StoredDataQuequesManager;
 import org.safegees.safegees.util.SafegeesDAO;
 import org.safegees.safegees.util.ShareDataController;
 
@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity
     private FloatingActionButton floatingUpdateButton;
 
     private static MainActivity instance;           //Singleton
-    private static float MAX_ZOOM = 1F;             //This MaxZoom can change depending the max depth of stored tile Maps
+    private static float MAX_ZOOM = 7.9F;             //This MaxZoom can change depending the max depth of stored tile Maps
     private static float INIT_ZOOM = 4.5F;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -446,12 +446,13 @@ public class MainActivity extends AppCompatActivity
         floatingUpdateButton.hide();
     }
 
+    //Deshabilited for testing
     /**
      * It will called by CustomMapTileProvider to stablish the Max Zoom depending the map depth avaiablility
      * @param maxZoom float with the max zoom depth
      */
     public static void setMaxZoom(float maxZoom){
-        if (MAX_ZOOM < maxZoom) MAX_ZOOM = maxZoom;
+        if (MAX_ZOOM < maxZoom) /* MAX_ZOOM = maxZoom*/;
     }
 
 
@@ -474,7 +475,7 @@ public class MainActivity extends AppCompatActivity
             /*
             //Only for DEVELOPE
             //Show the log if no connection
-            Map<String,String> appUsersMap = DataQuequesManager.getAppUsersMap(this);
+            Map<String,String> appUsersMap = StoredDataQuequesManager.getAppUsersMap(this);
             Iterator it = appUsersMap.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry pair = (Map.Entry)it.next();
@@ -581,7 +582,7 @@ public class MainActivity extends AppCompatActivity
             sdc.sendUserPosition(this, SplashActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)), latLng);
             //The server is defined in this way
             String userPosition = latLng.latitude + ","+latLng.longitude;
-            DataQuequesManager.putUserPositionInPositionsQueque(this,SplashActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)),userPosition);
+            StoredDataQuequesManager.putUserPositionInPositionsQueque(this, SplashActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)), userPosition);
 
             //Move the camera to user position with init zoom
             CameraUpdate upd = CameraUpdateFactory.newLatLngZoom(latLng, INIT_ZOOM);
