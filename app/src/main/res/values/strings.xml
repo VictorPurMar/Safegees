@@ -57,6 +57,8 @@
     <string name="KEY_ADD_USERS">add_users</string>
     <string name="KEY_USER_POSITIONS">user_position</string>
 
+    //Last camera position
+
 
     //TEST
     <string name="TEST_USER_NAME">alvaro@gmail.com</string>

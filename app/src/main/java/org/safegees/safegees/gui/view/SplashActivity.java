@@ -46,6 +46,7 @@ import org.safegees.safegees.util.StoredDataQuequesManager;
         @Override
         protected void onCreate(final Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+            setContentView(R.layout.splash_screen_layout);
 
             DATA_STORAGE = new StorageDataManager(this);
 

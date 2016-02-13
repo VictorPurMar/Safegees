@@ -221,6 +221,11 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         super.onDestroy();
         instance = null;
+        /*
+        long longitude = (long) mMap.getCameraPosition().target.longitude;
+        long latitude = (long) mMap.getCameraPosition().target.latitude;
+        SplashActivity.DATA_STORAGE.putLong(this.getResources().getString(R.string));
+        */
         SafegeesDAO.close();
     }
 
@@ -389,6 +394,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onMapLoaded() {
         //Log.i("MAP LOADING", "Loading");
+        setUpMap();
     }
 
     //---------------------------------
@@ -586,8 +592,7 @@ public class MainActivity extends AppCompatActivity
 
             //Move the camera to user position with init zoom
             CameraUpdate upd = CameraUpdateFactory.newLatLngZoom(latLng, INIT_ZOOM);
-            mMap.moveCamera(upd);
-        }
+            mMap.moveCamera(upd);}
     }
 
     /**
@@ -605,6 +610,7 @@ public class MainActivity extends AppCompatActivity
      * @return latLng LatLong with the position
      */
     private LatLng getUserLocation() {
+        LatLng latLng = null;
         // Get the location manager
         try {
             LocationManager locationManager = (LocationManager)
@@ -614,17 +620,17 @@ public class MainActivity extends AppCompatActivity
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
                 Location location = locationManager.getLastKnownLocation(bestProvider);
-                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                latLng = new LatLng(location.getLatitude(), location.getLongitude());
                 return latLng;
             } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
                 Location location = locationManager.getLastKnownLocation(bestProvider);
-                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                latLng = new LatLng(location.getLatitude(), location.getLongitude());
                 return latLng;
             }
         }catch (Exception e){
             return null;
         }
-        return null;
+        return latLng;
     }
 }
