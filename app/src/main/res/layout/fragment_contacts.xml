@@ -2,13 +2,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="org.safegees.safegees.gui.fragment.ProfileUserFragment">
+    tools:context="org.safegees.safegees.gui.fragment.ProfileUserFragment"
+    android:background="@color/wallet_bright_foreground_holo_dark">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <android.support.v7.widget.RecyclerView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment"
-        android:background="@color/colorPrimaryDark"/>
+        android:scrollbars="vertical"
+        android:divider="#FFCC00"
+        android:dividerHeight="4px"/>
 
 </FrameLayout>

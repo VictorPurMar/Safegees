@@ -24,15 +24,24 @@
 package org.safegees.safegees.gui.fragment;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import org.safegees.safegees.R;
+import org.safegees.safegees.gui.adapters.MyAdapter;
+import org.safegees.safegees.gui.decoration.DividerItemDecoration;
+import org.safegees.safegees.gui.view.SplashActivity;
+import org.safegees.safegees.model.Contact;
+import org.safegees.safegees.util.SafegeesDAO;
 
+import java.util.ArrayList;
 
 
 /**
@@ -54,6 +63,12 @@ public class ContactsFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+
+    //List view (Recicler) implementation
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     public ContactsFragment() {
         // Required empty public constructor
@@ -89,8 +104,30 @@ public class ContactsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        View view = inflater.inflate(R.layout.fragment_contacts, container, false);
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_contacts, container, false);
+
+
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), null));
+
+        SafegeesDAO sDAO = SafegeesDAO.getInstance(getActivity());
+        ArrayList<Contact> contacts = sDAO.getContacts();
+
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        //mRecyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        // specify an adapter (see also next example)
+        mAdapter = new MyAdapter(contacts);
+        mRecyclerView.setAdapter(mAdapter);
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
