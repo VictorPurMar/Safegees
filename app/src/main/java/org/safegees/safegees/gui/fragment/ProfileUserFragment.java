@@ -99,6 +99,11 @@ public class ProfileUserFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_profile_user, container, false);
         imageView = (ImageView) view.findViewById(R.id.result);
 
+
+        if (this.bitmap != null){
+            this.imageView.setImageBitmap(this.bitmap);
+        }
+
         //MainActivity activity = (MainActivity) getActivity();
         //imageView.setOnClickListener(activity);
 
@@ -134,8 +139,16 @@ public class ProfileUserFragment extends Fragment {
 
 
     public void setImageBitmap(Bitmap bitmap){
+        if (this.bitmap != null && !this.bitmap.isRecycled()) {
+            this.bitmap.recycle();
+            this.bitmap = null;
+        }
         this.bitmap = bitmap;
-        this.imageView.setImageBitmap(this.bitmap);
+        //Prevent
+        //java.lang.RuntimeException: Canvas: trying to use a recycled bitmap android.graphics.Bitmap@38248746
+        if (this.bitmap != null && this.imageView != null){
+            this.imageView.setImageBitmap(this.bitmap);
+        }
     }
 
     /**
