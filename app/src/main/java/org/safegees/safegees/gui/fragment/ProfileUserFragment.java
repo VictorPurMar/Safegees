@@ -24,14 +24,17 @@
 package org.safegees.safegees.gui.fragment;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import org.safegees.safegees.R;
+import org.safegees.safegees.gui.view.MainActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -52,6 +55,10 @@ public class ProfileUserFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    //Image selector
+    private ImageView imageView;
+    private Bitmap bitmap;
 
     public ProfileUserFragment() {
         // Required empty public constructor
@@ -88,7 +95,15 @@ public class ProfileUserFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile_user, container, false);
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_profile_user, container, false);
+        imageView = (ImageView) view.findViewById(R.id.result);
+
+        //MainActivity activity = (MainActivity) getActivity();
+        //imageView.setOnClickListener(activity);
+
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -113,6 +128,14 @@ public class ProfileUserFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+
+
+    }
+
+
+    public void setImageBitmap(Bitmap bitmap){
+        this.bitmap = bitmap;
+        this.imageView.setImageBitmap(this.bitmap);
     }
 
     /**

@@ -26,12 +26,19 @@
 package org.safegees.safegees.gui.view;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.Location;
@@ -48,11 +55,13 @@ import org.safegees.safegees.maps.CustomMapTileProvider;
 import org.safegees.safegees.model.Contact;
 import org.safegees.safegees.model.POI;
 import org.safegees.safegees.util.Connectivity;
+import org.safegees.safegees.util.StorageDataManager;
 import org.safegees.safegees.util.StoredDataQuequesManager;
 import org.safegees.safegees.util.SafegeesDAO;
 import org.safegees.safegees.util.ShareDataController;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -84,11 +93,17 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GoogleMap.OnCameraChangeListener, GoogleMap.OnMapLoadedCallback, ProfileUserFragment.OnFragmentInteractionListener, NewsFragment.OnFragmentInteractionListener, ContactsFragment.OnFragmentInteractionListener, AddContactFragment.OnFragmentInteractionListener, ProfileContactFragment.OnFragmentInteractionListener  {
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GoogleMap.OnCameraChangeListener, GoogleMap.OnMapLoadedCallback, ProfileUserFragment.OnFragmentInteractionListener, NewsFragment.OnFragmentInteractionListener, ContactsFragment.OnFragmentInteractionListener, AddContactFragment.OnFragmentInteractionListener, ProfileContactFragment.OnFragmentInteractionListener , View.OnClickListener{
 
 
     private SupportMapFragment mapFragment;
@@ -98,12 +113,16 @@ public class MainActivity extends AppCompatActivity
 
     private static MainActivity instance;           //Singleton
     private static float MAX_ZOOM = 7.9F;             //This MaxZoom can change depending the max depth of stored tile Maps
-    private static float INIT_ZOOM = 4.5F;
+    private static float INIT_ZOOM = 3.0F;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
+
+    //For image getting
+    private static final int REQUEST_CODE = 1;
+    private Bitmap bitmap;
 
     //---------------------------------
     // Singleton
@@ -276,7 +295,7 @@ public class MainActivity extends AppCompatActivity
                 transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
 
             }
-            transaction.replace(R.id.map, fg).addToBackStack("profile");
+            transaction.replace(R.id.map, fg,  "profile").addToBackStack("profile");
             transaction.commit();
             mapFragment.onPause();
 
@@ -292,7 +311,7 @@ public class MainActivity extends AppCompatActivity
                 transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
 
             }
-            transaction.replace(R.id.map, fg).addToBackStack("contacts");
+            transaction.replace(R.id.map, fg, "contacts").addToBackStack("contacts");
             transaction.commit();
             mapFragment.onPause();
 
@@ -319,7 +338,7 @@ public class MainActivity extends AppCompatActivity
                 transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
 
             }
-            transaction.replace(R.id.map, fg).addToBackStack("profile");
+            transaction.replace(R.id.map, fg, "news").addToBackStack("news");
             transaction.commit();
             mapFragment.onPause();
 
@@ -334,7 +353,7 @@ public class MainActivity extends AppCompatActivity
                 transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
 
             }
-            transaction.replace(R.id.map, fg).addToBackStack("profile");
+            transaction.replace(R.id.map, fg, "addPeople").addToBackStack("addPeople");
             transaction.commit();
             mapFragment.onPause();
 
@@ -632,5 +651,136 @@ public class MainActivity extends AppCompatActivity
             return null;
         }
         return latLng;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK)
+            try {
+                // We need to recyle unused bitmaps
+                if (bitmap != null) {
+                    bitmap.recycle();
+                }
+                InputStream stream = getContentResolver().openInputStream(
+                        data.getData());
+                bitmap = BitmapFactory.decodeStream(stream);
+                stream.close();
+                /*
+                getSupportFragmentManager()
+                imageView.setImageBitmap(bitmap);
+                */
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        bitmap = fixBitmap(bitmap);
+
+        ProfileUserFragment myFragment = (ProfileUserFragment) getSupportFragmentManager().findFragmentByTag("profile");
+        if (myFragment != null && myFragment.isVisible()) {
+            Log.i("ProfileFragment" , "Add poto");
+            myFragment.setImageBitmap(bitmap);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private Bitmap fixBitmap(Bitmap bitmap) {
+
+        Matrix matrix = new Matrix();
+        matrix.postRotate(0);
+        //matrix.postRotate(90);
+
+
+        Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), true);
+        Bitmap rotatedBitmap = Bitmap.createBitmap(scaledBitmap , 0, 0, scaledBitmap .getWidth(), scaledBitmap .getHeight(), matrix, true);
+
+        if (bitmap.getWidth() >= bitmap.getHeight()){
+
+            bitmap = Bitmap.createBitmap(
+                    rotatedBitmap,
+                    rotatedBitmap.getWidth()/2 - rotatedBitmap.getHeight()/2,
+                    0,
+                    rotatedBitmap.getHeight(),
+                    rotatedBitmap.getHeight()
+            );
+
+        }else{
+
+            bitmap = Bitmap.createBitmap(
+                    rotatedBitmap,
+                    0,
+                    rotatedBitmap.getHeight()/2 - rotatedBitmap.getWidth()/2,
+                    rotatedBitmap.getWidth(),
+                    rotatedBitmap.getWidth()
+            );
+        }
+
+
+        //Rounded the bitmap
+        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
+                bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        //final int color = 0xff424242;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        final RectF rectF = new RectF(rect);
+        final float roundPx = bitmap.getWidth() / 2;
+
+
+        paint.setAntiAlias(true);
+        //canvas.drawARGB(0, 0, 0, 0);
+        //paint.setColor(color);
+        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        return output;
+
+    }
+
+    public void pickImage(View View) {
+        //pickImage(v);
+        Log.i("Picked image", "true");
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        startActivityForResult(intent, REQUEST_CODE);
+    }
+
+    @Override
+    public void onClick(View v) {
+        //pickImage(v);
+        Log.i("Clicked", "true");
+
+    }
+
+    /** Create a File for saving an image or video */
+    private  File getOutputMediaFile(){
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
+                + "/Android/data/"
+                + getApplicationContext().getPackageName()
+                + "/Files");
+
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
+
+        // Create the storage directory if it does not exist
+        if (! mediaStorageDir.exists()){
+            if (! mediaStorageDir.mkdirs()){
+                return null;
+            }
+        }
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
+        File mediaFile;
+        String mImageName="USER_IMAGE"+ SplashActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)) +".jpg";
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
+        return mediaFile;
     }
 }
