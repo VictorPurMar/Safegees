@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="org.safegees.safegees.gui.fragment.ProfileUserFragment"
+    tools:context="org.safegees.safegees.gui.view.MainActivity"
     android:background="@color/wallet_bright_foreground_holo_dark">
 
     <android.support.v7.widget.RecyclerView
