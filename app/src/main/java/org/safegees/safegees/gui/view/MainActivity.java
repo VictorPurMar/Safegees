@@ -62,6 +62,7 @@ import org.safegees.safegees.util.ShareDataController;
 
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -78,6 +79,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -95,6 +97,7 @@ import com.google.android.gms.maps.model.TileOverlayOptions;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -141,6 +144,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         sDAO = SafegeesDAO.getInstance(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -179,6 +183,30 @@ public class MainActivity extends AppCompatActivity
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
+        try {
+            File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
+                    + "/Android/data/"
+                    + getApplicationContext().getPackageName()
+                    + "/Files");
+            String filename =mediaStorageDir.getAbsolutePath()+ "USER_IMAGE_" + SplashActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)).replace("@","").replace(".","") + ".png";
+
+           // Uri userImageUri = Uri.fromFile(new File(filename));
+            View headerView = navigationView.inflateHeaderView(R.layout.nav_header_main);
+            //View headerView = navigationView.findViewById(R.id.navigation_header_layout);
+            ImageView userImageView = (ImageView) headerView.findViewById(R.id.nav_user_image);
+
+            Log.e("IMAGE", userImageView.toString());
+
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            bitmap = BitmapFactory.decodeFile(filename, options);
+
+            userImageView.setImageBitmap(bitmap);
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.e("IMAGE ERROR", e.getMessage());
+        }
 
         instance = this;
     }
@@ -656,33 +684,62 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK)
+            bitmap = buildBitmapFromData(data.getData());
+        Log.e("DATA", data.getDataString());
+        ProfileUserFragment myFragment = (ProfileUserFragment) getSupportFragmentManager().findFragmentByTag("profile");
+        if (myFragment != null && myFragment.isVisible()) {
+            Log.i("ProfileFragment", "Add poto");
+            myFragment.setImageBitmap(bitmap);
+
+            File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
+                    + "/Android/data/"
+                    + getApplicationContext().getPackageName()
+                    + "/Files");
+            String filename = "USER_IMAGE_" + SplashActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)).replace("@","").replace(".","") + ".png";
+            filename = mediaStorageDir.getAbsolutePath()+filename;
+
+            FileOutputStream out = null;
             try {
-                // We need to recyle unused bitmaps
-                if (bitmap != null) {
-                    bitmap.recycle();
+                out = new FileOutputStream(filename);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 10, out); // bmp is your Bitmap instance
+                // PNG is a lossless format, the compression factor (100) is ignored
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (out != null) {
+                        out.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                InputStream stream = getContentResolver().openInputStream(
-                        data.getData());
-                bitmap = BitmapFactory.decodeStream(stream);
-                stream.close();
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public Bitmap buildBitmapFromData(Uri data){
+        try {
+            // We need to recyle unused bitmaps
+            if (bitmap != null) {
+                bitmap.recycle();
+            }
+            InputStream stream = getContentResolver().openInputStream(
+                    data);
+            bitmap = BitmapFactory.decodeStream(stream);
+            stream.close();
                 /*
                 getSupportFragmentManager()
                 imageView.setImageBitmap(bitmap);
                 */
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         bitmap = fixBitmap(bitmap);
-
-        ProfileUserFragment myFragment = (ProfileUserFragment) getSupportFragmentManager().findFragmentByTag("profile");
-        if (myFragment != null && myFragment.isVisible()) {
-            Log.i("ProfileFragment" , "Add poto");
-            myFragment.setImageBitmap(bitmap);
-        }
-        super.onActivityResult(requestCode, resultCode, data);
+        return bitmap;
     }
 
     private Bitmap fixBitmap(Bitmap bitmap) {
@@ -737,6 +794,9 @@ public class MainActivity extends AppCompatActivity
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         canvas.drawBitmap(bitmap, rect, rect, paint);
 
+        //Scale squared
+        output = Bitmap.createScaledBitmap(output, 300, 300, true);
+
         return output;
 
     }
@@ -756,31 +816,5 @@ public class MainActivity extends AppCompatActivity
         //pickImage(v);
         Log.i("Clicked", "true");
 
-    }
-
-    /** Create a File for saving an image or video */
-    private  File getOutputMediaFile(){
-        // To be safe, you should check that the SDCard is mounted
-        // using Environment.getExternalStorageState() before doing this.
-        File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
-                + "/Android/data/"
-                + getApplicationContext().getPackageName()
-                + "/Files");
-
-        // This location works best if you want the created images to be shared
-        // between applications and persist after your app has been uninstalled.
-
-        // Create the storage directory if it does not exist
-        if (! mediaStorageDir.exists()){
-            if (! mediaStorageDir.mkdirs()){
-                return null;
-            }
-        }
-        // Create a media file name
-        String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
-        File mediaFile;
-        String mImageName="USER_IMAGE"+ SplashActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)) +".jpg";
-        mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
-        return mediaFile;
     }
 }

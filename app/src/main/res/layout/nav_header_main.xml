@@ -6,10 +6,11 @@
     android:gravity="bottom"
     android:orientation="horizontal"
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
-    android:weightSum="3">
+    android:weightSum="3"
+    android:id="@+id/navigation_header_layout">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/nav_user_image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scaleType="fitCenter"
