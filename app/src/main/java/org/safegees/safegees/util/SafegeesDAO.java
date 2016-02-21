@@ -25,7 +25,6 @@ package org.safegees.safegees.util;
 import android.content.Context;
 import android.util.Log;
 
-import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,6 +32,7 @@ import org.json.JSONObject;
 import org.safegees.safegees.R;
 import org.safegees.safegees.gui.view.SplashActivity;
 import org.safegees.safegees.model.Contact;
+import org.safegees.safegees.model.LatLng;
 import org.safegees.safegees.model.POI;
 
 import java.util.ArrayList;

@@ -23,7 +23,6 @@
 
 package org.safegees.safegees.model;
 
-import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Date;
 

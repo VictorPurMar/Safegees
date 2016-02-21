@@ -32,7 +32,7 @@
             android:gravity="center_vertical"
             android:text="Example application example example example example"
             android:textSize="16sp"
-            android:textColor="@color/common_action_bar_splitter"
+            android:textColor="@color/colorPrimaryExtraLight"
             android:ellipsize="end"
             android:singleLine="true"/>
         <TextView
@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:text="Description"
             android:textSize="12sp"
-            android:textColor="@color/common_action_bar_splitter"
+            android:textColor="@color/colorPrimaryExtraLight"
             android:ellipsize="end"
             android:singleLine="true"/>
     </LinearLayout>

@@ -29,10 +29,10 @@ import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.model.LatLng;
 
 import org.safegees.safegees.gui.view.MainActivity;
 import org.safegees.safegees.gui.view.SplashActivity;
+import org.safegees.safegees.model.LatLng;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -280,7 +280,7 @@ public class ShareDataController {
 
             if (Connectivity.isNetworkAvaiable(this.context)) {
                 String userPassword = StoredDataQuequesManager.getUserPassword(this.context, this.userEmail);
-                String latLongString = this.latLng.latitude+","+this.latLng.longitude;
+                String latLongString = this.latLng.getLatitude()+","+this.latLng.getLongitude();
                 return (scc.updateUserPosition(this.context, this.userEmail, userPassword,latLongString));
             }
             return false;

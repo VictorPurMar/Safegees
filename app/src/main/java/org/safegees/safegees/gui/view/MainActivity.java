@@ -25,10 +25,8 @@
 
 package org.safegees.safegees.gui.view;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -40,29 +38,23 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationManager;
 import android.net.Uri;
 
+import org.osmdroid.views.MapView;
 import org.safegees.safegees.R;
 import org.safegees.safegees.gui.fragment.AddContactFragment;
 import org.safegees.safegees.gui.fragment.ContactsFragment;
+import org.safegees.safegees.gui.fragment.MapFragment;
 import org.safegees.safegees.gui.fragment.NewsFragment;
 import org.safegees.safegees.gui.fragment.ProfileContactFragment;
 import org.safegees.safegees.gui.fragment.ProfileUserFragment;
-import org.safegees.safegees.maps.CustomMapTileProvider;
-import org.safegees.safegees.model.Contact;
-import org.safegees.safegees.model.POI;
 import org.safegees.safegees.util.Connectivity;
-import org.safegees.safegees.util.StorageDataManager;
 import org.safegees.safegees.util.StoredDataQuequesManager;
 import org.safegees.safegees.util.SafegeesDAO;
 import org.safegees.safegees.util.ShareDataController;
 
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -81,36 +73,23 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.TileOverlayOptions;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
+import java.lang.reflect.Array;
 
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GoogleMap.OnCameraChangeListener, GoogleMap.OnMapLoadedCallback, ProfileUserFragment.OnFragmentInteractionListener, NewsFragment.OnFragmentInteractionListener, ContactsFragment.OnFragmentInteractionListener, AddContactFragment.OnFragmentInteractionListener, ProfileContactFragment.OnFragmentInteractionListener , View.OnClickListener{
+        implements NavigationView.OnNavigationItemSelectedListener,ProfileUserFragment.OnFragmentInteractionListener, NewsFragment.OnFragmentInteractionListener, ContactsFragment.OnFragmentInteractionListener, AddContactFragment.OnFragmentInteractionListener, ProfileContactFragment.OnFragmentInteractionListener , View.OnClickListener, MapFragment.OnFragmentInteractionListener{
 
 
+    /*
     private SupportMapFragment mapFragment;
-    private GoogleMap mMap;
+    private GoogleMap mMap;*/
+    private MapFragment mapFragment;
+    private MapView nMap;
     private SafegeesDAO sDAO;
     private FloatingActionButton floatingUpdateButton;
 
@@ -121,7 +100,7 @@ public class MainActivity extends AppCompatActivity
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
-    private GoogleApiClient client;
+    //private GoogleApiClient client;
 
     //For image getting
     private static final int REQUEST_CODE = 1;
@@ -179,16 +158,26 @@ public class MainActivity extends AppCompatActivity
         // Store the header view to update
         headerView = navigationView.inflateHeaderView(R.layout.nav_header_main);
 
+
+        //Open Street Map View
+
+
+        mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        /*
         //Google Map
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
+        /*
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
         loadStoredStoredImage();
+        */
+
+
+
 
         instance = this;
     }
@@ -232,40 +221,14 @@ public class MainActivity extends AppCompatActivity
     public void onStart() {
         super.onStart();
 
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "Maps Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app deep link URI is correct.
-                Uri.parse("android-app://org.safegees.safegees/http/host/path")
-        );
-        AppIndex.AppIndexApi.start(client, viewAction);
+
     }
 
     @Override
     public void onStop() {
         super.onStop();
 
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "Maps Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app deep link URI is correct.
-                Uri.parse("android-app://org.safegees.safegees/http/host/path")
-        );
-        AppIndex.AppIndexApi.end(client, viewAction);
-        client.disconnect();
+
     }
 
     @Override
@@ -276,7 +239,9 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+
             mapFragment.onResume();
+
         }
     }
 
@@ -345,7 +310,9 @@ public class MainActivity extends AppCompatActivity
             //Set the imageBitMap
             ProfileUserFragment fgP = (ProfileUserFragment) fg;
             fgP.setImageBitmap(bitmap);
+
             mapFragment.onPause();
+
             this.hideUpdateFloatingButton();
 
         } else if (id == R.id.nav_contacts) {
@@ -362,19 +329,23 @@ public class MainActivity extends AppCompatActivity
             }
             transaction.replace(R.id.map, fg, "contacts").addToBackStack("contacts");
             transaction.commit();
+
             mapFragment.onPause();
+
             this.hideUpdateFloatingButton();
         } else if (id == R.id.nav_map) {
 
             if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
-                //transaction.remove(getActiveFragment());
+                transaction.remove(getActiveFragment());
                 getSupportFragmentManager().popBackStack();
                 transaction.commit();
                 //super.onBackPressed();
             }
+
             mapFragment.onResume();
+
             this.showUpdateFloatingButton();
         } else if (id == R.id.nav_news) {
             Fragment fg = NewsFragment.newInstance();
@@ -389,7 +360,9 @@ public class MainActivity extends AppCompatActivity
             }
             transaction.replace(R.id.map, fg, "news").addToBackStack("news");
             transaction.commit();
+
             mapFragment.onPause();
+
             this.hideUpdateFloatingButton();
 
         } else if (id == R.id.nav_add_people) {
@@ -405,7 +378,9 @@ public class MainActivity extends AppCompatActivity
             }
             transaction.replace(R.id.map, fg, "addPeople").addToBackStack("addPeople");
             transaction.commit();
+
             mapFragment.onPause();
+
             this.hideUpdateFloatingButton();
 
         }
@@ -420,13 +395,14 @@ public class MainActivity extends AppCompatActivity
      * Check if MAX ZOOM is passed to fix it updating the camera
      * @param cameraPosition
      */
+    /*
     @Override
     public void onCameraChange(CameraPosition cameraPosition) {
         if (cameraPosition.zoom > MAX_ZOOM){
             CameraUpdate upd = CameraUpdateFactory.newLatLngZoom(new LatLng(cameraPosition.target.latitude, cameraPosition.target.longitude), MAX_ZOOM);
             mMap.moveCamera(upd);
         }
-    }
+    }*/
 
     //GOOGLE MAPS API
     /**
@@ -438,6 +414,7 @@ public class MainActivity extends AppCompatActivity
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
+    /*
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
@@ -460,12 +437,15 @@ public class MainActivity extends AppCompatActivity
         this.setUpMap();
 
     }
+    */
     //GOOGLE MAPS API
+    /*
     @Override
     public void onMapLoaded() {
         //Log.i("MAP LOADING", "Loading");
         setUpMap();
     }
+    */
 
     //---------------------------------
     // Public
@@ -476,7 +456,7 @@ public class MainActivity extends AppCompatActivity
         //you can leave it empty
     }
 
-    /**
+
     //Fragment interface necesary method
     public Fragment getActiveFragment() {
         if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
@@ -485,7 +465,7 @@ public class MainActivity extends AppCompatActivity
         String tag = getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount() - 1).getName();
         return (Fragment) getSupportFragmentManager().findFragmentByTag(tag);
     }
-     **/
+
 
     /**
      * Refresh the GoogleMap mMap
@@ -495,6 +475,7 @@ public class MainActivity extends AppCompatActivity
      * Fourth add Markers to the map
      */
     public void refreshMap(){
+        /*
         //Rebuild objects in DAO
         SafegeesDAO.refreshInstance(this);
         //Clear the map
@@ -503,6 +484,7 @@ public class MainActivity extends AppCompatActivity
         buildMap(this.mMap);
         //Add markers
         this.refreshPointsInMap();
+        */
     }
 
     /**
@@ -586,6 +568,7 @@ public class MainActivity extends AppCompatActivity
      * Build the Gooogle Map with local Tiles (Using CustomMapTileProvider)
      * @param googleMap
      */
+    /*
     private void buildMap(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
@@ -593,11 +576,13 @@ public class MainActivity extends AppCompatActivity
         mMap.addTileOverlay(new TileOverlayOptions().tileProvider(new CustomMapTileProvider(getResources().getAssets())));
         mMap.setOnCameraChangeListener(this);
     }
+    */
 
     /**
      * Get the points from DAO (SafeggeesDAO) and set the markers on Map
      */
     private void refreshPointsInMap() {
+        /*
         if (this.sDAO != null) {
             ArrayList<POI> pois = this.sDAO.getPois();
             for (int i = 0; i < pois.size(); i++) {
@@ -616,6 +601,7 @@ public class MainActivity extends AppCompatActivity
                     this.mMap.addMarker(new MarkerOptions().position(contact.getPosition()).title(contact.getEmail()).alpha(1f).icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
             }
         }
+        */
     }
 
     @NonNull
@@ -647,6 +633,7 @@ public class MainActivity extends AppCompatActivity
      * Stablish the ZoomLevel as INIT_ZOOM and move Camera
      */
     private void setUpMap() {
+        /*
         LatLng latLng = this.getUserLocation();
         if (latLng == null) {
             CameraUpdate upd = CameraUpdateFactory.newLatLngZoom(mMap.getCameraPosition().target, INIT_ZOOM);
@@ -663,6 +650,7 @@ public class MainActivity extends AppCompatActivity
             //Move the camera to user position with init zoom
             CameraUpdate upd = CameraUpdateFactory.newLatLngZoom(latLng, INIT_ZOOM);
             mMap.moveCamera(upd);}
+            */
     }
 
     /**
@@ -679,7 +667,9 @@ public class MainActivity extends AppCompatActivity
      * Get Coarse Location if permission is granted
      * @return latLng LatLong with the position
      */
+     /*
     private LatLng getUserLocation() {
+
         LatLng latLng = null;
         // Get the location manager
         try {
@@ -702,7 +692,7 @@ public class MainActivity extends AppCompatActivity
             return null;
         }
         return latLng;
-    }
+    }*/
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
