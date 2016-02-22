@@ -99,7 +99,8 @@ public class ShareDataController {
                 sendAddContactsQueque(scc);
 
                 //Send all the User Positions Queque
-                sendUserPositionsQueque(scc);
+
+                //sendUserPositionsQueque(scc);
 
                 //Get general data (POI)
                 scc.getPointsOfInterest(this.context);

@@ -32,8 +32,10 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
+import android.view.WindowManager;
 import android.widget.Toast;
 
+import org.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants;
 import org.safegees.safegees.R;
 import org.safegees.safegees.util.Connectivity;
 import org.safegees.safegees.util.MapFileManager;
@@ -57,18 +59,62 @@ import java.io.File;
             super.onCreate(savedInstanceState);
             setContentView(R.layout.splash_screen_layout);
 
+            //Manain the splash screen on
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+            //Activate the stored data
+            DATA_STORAGE = new StorageDataManager(this);
 
 
-            FileManagerTask fmt = new FileManagerTask(this);
-            fmt.execute();
-
-
-
-
+            if( StoredDataQuequesManager.getAppUsersMap(this).size() == 0) {
+                storageUserSelect();
+            }else{
+                FileManagerTask fmt = new FileManagerTask(this);
+                fmt.execute();
+            }
         }
 
+    private void storageUserSelect() {
+
+        //To do the storage selector
+        //Is neccessary to compile the whole OSMProject and touch OpenStreetMapTileProviderConstants.java
+        //Concretly this variable public static final File OSMDROID_PATH = new File("/mnt/sdcard/osmdroid");
+        //
+        //By this reason this development will stopped by now
+        /*
+        final FileManagerTask fmt = new FileManagerTask(this);
+            if(MapFileManager.isSDCard(this)) {
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case DialogInterface.BUTTON_POSITIVE:
+                                DATA_STORAGE.putBoolean("Sdcard",true);
+                                fmt.execute();
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                DATA_STORAGE.putBoolean("Sdcard",false);
+                                fmt.execute();
+                                break;
+                        }
+                    }
+                };
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("Welcome to Safegees!\n\n\nWe detect that you have an external storage (sdcard1). Do you want use this external card to store the maps?").setPositiveButton("Yes", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
+            }else{
+                DATA_STORAGE.putBoolean("Sdcard",false);
+                fmt.execute();
+            }
+            */
+        DATA_STORAGE.putBoolean("Sdcard",false);
+        final FileManagerTask fmt = new FileManagerTask(this);
+        fmt.execute();
+    }
+
     private void start() {
-        DATA_STORAGE = new StorageDataManager(this);
+
 
         if(DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)) != null && DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)).length()>0){
             shareDataWithServer();

@@ -1,9 +1,10 @@
 package org.safegees.safegees.util;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.os.Environment;
 import android.util.Log;
+
+import org.safegees.safegees.gui.view.SplashActivity;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -20,13 +21,26 @@ import java.util.zip.ZipInputStream;
  */
 public class MapFileManager {
 
-    public static boolean mapExists(Context context){
-        String destination = Environment.getExternalStorageDirectory().getAbsolutePath().toString()+File.separator+"osmdroid"+File.separator+"tiles"+File.separator+"SafegeesMap";
+    public static boolean isSDCard(Context context){
+        String strSDCardPath = System.getenv("SECONDARY_STORAGE");
+        if ((strSDCardPath == null) || (strSDCardPath.length() == 0)) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean mapExists(Context context) {
+
+
+        String externalStorageDirectory =  getUserStorageriority();
+
+        String destination = externalStorageDirectory + File.separator + "osmdroid" + File.separator + "tiles" + File.separator + "SafegeesMap";
         File desFile = new File(destination);
-        if(desFile.exists() && desFile.isDirectory() && desFile.length() > 100) {
+        // 16788000 is the default size of maps zip
+        if (desFile.exists() && desFile.isDirectory() && desFile.length() > 1000) {
             return true;
-        }else{
-            String principalDestination = Environment.getExternalStorageDirectory().getAbsolutePath().toString()+File.separator+"osmdroid";
+        } else {
+            String principalDestination = externalStorageDirectory + File.separator + "osmdroid";
             File principalFile = new File(principalDestination);
             principalFile.mkdirs();
             InputStream is = null;
@@ -37,7 +51,7 @@ public class MapFileManager {
             }
             try {
 
-                File f = new File(principalFile.getAbsolutePath().toString()+File.separator+"SafegeesMap.zip");
+                File f = new File(principalFile.getAbsolutePath().toString() + File.separator + "SafegeesMap.zip");
 
                 int size = is.available();
                 byte[] buffer = new byte[size];
@@ -51,21 +65,53 @@ public class MapFileManager {
                 checkAndUnZipTilesFile();
                 return true;
             } catch (IOException e) {
-                e.printStackTrace();
+                //       e.printStackT
+                //Map doesnt existrace();
             }
 
         }
         return false;
     }
 
+    public static String getUserStorageriority() {
+        boolean isSdCard = SplashActivity.DATA_STORAGE.getBoolean("SDCard");
+        String strSDCardPath = "";
+        if (isSdCard) {
+            strSDCardPath = System.getenv("SECONDARY_STORAGE");
+
+            if ((strSDCardPath == null) || (strSDCardPath.length() == 0)) {
+                strSDCardPath = System.getenv("EXTERNAL_SDCARD_STORAGE");
+            }
+
+            //If may get a full path that is not the right one, even if we don't have the SD Card there.
+            //We just need the "/mnt/extSdCard/" i.e and check if it's writable
+            if(strSDCardPath != null) {
+                if (strSDCardPath.contains(":")) {
+                    strSDCardPath = strSDCardPath.substring(0, strSDCardPath.indexOf(":"));
+                }
+                File externalFilePath = new File(strSDCardPath);
+
+                if (externalFilePath.exists() && externalFilePath.canWrite()){
+                    return strSDCardPath;
+                }
+            }
+        }else{
+            strSDCardPath = Environment.getExternalStorageDirectory().toString();
+        }
+
+        return strSDCardPath;
+    }
+
+
 
     public static boolean checkAndUnZipTilesFile(){
+        String externalStorageDirectory = getUserStorageriority();
         boolean zipUnfilled = false;
-        Log.i("Target" , Environment.getExternalStorageDirectory().getAbsolutePath().toString()+File.separator+"osmdroid"+File.separator+"SafegeesMap.zip");
-        Log.i("Destination" , Environment.getExternalStorageDirectory().getAbsolutePath().toString()+File.separator+"osmdroid"+File.separator+"tiles"+File.separator);
+        Log.i("Target" , externalStorageDirectory+File.separator+"osmdroid"+File.separator+"SafegeesMap.zip");
+        Log.i("Destination" , externalStorageDirectory+File.separator+"osmdroid"+File.separator+"tiles"+File.separator);
 
-        String target =  Environment.getExternalStorageDirectory().getAbsolutePath().toString()+File.separator+"osmdroid"+File.separator+"SafegeesMap.zip";
-        String destination = Environment.getExternalStorageDirectory().getAbsolutePath().toString()+File.separator+"osmdroid"+File.separator+"tiles"+File.separator;
+        String target =  externalStorageDirectory+File.separator+"osmdroid"+File.separator+"SafegeesMap.zip";
+        String destination = externalStorageDirectory+File.separator+"osmdroid"+File.separator+"tiles"+File.separator;
 
         File desFile = new File(destination);
 
@@ -74,8 +120,8 @@ public class MapFileManager {
         if(zipFile.exists() && !zipFile.isDirectory()) {
             desFile.mkdirs();
             desFile.setReadable(true);
-            String osmdroid =  Environment.getExternalStorageDirectory().getAbsolutePath().toString()+File.separator+"osmdroid";
-            String tiles =  Environment.getExternalStorageDirectory().getAbsolutePath().toString()+File.separator+"osmdroid"+File.separator+"tiles";
+            String osmdroid =  externalStorageDirectory+File.separator+"osmdroid";
+            String tiles =  externalStorageDirectory+File.separator+"osmdroid"+File.separator+"tiles";
             File osmDroidFile = new File(osmdroid);
             File tilesFile = new File(tiles);
             osmDroidFile.setWritable(true);

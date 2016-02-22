@@ -1,22 +1,35 @@
 package org.safegees.safegees.gui.fragment;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.api.IMapController;
+import org.osmdroid.tileprovider.MapTileProviderBasic;
+import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.ItemizedIconOverlay;
+import org.osmdroid.views.overlay.ItemizedOverlay;
+import org.osmdroid.views.overlay.MyLocationOverlay;
+import org.osmdroid.views.overlay.Overlay;
+import org.osmdroid.views.overlay.OverlayItem;
+import org.osmdroid.views.overlay.TilesOverlay;
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import org.safegees.safegees.R;
-import org.safegees.safegees.gui.adapters.MyAdapter;
-import org.safegees.safegees.gui.decoration.DividerItemDecoration;
 import org.safegees.safegees.model.Contact;
+import org.safegees.safegees.model.LatLng;
+import org.safegees.safegees.model.POI;
 import org.safegees.safegees.util.SafegeesDAO;
 
 import java.util.ArrayList;
@@ -24,7 +37,7 @@ import java.util.ArrayList;
 /**
  * Created by victor on 21/2/16.
  */
-public class MapFragment extends Fragment {
+public class MapFragment extends Fragment implements ItemizedIconOverlay.OnItemGestureListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -41,6 +54,15 @@ public class MapFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+
+    //My Location
+    private IMapController mapController;
+    private MapView mapView;
+    private SafegeesDAO sDAO;
+    ArrayList<OverlayItem> items;
+    MyLocationNewOverlay myLocationOverlay;
+    private ItemizedOverlay<OverlayItem> mMyLocationOverlay;
+    ArrayList<OverlayItem> poisList ;
 
     public MapFragment() {
         // Required empty public constructor
@@ -78,45 +100,107 @@ public class MapFragment extends Fragment {
                              Bundle savedInstanceState) {
 
 
-        /*
-        View view = inflater.inflate(R.layout.fragment_contacts, container, false);
-        // Inflate the layout for this fragment
-
-
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), null));
-
-        SafegeesDAO sDAO = SafegeesDAO.getInstance(getActivity());
-        ArrayList<Contact> contacts = sDAO.getContacts();
-
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
-        //mRecyclerView.setHasFixedSize(true);
-
-        // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(mLayoutManager);
-
-        // specify an adapter (see also next example)
-        mAdapter = new MyAdapter(contacts);
-        mRecyclerView.setAdapter(mAdapter);
-        */
 
         View view = inflater.inflate(R.layout.fragment_map, container, false);
-        MapView mapView = (MapView) view.findViewById(R.id.mapview);
+        sDAO = SafegeesDAO.getInstance(getContext());
+        mapView = (MapView) view.findViewById(R.id.mapview);
 
         mapView.setTileSource(new XYTileSource("SafegeesMap", 2, 6, 256, ".png", new String[]{}));
         mapView.setMultiTouchControls(true);
         mapView.setMinZoomLevel(2);
         mapView.setUseDataConnection(false); //optional, but a good way to prevent loading from the network and test your zip loading.
-        IMapController mapController = mapView.getController();
-        mapController.setZoom(4);
-        //setContentView(mapView);
+        //mapView.setClickable(true);
+        poisList = new ArrayList<OverlayItem>();
+
+        final IMapController mapViewController = mapView.getController();
+        mapViewController.setZoom(4);
+        GeoPoint mediterrany = new GeoPoint(34.553127,18.048012);
+        mapViewController.setCenter(mediterrany);
 
 
+        // My Location Overlay
+        myLocationOverlay = new MyLocationNewOverlay(getContext(), mapView);
+        myLocationOverlay.enableMyLocation(); // not on by default
+        myLocationOverlay.enableFollowLocation();
+        //myLocationOverlay.setDrawAccuracyEnabled(true);
+        myLocationOverlay.runOnFirstFix(new Runnable() {
+            public void run() {
+                mapViewController.animateTo(myLocationOverlay.getMyLocation());
+            }
+        });
+        mapView.getOverlays().add(myLocationOverlay);
+        //myLocationOverlay.enableFollowLocation();
+
+
+
+        refreshMap();
+
+        //mapView.getOverlays().add(myLocationOverlay);
+        //myLocationOverlay.enableFollowLocation();
 
         return view;
     }
+
+
+    public void refreshMap(){
+
+        //Rebuild objects in sDAO
+        SafegeesDAO.refreshInstance(getContext());
+        //Clear the map
+        //this.mapView.invalidate();
+        //Build mMap with local Tiles
+        //buildMap(this.mMap);
+        //Add markers
+        this.refreshPointsInMap();
+
+    }
+
+    /**
+     * Get the points from sDAO (SafeggeesDAO) and set the markers on Map
+     */
+    private void refreshPointsInMap() {
+
+        mapView.postInvalidate();
+        if (this.sDAO != null) {
+            Drawable markerDrawable = getResources().getDrawable( R.drawable.ic_add_location_black_24dp );
+            ArrayList<POI> pois = this.sDAO.getPois();
+            for (int i = 0; i < pois.size(); i++) {
+                POI poi = pois.get(i);
+                LatLng latLng = poi.getPosition();
+                GeoPoint geopoint = new GeoPoint(latLng.getLatitude(), latLng.getLongitude());
+                OverlayItem item =new OverlayItem(poi.getName(), poi.getDescription(), geopoint);
+                item.setMarker(markerDrawable);
+                poisList.add(item);
+            }
+
+            ItemizedIconOverlay overyLay = new ItemizedIconOverlay(poisList, markerDrawable,this, new DefaultResourceProxyImpl(getContext()));
+            mapView.getOverlays().add(overyLay);
+
+            markerDrawable = getResources().getDrawable( R.drawable.ic_person_pin_circle_black_24dp );
+            ArrayList<Contact> contacts = this.sDAO.getContacts();
+            for (int i = 0; i < contacts.size(); i++) {
+                Contact contact = contacts.get(i);
+                LatLng latLng = contact.getPosition();
+                GeoPoint geopoint = new GeoPoint(latLng.getLatitude(), latLng.getLongitude());
+                OverlayItem item =new OverlayItem(contact.getName(), contact.getEmail(), geopoint);
+                item.setMarker(markerDrawable);
+                poisList.add(item);
+            }
+            overyLay = new ItemizedIconOverlay(poisList, markerDrawable,this, new DefaultResourceProxyImpl(getContext()));
+            mapView.getOverlays().add(overyLay);
+
+            //mapView.postInvalidate();
+
+
+            //mapViewController.setCenter(myLocationOverlay.getMyLocation());
+            //mapView.postInvalidate();
+        }
+
+
+    }
+
+
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -140,6 +224,18 @@ public class MapFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public boolean onItemSingleTapUp(int index, Object item) {
+        OverlayItem oi = poisList.get(index);
+        Toast.makeText(getContext(), oi.getTitle(), Toast.LENGTH_SHORT);
+        return false;
+    }
+
+    @Override
+    public boolean onItemLongPress(int index, Object item) {
+        return false;
     }
 
     /**
