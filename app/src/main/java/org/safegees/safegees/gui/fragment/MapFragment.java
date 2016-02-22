@@ -104,13 +104,13 @@ public class MapFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_map, container, false);
         MapView mapView = (MapView) view.findViewById(R.id.mapview);
-        
-        mapView.setTileSource(new XYTileSource("SafegeesMap", 2, 7, 256, ".png", new String[]{}));
+
+        mapView.setTileSource(new XYTileSource("SafegeesMap", 2, 6, 256, ".png", new String[]{}));
         mapView.setMultiTouchControls(true);
         mapView.setMinZoomLevel(2);
         mapView.setUseDataConnection(false); //optional, but a good way to prevent loading from the network and test your zip loading.
-        //IMapController mapController = mapView.getController();
-        //mapController.setZoom(3);
+        IMapController mapController = mapView.getController();
+        mapController.setZoom(4);
         //setContentView(mapView);
 
 

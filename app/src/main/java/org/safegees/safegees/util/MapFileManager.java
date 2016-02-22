@@ -1,0 +1,130 @@
+package org.safegees.safegees.util;
+
+import android.content.Context;
+import android.content.res.AssetManager;
+import android.os.Environment;
+import android.util.Log;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
+/**
+ * Created by victor on 22/2/16.
+ */
+public class MapFileManager {
+
+    public static boolean mapExists(Context context){
+        String destination = Environment.getExternalStorageDirectory().getAbsolutePath().toString()+File.separator+"osmdroid"+File.separator+"tiles"+File.separator+"SafegeesMap";
+        File desFile = new File(destination);
+        if(desFile.exists() && desFile.isDirectory() && desFile.length() > 100) {
+            return true;
+        }else{
+            String principalDestination = Environment.getExternalStorageDirectory().getAbsolutePath().toString()+File.separator+"osmdroid";
+            File principalFile = new File(principalDestination);
+            principalFile.mkdirs();
+            InputStream is = null;
+            try {
+                is = context.getAssets().open("SafegeesMap.zip");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+
+                File f = new File(principalFile.getAbsolutePath().toString()+File.separator+"SafegeesMap.zip");
+
+                int size = is.available();
+                byte[] buffer = new byte[size];
+                is.read(buffer);
+                is.close();
+
+
+                FileOutputStream fos = new FileOutputStream(f);
+                fos.write(buffer);
+                fos.close();
+                checkAndUnZipTilesFile();
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+        return false;
+    }
+
+
+    public static boolean checkAndUnZipTilesFile(){
+        boolean zipUnfilled = false;
+        Log.i("Target" , Environment.getExternalStorageDirectory().getAbsolutePath().toString()+File.separator+"osmdroid"+File.separator+"SafegeesMap.zip");
+        Log.i("Destination" , Environment.getExternalStorageDirectory().getAbsolutePath().toString()+File.separator+"osmdroid"+File.separator+"tiles"+File.separator);
+
+        String target =  Environment.getExternalStorageDirectory().getAbsolutePath().toString()+File.separator+"osmdroid"+File.separator+"SafegeesMap.zip";
+        String destination = Environment.getExternalStorageDirectory().getAbsolutePath().toString()+File.separator+"osmdroid"+File.separator+"tiles"+File.separator;
+
+        File desFile = new File(destination);
+
+        File zipFile = new File(target);
+
+        if(zipFile.exists() && !zipFile.isDirectory()) {
+            desFile.mkdirs();
+            desFile.setReadable(true);
+            String osmdroid =  Environment.getExternalStorageDirectory().getAbsolutePath().toString()+File.separator+"osmdroid";
+            String tiles =  Environment.getExternalStorageDirectory().getAbsolutePath().toString()+File.separator+"osmdroid"+File.separator+"tiles";
+            File osmDroidFile = new File(osmdroid);
+            File tilesFile = new File(tiles);
+            osmDroidFile.setWritable(true);
+            tilesFile.setWritable(true);
+
+
+            try {
+               zipUnfilled =  MapFileManager.unzip(zipFile,desFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+
+            }
+        }
+        //Delete unused zip
+        zipFile.delete();
+        return zipUnfilled;
+    }
+
+    public static boolean unzip(File zipFile, File targetDirectory) throws IOException {
+        ZipInputStream zis = new ZipInputStream(
+                new BufferedInputStream(new FileInputStream(zipFile)));
+        try {
+            ZipEntry ze;
+            int count;
+            byte[] buffer = new byte[8192];
+            while ((ze = zis.getNextEntry()) != null) {
+                File file = new File(targetDirectory, ze.getName());
+                File dir = ze.isDirectory() ? file : file.getParentFile();
+                if (!dir.isDirectory() && !dir.mkdirs())
+                    throw new FileNotFoundException("Failed to ensure directory: " +
+                            dir.getAbsolutePath());
+                if (ze.isDirectory())
+                    continue;
+                FileOutputStream fout = new FileOutputStream(file);
+                try {
+                    while ((count = zis.read(buffer)) != -1)
+                        fout.write(buffer, 0, count);
+                } finally {
+                    fout.close();
+                }
+            /* if time should be restored as well
+            long time = ze.getTime();
+            if (time > 0)
+                file.setLastModified(time);
+            */
+            }
+        } finally {
+            zis.close();
+            return true;
+        }
+    }
+}
