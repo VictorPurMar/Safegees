@@ -34,7 +34,7 @@ public class MapFileManager {
 
         String externalStorageDirectory =  getUserStorageriority();
 
-        String destination = externalStorageDirectory + File.separator + "osmdroid" + File.separator + "tiles" + File.separator + "SafegeesMap";
+        String destination = externalStorageDirectory + File.separator + "osmdroid" + File.separator + "tiles" + File.separator + "Mapnik";
         File desFile = new File(destination);
         // 16788000 is the default size of maps zip
         if (desFile.exists() && desFile.isDirectory() && desFile.length() > 1000) {
@@ -45,13 +45,13 @@ public class MapFileManager {
             principalFile.mkdirs();
             InputStream is = null;
             try {
-                is = context.getAssets().open("SafegeesMap.zip");
+                is = context.getAssets().open("Safegees.zip");
             } catch (IOException e) {
                 e.printStackTrace();
             }
             try {
 
-                File f = new File(principalFile.getAbsolutePath().toString() + File.separator + "SafegeesMap.zip");
+                File f = new File(principalFile.getAbsolutePath().toString() + File.separator + "Safegees.zip");
 
                 int size = is.available();
                 byte[] buffer = new byte[size];
@@ -107,10 +107,10 @@ public class MapFileManager {
     public static boolean checkAndUnZipTilesFile(){
         String externalStorageDirectory = getUserStorageriority();
         boolean zipUnfilled = false;
-        Log.i("Target" , externalStorageDirectory+File.separator+"osmdroid"+File.separator+"SafegeesMap.zip");
+        Log.i("Target" , externalStorageDirectory+File.separator+"osmdroid"+File.separator+ "Safegees.zip");
         Log.i("Destination" , externalStorageDirectory+File.separator+"osmdroid"+File.separator+"tiles"+File.separator);
 
-        String target =  externalStorageDirectory+File.separator+"osmdroid"+File.separator+"SafegeesMap.zip";
+        String target =  externalStorageDirectory+File.separator+"osmdroid"+File.separator+ "Safegees.zip";
         String destination = externalStorageDirectory+File.separator+"osmdroid"+File.separator+"tiles"+File.separator;
 
         File desFile = new File(destination);

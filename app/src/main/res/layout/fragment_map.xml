@@ -8,6 +8,6 @@
     <org.osmdroid.views.MapView
         android:id="@+id/mapview"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"/>
 
 </FrameLayout>

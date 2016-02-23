@@ -49,7 +49,6 @@ import org.safegees.safegees.gui.fragment.NewsFragment;
 import org.safegees.safegees.gui.fragment.ProfileContactFragment;
 import org.safegees.safegees.gui.fragment.ProfileUserFragment;
 import org.safegees.safegees.util.Connectivity;
-import org.safegees.safegees.util.StoredDataQuequesManager;
 import org.safegees.safegees.util.SafegeesDAO;
 import org.safegees.safegees.util.ShareDataController;
 
@@ -60,7 +59,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -78,7 +76,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Array;
 
 
 public class MainActivity extends AppCompatActivity
@@ -140,9 +137,9 @@ public class MainActivity extends AppCompatActivity
         });
 
         if(Connectivity.isNetworkAvaiable(this)) {
-            showUpdateFloatingButton();
+            connectivityOn();
         }else{
-            hideUpdateFloatingButton();
+            connectivityOff();
         }
 
         //The drawer Layout is the Lateral menu
@@ -313,7 +310,7 @@ public class MainActivity extends AppCompatActivity
 
             mapFragment.onPause();
 
-            this.hideUpdateFloatingButton();
+            this.connectivityOff();
 
         } else if (id == R.id.nav_contacts) {
 
@@ -332,7 +329,7 @@ public class MainActivity extends AppCompatActivity
 
             mapFragment.onPause();
 
-            this.hideUpdateFloatingButton();
+            this.connectivityOff();
         } else if (id == R.id.nav_map) {
 
             if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
@@ -346,7 +343,7 @@ public class MainActivity extends AppCompatActivity
 
             mapFragment.onResume();
 
-            this.showUpdateFloatingButton();
+            this.connectivityOn();
         } else if (id == R.id.nav_news) {
             Fragment fg = NewsFragment.newInstance();
             //Fragment acFrag = getActiveFragment();
@@ -363,7 +360,7 @@ public class MainActivity extends AppCompatActivity
 
             mapFragment.onPause();
 
-            this.hideUpdateFloatingButton();
+            this.connectivityOff();
 
         } else if (id == R.id.nav_add_people) {
             Fragment fg = AddContactFragment.newInstance();
@@ -381,7 +378,7 @@ public class MainActivity extends AppCompatActivity
 
             mapFragment.onPause();
 
-            this.hideUpdateFloatingButton();
+            this.connectivityOff();
 
         }
 
@@ -491,17 +488,19 @@ public class MainActivity extends AppCompatActivity
      * Floating button show
      * Called by NetworkStateReceiver
      */
-    public void showUpdateFloatingButton(){
+    public void connectivityOn(){
         this.floatingUpdateButton.show();
+        if (mapFragment != null) mapFragment.setMapViewDependingConnection();
     }
 
     /**
      * Floating button hide
      * Called by NetworkStateReceiver
      */
-    public void hideUpdateFloatingButton(){
+    public void connectivityOff(){
         //The floating button will be used to update content if exists internet connection
         floatingUpdateButton.hide();
+        if (mapFragment != null) mapFragment.setMapViewDependingConnection();
     }
 
     //Deshabilited for testing
