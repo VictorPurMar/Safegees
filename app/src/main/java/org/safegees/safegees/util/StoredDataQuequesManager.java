@@ -43,7 +43,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.safegees.safegees.R;
-import org.safegees.safegees.gui.view.SplashActivity;
+import org.safegees.safegees.gui.view.MainActivity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -104,13 +104,13 @@ public class StoredDataQuequesManager {
 
     private static boolean putInStorageJSON(String userMail, String userValue, String storedJSONStringKEY, String jsonResourceKey, String jsonTitle_key, String jsonUserEmailKey, String jsonUserValueKey, boolean substituteStoredFieldByUserEmail) {
         boolean isAdded = false;
-        String JSONStoredString = SplashActivity.DATA_STORAGE.getString(storedJSONStringKEY);
+        String JSONStoredString = MainActivity.DATA_STORAGE.getString(storedJSONStringKEY);
         if (JSONStoredString != null && !JSONStoredString.equals("")){
             try {
                 JSONObject json = new JSONObject(JSONStoredString);
                 if(substituteStoredFieldByUserEmail){
                     removeFromStoredQuequeByValue(userMail, JSONStoredString,jsonResourceKey,jsonTitle_key,jsonUserEmailKey);
-                    JSONStoredString = SplashActivity.DATA_STORAGE.getString(storedJSONStringKEY);
+                    JSONStoredString = MainActivity.DATA_STORAGE.getString(storedJSONStringKEY);
                     json = new JSONObject(JSONStoredString);
                 }
                 JSONArray ja = json.getJSONArray(jsonTitle_key);
@@ -121,7 +121,7 @@ public class StoredDataQuequesManager {
                 json = new JSONObject();
                 json.put(jsonTitle_key, ja);
                 Log.i("JSON_OBJECT_STORED", "KEY:" + jsonResourceKey + " JSON:" + json.toString());
-                SplashActivity.DATA_STORAGE.putString(jsonResourceKey, json.toString());
+                MainActivity.DATA_STORAGE.putString(jsonResourceKey, json.toString());
                 isAdded = true;
 
             } catch (JSONException e) {
@@ -138,7 +138,7 @@ public class StoredDataQuequesManager {
                 JSONObject json = new JSONObject();
                 json.put(jsonTitle_key, ja);
                 Log.i("JSON_OBJECT_STORED", "KEY:" + jsonResourceKey + " JSON:" + json.toString());
-                SplashActivity.DATA_STORAGE.putString(jsonResourceKey, json.toString());
+                MainActivity.DATA_STORAGE.putString(jsonResourceKey, json.toString());
                 isAdded = true;
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -148,19 +148,19 @@ public class StoredDataQuequesManager {
     }
 
     public static boolean removeAppUserFromQueque(Context context, String userMail, String userPassword){
-        String storedJSON = SplashActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_APP_USERS));
+        String storedJSON = MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_APP_USERS));
         String jsonResourceKey = context.getResources().getString(KEY_APP_USER_JSON);
         return removeFromStoredQuequeByTwoValues(userMail, userPassword, storedJSON, jsonResourceKey, KEY_JSON_APP_USERS_TITLE, KEY_JSON_USER_EMAIL, KEY_JSON_USER_PASSWORD);
     }
 
     public static boolean removeUserPositionInQueque(Context context, String userMail, String userPosition){
-        String storedJSON = SplashActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_POSITIONS));
+        String storedJSON = MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_POSITIONS));
         String jsonResourceKey = context.getResources().getString(KEY_USER_POSITION_JSON);
         return removeFromStoredQuequeByTwoValues(userMail, userPosition, storedJSON, jsonResourceKey, KEY_JSON_USER_POSITION_TITLE, KEY_JSON_USER_EMAIL, KEY_JSON_USER_POSITION);
     }
 
     public static boolean removeContactToAddInQueque(Context context, String userMail, String emailForAdd){
-        String storedJSON = SplashActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_ADD_USERS));
+        String storedJSON = MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_ADD_USERS));
         String jsonResourceKey = context.getResources().getString(KEY_ADD_USER_JSON);
         return removeFromStoredQuequeByTwoValues(userMail, emailForAdd, storedJSON, jsonResourceKey, KEY_JSON_ADD_USERS_TITLE, KEY_JSON_USER_EMAIL, KEY_JSON_CONTACT_TO_ADD);
     }
@@ -185,7 +185,7 @@ public class StoredDataQuequesManager {
                 json = new JSONObject();
                 json.put(storedJSONTitle, ja);
                 Log.i("JSON_OBJECT_REMOVE", "Removed user:" + userMail + " and contact:" + userValue + " with RESULT JSON:" + json.toString());
-                SplashActivity.DATA_STORAGE.putString(jsonResourceKey, json.toString());
+                MainActivity.DATA_STORAGE.putString(jsonResourceKey, json.toString());
                 isRemoved =  true;
 
             } catch (JSONException e) {
@@ -212,7 +212,7 @@ public class StoredDataQuequesManager {
                 json = new JSONObject();
                 json.put(storedJSONTitle, ja);
                 Log.i("JSON_OBJECT_REMOVE", "Removed by value:" + userValue + " with RESULT JSON:" + json.toString());
-                SplashActivity.DATA_STORAGE.putString(jsonResourceKey, json.toString());
+                MainActivity.DATA_STORAGE.putString(jsonResourceKey, json.toString());
                 isRemoved =  true;
 
             } catch (JSONException e) {
@@ -223,17 +223,17 @@ public class StoredDataQuequesManager {
     }
 
     public static Map<String, String> getAppUsersMap(Context context){
-        String dataStorageValue = SplashActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_APP_USERS));
+        String dataStorageValue = MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_APP_USERS));
         return getStoredMap(KEY_JSON_USER_EMAIL, KEY_JSON_USER_PASSWORD, KEY_JSON_APP_USERS_TITLE, dataStorageValue);
     }
 
     public static Map<String, String> getAddContactsMapQueque(Context context){
-        String addContact = SplashActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_ADD_USERS));
+        String addContact = MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_ADD_USERS));
         return getStoredMap(KEY_JSON_USER_EMAIL, KEY_JSON_CONTACT_TO_ADD,KEY_JSON_ADD_USERS_TITLE, addContact);
     }
 
     public static Map<String, String> getUserPositionsMap(Context context){
-        String userPositions = SplashActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_POSITIONS));
+        String userPositions = MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_POSITIONS));
         return getStoredMap(KEY_JSON_USER_EMAIL, KEY_JSON_USER_POSITION, KEY_JSON_USER_POSITION_TITLE, userPositions);
     }
 

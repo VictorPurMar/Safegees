@@ -34,7 +34,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import org.safegees.safegees.R;
-import org.safegees.safegees.gui.view.MainActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -104,7 +103,7 @@ public class ProfileUserFragment extends Fragment {
             this.imageView.setImageBitmap(this.bitmap);
         }
 
-        //MainActivity activity = (MainActivity) getActivity();
+        //PrincipalMapActivity activity = (PrincipalMapActivity) getActivity();
         //imageView.setOnClickListener(activity);
 
 

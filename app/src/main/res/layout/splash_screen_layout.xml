@@ -17,7 +17,7 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="50dp"
-        android:layout_weight="0.50"
+        android:layout_weight="0.70"
         />
     <ProgressBar
         android:id="@+id/progressBar1"
@@ -26,12 +26,25 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:visibility="visible"
-        android:layout_weight="0.30"
+        android:layout_weight="0.10"
         android:layout_margin="50dp"
         android:backgroundTint="@color/colorPrimaryExtraLight"
         android:indeterminate="false"
         android:indeterminateTint="@color/colorPrimaryExtraLight"
         android:indeterminateTintMode="src_in" />
+
+    <TextView
+        android:id="@+id/advice_user"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:text=""
+        android:textSize="14dp"
+        android:layout_marginBottom="30dp"
+        android:textColor="@color/colorPrimaryBright"
+        android:layout_weight="0.1"/>
 
     <TextView
         android:layout_width="wrap_content"

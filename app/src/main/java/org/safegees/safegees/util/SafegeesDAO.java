@@ -30,7 +30,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.safegees.safegees.R;
-import org.safegees.safegees.gui.view.SplashActivity;
+import org.safegees.safegees.gui.view.MainActivity;
 import org.safegees.safegees.model.Contact;
 import org.safegees.safegees.model.LatLng;
 import org.safegees.safegees.model.POI;
@@ -77,7 +77,7 @@ public class SafegeesDAO {
 
     private ArrayList<Contact> getContactsArray() {
         this.contacts = new ArrayList<Contact>();
-        String contactsData = SplashActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_CONTACTS_DATA) + "_" + SplashActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_MAIL)));
+        String contactsData = MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_CONTACTS_DATA) + "_" + MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_MAIL)));
         JSONArray jsonArray = null;
         try {
             jsonArray = new JSONArray(contactsData);
@@ -116,7 +116,7 @@ public class SafegeesDAO {
 
     private ArrayList<POI> getPoisArray() {
         this.pois = new ArrayList<POI>();
-        String poisData = SplashActivity.DATA_STORAGE.getString(this.context.getString(R.string.KEY_POINTS_OF_INTEREST));
+        String poisData = MainActivity.DATA_STORAGE.getString(this.context.getString(R.string.KEY_POINTS_OF_INTEREST));
         JSONArray jsonArray = null;
         try {
             jsonArray = new JSONArray(poisData);

@@ -1,9 +1,7 @@
 /**
  *   MainActivity.java
  *
- *   This class is the base Activity interact activity in the application
- *   Contains Top and Lateral Menu as fragments
- *   And displays the navigation Map that is the main value of the app
+ *   Future class description
  *
  *
  *   Copyright (C) 2016  Victor Purcallas <vpurcallas@gmail.com>
@@ -20,830 +18,243 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with ARcowabungaproject.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
-
 
 package org.safegees.safegees.gui.view;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.WindowManager;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import org.osmdroid.views.MapView;
 import org.safegees.safegees.R;
-import org.safegees.safegees.gui.fragment.AddContactFragment;
-import org.safegees.safegees.gui.fragment.ContactsFragment;
-import org.safegees.safegees.gui.fragment.MapFragment;
-import org.safegees.safegees.gui.fragment.NewsFragment;
-import org.safegees.safegees.gui.fragment.ProfileContactFragment;
-import org.safegees.safegees.gui.fragment.ProfileUserFragment;
 import org.safegees.safegees.util.Connectivity;
+import org.safegees.safegees.util.MapFileManager;
+import org.safegees.safegees.util.StorageDataManager;
 import org.safegees.safegees.util.SafegeesDAO;
 import org.safegees.safegees.util.ShareDataController;
+import org.safegees.safegees.util.StoredDataQuequesManager;
 
-import android.os.Bundle;
-import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
-import android.view.View;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.ImageView;
+import java.io.FilenameFilter;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+/**
+ * Created by victor on 25/12/15.
+ */
+    public class MainActivity extends AppCompatActivity {
+    public static StorageDataManager DATA_STORAGE;
+    private FileManagerTask fileManagerTask;
+    private TextView adviceUser;
 
+        @Override
+        protected void onCreate(final Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.splash_screen_layout);
+            this.adviceUser = (TextView) findViewById(R.id.advice_user);
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,ProfileUserFragment.OnFragmentInteractionListener, NewsFragment.OnFragmentInteractionListener, ContactsFragment.OnFragmentInteractionListener, AddContactFragment.OnFragmentInteractionListener, ProfileContactFragment.OnFragmentInteractionListener , View.OnClickListener, MapFragment.OnFragmentInteractionListener{
+            //Manain the splash screen on
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+            //Activate the stored data
+            this.DATA_STORAGE = new StorageDataManager(this);
 
-    /*
-    private SupportMapFragment mapFragment;
-    private GoogleMap mMap;*/
-    private MapFragment mapFragment;
-    private MapView nMap;
-    private SafegeesDAO sDAO;
-    private FloatingActionButton floatingUpdateButton;
-
-    private static MainActivity instance;           //Singleton
-    private static float MAX_ZOOM = 7.9F;             //This MaxZoom can change depending the max depth of stored tile Maps
-    private static float INIT_ZOOM = 3.0F;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    //private GoogleApiClient client;
-
-    //For image getting
-    private static final int REQUEST_CODE = 1;
-    private Bitmap bitmap;
-    private View headerView;
-
-    //---------------------------------
-    // Singleton
-    //---------------------------------
-
-    public static MainActivity getInstance(){
-        return instance;
-    }
-
-    //---------------------------------
-    // Android Basic
-    //---------------------------------
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-
-        sDAO = SafegeesDAO.getInstance(this);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        this.floatingUpdateButton = (FloatingActionButton) findViewById(R.id.fab);
-        this.floatingUpdateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Updating data", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                MainActivity.getInstance().update();
+            boolean moovedAssetsZip = DATA_STORAGE.getBoolean("movedAssetsZip");
+            if (!moovedAssetsZip){
+                //Set the maps from assets to osmdroid folder
+                DATA_STORAGE.putBoolean("movedAssetsZip", MapFileManager.buildAssetsMap(this));
+                moovedAssetsZip = DATA_STORAGE.getBoolean("movedAssetsZip");
             }
-        });
-
-        if(Connectivity.isNetworkAvaiable(this)) {
-            connectivityOn();
-        }else{
-            connectivityOff();
-        }
-
-        //The drawer Layout is the Lateral menu
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        // Store the header view to update
-        headerView = navigationView.inflateHeaderView(R.layout.nav_header_main);
 
 
-        //Open Street Map View
+            if (moovedAssetsZip) {
+                if (MapFileManager.isNewMapZip()) {
+                    adviceUser.setText("Uncompressing maps");
+                    this.DATA_STORAGE.putBoolean("isNewMap", true);
+                    FileManagerTask fmt = new FileManagerTask(this);
+                    fmt.execute();
 
-
-        mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        /*
-        //Google Map
-        mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-        /*
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-
-        loadStoredStoredImage();
-        */
-
-
-
-
-        instance = this;
-    }
-
-    private void loadStoredStoredImage() {
-        try {
-
-            String filename = getUserImageFileName();
-
-            //View headerView = navigationView.findViewById(R.id.navigation_header_layout);
-            ImageView userImageView = (ImageView) headerView.findViewById(R.id.nav_user_image);
-
-            Log.e("IMAGE", userImageView.toString());
-
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-            bitmap = BitmapFactory.decodeFile(filename, options);
-
-            if(bitmap!=null) {
-                userImageView.setImageBitmap(bitmap);
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            Log.e("IMAGE ERROR", e.getMessage());
-        }
-    }
-
-    @NonNull
-    private String getUserImageFileName() {
-        File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
-                + "/Android/data/"
-                + getApplicationContext().getPackageName()
-                + "/images/");
-        String filename = "USER_IMAGE_" + SplashActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)).replace("@","").replace(".","") + ".png";
-        filename = mediaStorageDir.getAbsolutePath()+File.separator+filename;
-        return filename;
-    }
-
-    //Starts the google api connecting to client
-    @Override
-    public void onStart() {
-        super.onStart();
-
-
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-
-    }
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-
-            mapFragment.onResume();
-
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        instance = null;
-        /*
-        long longitude = (long) mMap.getCameraPosition().target.longitude;
-        long latitude = (long) mMap.getCameraPosition().target.latitude;
-        SplashActivity.DATA_STORAGE.putLong(this.getResources().getString(R.string));
-        */
-        SafegeesDAO.close();
-    }
-
-    // Top App Menu
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        switch (item.getItemId()) {
-            case R.id.action_close_session:
-                closeSession();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-
-    }
-
-    //---------------------------------
-    // Override
-    //---------------------------------
-
-
-    //GOOGLE MAPS API
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_profile) {
-            Fragment fg = ProfileUserFragment.newInstance();
-
-            //Fragment acFrag = getActiveFragment();
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-            if (getSupportFragmentManager().getBackStackEntryCount() != 0){
-                getSupportFragmentManager().popBackStack();
+                } else {
+                    start();
+                }
             }else{
-                transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
-
-            }
-            transaction.replace(R.id.map, fg,  "profile").addToBackStack("profile");
-            transaction.commit();
-            //Set the imageBitMap
-            ProfileUserFragment fgP = (ProfileUserFragment) fg;
-            fgP.setImageBitmap(bitmap);
-
-            mapFragment.onPause();
-
-            this.connectivityOff();
-
-        } else if (id == R.id.nav_contacts) {
-
-            Fragment fg = ContactsFragment.newInstance();
-            //Fragment acFrag = getActiveFragment();
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-            if (getSupportFragmentManager().getBackStackEntryCount() != 0){
-                getSupportFragmentManager().popBackStack();
-            }else{
-                transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
-
-            }
-            transaction.replace(R.id.map, fg, "contacts").addToBackStack("contacts");
-            transaction.commit();
-
-            mapFragment.onPause();
-
-            this.connectivityOff();
-        } else if (id == R.id.nav_map) {
-
-            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
-                transaction.remove(getActiveFragment());
-                getSupportFragmentManager().popBackStack();
-                transaction.commit();
-                //super.onBackPressed();
-            }
-
-            mapFragment.onResume();
-
-            this.connectivityOn();
-        } else if (id == R.id.nav_news) {
-            Fragment fg = NewsFragment.newInstance();
-            //Fragment acFrag = getActiveFragment();
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-            if (getSupportFragmentManager().getBackStackEntryCount() != 0){
-                getSupportFragmentManager().popBackStack();
-            }else{
-                transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
-
-            }
-            transaction.replace(R.id.map, fg, "news").addToBackStack("news");
-            transaction.commit();
-
-            mapFragment.onPause();
-
-            this.connectivityOff();
-
-        } else if (id == R.id.nav_add_people) {
-            Fragment fg = AddContactFragment.newInstance();
-            //Fragment acFrag = getActiveFragment();
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-            if (getSupportFragmentManager().getBackStackEntryCount() != 0){
-                getSupportFragmentManager().popBackStack();
-            }else{
-                transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
-
-            }
-            transaction.replace(R.id.map, fg, "addPeople").addToBackStack("addPeople");
-            transaction.commit();
-
-            mapFragment.onPause();
-
-            this.connectivityOff();
-
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
-    //GOOGLE MAPS API
-    /**
-     * Check if MAX ZOOM is passed to fix it updating the camera
-     * @param cameraPosition
-     */
-    /*
-    @Override
-    public void onCameraChange(CameraPosition cameraPosition) {
-        if (cameraPosition.zoom > MAX_ZOOM){
-            CameraUpdate upd = CameraUpdateFactory.newLatLngZoom(new LatLng(cameraPosition.target.latitude, cameraPosition.target.longitude), MAX_ZOOM);
-            mMap.moveCamera(upd);
-        }
-    }*/
-
-    //GOOGLE MAPS API
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
-    /*
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-
-        //Build the Map
-        buildMap(googleMap);
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            mMap.setMyLocationEnabled(true);
-            //Move the camera to the user's location and zoom in!
-            //mMap.getUiSettings().setMyLocationButtonEnabled(true);
-        } else {
-            Log.i("PERMISSION", "No User Location Enabled");
-        }
-        //Add markers
-        this.refreshPointsInMap();
-        //Toast.makeText(this, SafegeesDAO.getInstance(this).getPois().toString(), Toast.LENGTH_LONG).show();
-
-        //First time stablish the initial Zoom Level
-        this.setUpMap();
-
-    }
-    */
-    //GOOGLE MAPS API
-    /*
-    @Override
-    public void onMapLoaded() {
-        //Log.i("MAP LOADING", "Loading");
-        setUpMap();
-    }
-    */
-
-    //---------------------------------
-    // Public
-    //---------------------------------
-
-    //Fragment interface necesary method
-    public void onFragmentInteraction(Uri uri){
-        //you can leave it empty
-    }
-
-
-    //Fragment interface necesary method
-    public Fragment getActiveFragment() {
-        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
-            return null;
-        }
-        String tag = getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount() - 1).getName();
-        return (Fragment) getSupportFragmentManager().findFragmentByTag(tag);
-    }
-
-
-    /**
-     * Refresh the GoogleMap mMap
-     * First rebuild the sDao where the objects where loaded
-     * Second clears the map
-     * Third build the mMap with the local Tiles
-     * Fourth add Markers to the map
-     */
-    public void refreshMap(){
-        /*
-        //Rebuild objects in DAO
-        SafegeesDAO.refreshInstance(this);
-        //Clear the map
-        this.mMap.clear();
-        //Build mMap with local Tiles
-        buildMap(this.mMap);
-        //Add markers
-        this.refreshPointsInMap();
-        */
-    }
-
-    /**
-     * Floating button show
-     * Called by NetworkStateReceiver
-     */
-    public void connectivityOn(){
-        this.floatingUpdateButton.show();
-        if (mapFragment != null) mapFragment.setMapViewDependingConnection();
-    }
-
-    /**
-     * Floating button hide
-     * Called by NetworkStateReceiver
-     */
-    public void connectivityOff(){
-        //The floating button will be used to update content if exists internet connection
-        floatingUpdateButton.hide();
-        if (mapFragment != null) mapFragment.setMapViewDependingConnection();
-    }
-
-    //Deshabilited for testing
-    /**
-     * It will called by CustomMapTileProvider to stablish the Max Zoom depending the map depth avaiablility
-     * @param maxZoom float with the max zoom depth
-     */
-    public static void setMaxZoom(float maxZoom){
-        if (MAX_ZOOM < maxZoom) /* MAX_ZOOM = maxZoom*/;
-    }
-
-
-
-    //---------------------------------
-    // Private
-    //---------------------------------
-
-    /**
-     * Updates the data
-     * Download new data with ShareDataController this method calls MainActivity build method when is finished
-     */
-    private void update(){
-            if (Connectivity.isNetworkAvaiable(this)){
-                //Download data
-                ShareDataController sddm = new ShareDataController();
-                sddm.run(this);
+                Log.e("MainActivity", "The assets wasnt dont mooved");
             }
 
             /*
-            //Only for DEVELOPE
-            //Show the log if no connection
-            Map<String,String> appUsersMap = StoredDataQuequesManager.getAppUsersMap(this);
-            Iterator it = appUsersMap.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry pair = (Map.Entry)it.next();
-                String userMail =  (String) pair.getKey();
-                String contactsData = SplashActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_CONTACTS_DATA)+"_"+userMail);
-                Log.i("CONTACTS_DATA", "User:" + userMail + "    Data:" + contactsData);
-                it.remove(); // avoids a ConcurrentModificationException
+            if( StoredDataQuequesManager.getAppUsersMap(this).size() == 0) {
+                storageUserSelect();
+            }else{
+                FileManagerTask fmt = new FileManagerTask(this);
+                fmt.execute();
             }
-            String generalData = SplashActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_POINTS_OF_INTEREST));
-            Log.i("GENERAL_DATA", "Data:" + generalData);
             */
-    }
+        }
 
-
-    /**
-     * Clossed the session
-     * Delete the active UserEmail and Password and relauch the app
-     */
-    private void closeSession() {
-        //Delete user password and mail
-        SplashActivity.DATA_STORAGE.putString(getResources().getString(R.string.KEY_USER_PASSWORD), "");
-        SplashActivity.DATA_STORAGE.putString(getResources().getString(R.string.KEY_USER_MAIL), "");
-        //Restart application
-        Intent i = getBaseContext().getPackageManager()
-                .getLaunchIntentForPackage(getBaseContext().getPackageName());
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(i);
-        finish();
-    }
-
-    /**
-     * Build the Gooogle Map with local Tiles (Using CustomMapTileProvider)
-     * @param googleMap
-     */
     /*
-    private void buildMap(GoogleMap googleMap) {
-        mMap = googleMap;
-        mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
-        //Set custom tiles
-        mMap.addTileOverlay(new TileOverlayOptions().tileProvider(new CustomMapTileProvider(getResources().getAssets())));
-        mMap.setOnCameraChangeListener(this);
+    private void storageUserSelect() {
+
+        //To do the storage selector
+        //Is neccessary to compile the whole OSMProject and touch OpenStreetMapTileProviderConstants.java
+        //Concretly this variable public static final File OSMDROID_PATH = new File("/mnt/sdcard/osmdroid");
+        //
+        //By this reason this development will stopped by now
+
+        final FileManagerTask fmt = new FileManagerTask(this);
+            if(MapFileManager.isSDCard(this)) {
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case DialogInterface.BUTTON_POSITIVE:
+                                DATA_STORAGE.putBoolean("Sdcard",true);
+                                fmt.execute();
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                DATA_STORAGE.putBoolean("Sdcard",false);
+                                fmt.execute();
+                                break;
+                        }
+                    }
+                };
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("Welcome to Safegees!\n\n\nWe detect that you have an external storage (sdcard1). Do you want use this external card to store the maps?").setPositiveButton("Yes", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
+            }else{
+                DATA_STORAGE.putBoolean("Sdcard",false);
+                fmt.execute();
+            }
+
+        DATA_STORAGE.putBoolean("Sdcard",false);
+        final FileManagerTask fmt = new FileManagerTask(this);
+        fmt.execute();
     }
     */
 
-    /**
-     * Get the points from DAO (SafeggeesDAO) and set the markers on Map
-     */
-    private void refreshPointsInMap() {
-        /*
-        if (this.sDAO != null) {
-            ArrayList<POI> pois = this.sDAO.getPois();
-            for (int i = 0; i < pois.size(); i++) {
-                POI poi = pois.get(i);
-                Bitmap bitmap = getBitmap(R.drawable.ic_add_location_black_24dp);
-                this.mMap.addMarker(new MarkerOptions().position(poi.getPosition()).title(poi.getName()).snippet(poi.getDescription()).alpha(0.9f).icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
-            }
-
-            ArrayList<Contact> contacts = this.sDAO.getContacts();
-            for (int i = 0; i < contacts.size(); i++) {
-                Contact contact = contacts.get(i);
-                Bitmap bitmap = getBitmap(R.drawable.ic_person_pin_circle_black_24dp);
-                if (contact.getPosition() != null && contact.getLast_connection_date() != null)
-                    this.mMap.addMarker(new MarkerOptions().position(contact.getPosition()).title(contact.getEmail()).snippet(contact.getLast_connection_date().toString()).alpha(1f).icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
-                else if (contact.getPosition() != null)
-                    this.mMap.addMarker(new MarkerOptions().position(contact.getPosition()).title(contact.getEmail()).alpha(1f).icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
-            }
-        }
-        */
-    }
-
-    @NonNull
-    private Bitmap getBitmap(int drawable) {
-        Bitmap bitmap;
-        int px = getResources().getDimensionPixelOffset(R.dimen.map_dot_marker_size);
-        bitmap = Bitmap.createBitmap(px, px, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        Drawable shape = getResources().getDrawable(drawable);
-        shape.setBounds(0, 0, bitmap.getWidth(), bitmap.getHeight());
-        shape.draw(canvas);
-        return bitmap;
-    }
-
-    private Paint paintSurface() {
-        Paint paint = new Paint();
-        paint.setAntiAlias(true);
-        paint.setDither(true);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeJoin(Paint.Join.MITER);
-        paint.setStrokeCap(Paint.Cap.SQUARE);
-        paint.setColor(Color.RED);
-        paint.setStrokeWidth(16);
-        paint.setAlpha(100);
-        return paint;
-    }
-
-    /**
-     * Stablish the ZoomLevel as INIT_ZOOM and move Camera
-     */
-    private void setUpMap() {
-        /*
-        LatLng latLng = this.getUserLocation();
-        if (latLng == null) {
-            CameraUpdate upd = CameraUpdateFactory.newLatLngZoom(mMap.getCameraPosition().target, INIT_ZOOM);
-            mMap.moveCamera(upd);
+    private void start() {
+        if(DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)) != null && DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)).length()>0){
+            shareDataWithServer();
         }else{
-            //TEST
-            //Send user position
-            ShareDataController sdc = new ShareDataController();
-            sdc.sendUserPosition(this, SplashActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)), latLng);
-            //The server is defined in this way
-            String userPosition = latLng.latitude + ","+latLng.longitude;
-            StoredDataQuequesManager.putUserPositionInPositionsQueque(this, SplashActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)), userPosition);
-
-            //Move the camera to user position with init zoom
-            CameraUpdate upd = CameraUpdateFactory.newLatLngZoom(latLng, INIT_ZOOM);
-            mMap.moveCamera(upd);}
-            */
-    }
-
-    /**
-     * Fixing tile's y index (reversing order)
-     */
-    /**
-    private int fixYCoordinate(int y, int zoom) {
-        int size = 1 << zoom; // size = 2^zoom
-        return size - 1 - y;
-    }
-     */
-
-    /**
-     * Get Coarse Location if permission is granted
-     * @return latLng LatLong with the position
-     */
-     /*
-    private LatLng getUserLocation() {
-
-        LatLng latLng = null;
-        // Get the location manager
-        try {
-            LocationManager locationManager = (LocationManager)
-                    getSystemService(LOCATION_SERVICE);
-            Criteria criteria = new Criteria();
-            String bestProvider = locationManager.getBestProvider(criteria, false);
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED) {
-                Location location = locationManager.getLastKnownLocation(bestProvider);
-                latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                return latLng;
-            } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED) {
-                Location location = locationManager.getLastKnownLocation(bestProvider);
-                latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                return latLng;
+            if (Connectivity.isNetworkAvaiable(this) || StoredDataQuequesManager.getAppUsersMap(this).size() != 0) {
+                //Start the loggin for result
+                Intent loginInt = new Intent(this, LoginActivity.class);
+                startActivityForResult(loginInt, 1);
+            }else{
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("You must  be connected to interet before the first use")
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Intent i = getBaseContext().getPackageManager()
+                                        .getLaunchIntentForPackage(getBaseContext().getPackageName());
+                                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(i);
+                                //finish();
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
             }
-        }catch (Exception e){
-            return null;
         }
-        return latLng;
-    }*/
+    }
 
+    public void launchMainActivity(){
+            // Start the app
+            Intent intent = new Intent(this, PrincipalMapActivity.class);
+            startActivity(intent);
+            finish();
+
+        }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+
+
+    }
+
+    //If check login is OK lauch the Main Activity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK)
-            bitmap = buildBitmapFromData(data.getData());
-        Log.e("DATA", data.getDataString());
-        ProfileUserFragment myFragment = (ProfileUserFragment) getSupportFragmentManager().findFragmentByTag("profile");
-        if (myFragment != null && myFragment.isVisible()) {
-            Log.i("ProfileFragment", "Add poto");
-            myFragment.setImageBitmap(bitmap);
-            //Store in /images
-            storeUserImage();
-            //Reload the header image
-            loadStoredStoredImage();
 
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    private void storeUserImage() {
-        File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
-                + "/Android/data/"
-                + getApplicationContext().getPackageName()
-                + "/images/");
-        String filename = "USER_IMAGE_" + SplashActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)).replace("@","").replace(".","") + ".png";
-        filename = mediaStorageDir.getAbsolutePath()+File.separator+filename;
-
-        boolean success = true;
-        if (!mediaStorageDir.exists()) {
-            success = mediaStorageDir.mkdir();
-        }
-        if (success) {
-            FileOutputStream out = null;
-            try {
-                out = new FileOutputStream(filename);
-                bitmap.compress(Bitmap.CompressFormat.PNG, 10, out); // bmp is your Bitmap instance
-                // PNG is a lossless format, the compression factor (100) is ignored
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    if (out != null) {
-                        out.close();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        if (requestCode == 1) {
+            if(resultCode == Activity.RESULT_OK){
+                shareDataWithServer();
             }
-        } else {
-            Log.e("Error", "File cant be created");
-        }
-    }
-
-    public Bitmap buildBitmapFromData(Uri data){
-        try {
-            // We need to recyle unused bitmaps
-            if (bitmap != null && !bitmap.isRecycled()) {
-                bitmap.recycle();
-                bitmap = null;
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
             }
+        }
+    }
 
-            InputStream stream = getContentResolver().openInputStream(
-                    data);
-            bitmap = BitmapFactory.decodeStream(stream);
-            stream.close();
-                /*
-                getSupportFragmentManager()
-                imageView.setImageBitmap(bitmap);
-                */
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+    public void launchTheApp(){
+        adviceUser.setText("Initializing");
+        buildObjects();
+        launchMainActivity();
+    }
+
+    private void buildObjects() {
+        SafegeesDAO sDao = SafegeesDAO.getInstance(this);
+    }
+
+    private void shareDataWithServer() {
+        //Download data
+        this.adviceUser.setText("Sharing info with Safegees");
+        ShareDataController sddm = new ShareDataController();
+        sddm.run(this);
+    }
+
+    /**
+     * Represents an asynchronous login/registration task used to authenticate
+     * the user.
+     */
+    public class FileManagerTask extends AsyncTask<Void, Void, Boolean> {
+        private Context context;
+
+
+
+        FileManagerTask(Context context) {
+            this.context = context;
         }
 
-        bitmap = fixBitmap(bitmap);
-        return bitmap;
-    }
-
-    private Bitmap fixBitmap(Bitmap bitmap) {
-
-        Matrix matrix = new Matrix();
-        matrix.postRotate(0);
-        //matrix.postRotate(90);
-
-
-        Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), true);
-        Bitmap rotatedBitmap = Bitmap.createBitmap(scaledBitmap , 0, 0, scaledBitmap .getWidth(), scaledBitmap .getHeight(), matrix, true);
-
-        if (bitmap.getWidth() >= bitmap.getHeight()){
-
-            bitmap = Bitmap.createBitmap(
-                    rotatedBitmap,
-                    rotatedBitmap.getWidth()/2 - rotatedBitmap.getHeight()/2,
-                    0,
-                    rotatedBitmap.getHeight(),
-                    rotatedBitmap.getHeight()
-            );
-
-        }else{
-
-            bitmap = Bitmap.createBitmap(
-                    rotatedBitmap,
-                    0,
-                    rotatedBitmap.getHeight()/2 - rotatedBitmap.getWidth()/2,
-                    rotatedBitmap.getWidth(),
-                    rotatedBitmap.getWidth()
-            );
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            // TODO: attempt authentication against a network service.
+            return MapFileManager.checkAndUnZipTilesFile();
         }
 
-
-        //Rounded the bitmap
-        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
-                bitmap.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(output);
-
-        //final int color = 0xff424242;
-        final Paint paint = new Paint();
-        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-        final RectF rectF = new RectF(rect);
-        final float roundPx = bitmap.getWidth() / 2;
+        @Override
+        protected void onPostExecute(final Boolean success) {
 
 
-        paint.setAntiAlias(true);
-        //canvas.drawARGB(0, 0, 0, 0);
-        //paint.setColor(color);
-        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+            fileManagerTask = null;
+            if (success) {
+                Toast toast = Toast.makeText(context, "Zip was added correctly", Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+                start();
+            } else {
+                Toast toast = Toast.makeText(context, "Error", Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+            }
+        }
 
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(bitmap, rect, rect, paint);
+        @Override
+        protected void onCancelled() {
+            fileManagerTask = null;;
+        }
 
-        //Scale squared
-        output = Bitmap.createScaledBitmap(output, 300, 300, true);
-
-        return output;
-
-    }
-
-    public void pickImage(View View) {
-        //pickImage(v);
-        Log.i("Picked image", "true");
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        startActivityForResult(intent, REQUEST_CODE);
-    }
-
-    @Override
-    public void onClick(View v) {
-        //pickImage(v);
-        Log.i("Clicked", "true");
 
     }
 }

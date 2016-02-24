@@ -67,13 +67,12 @@ package org.safegees.safegees.util;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.safegees.safegees.R;
-import org.safegees.safegees.gui.view.SplashActivity;
+import org.safegees.safegees.gui.view.MainActivity;
 
 import java.util.HashMap;
 
@@ -103,7 +102,7 @@ public class SafegeesConnectionManager {
         //Store the response in conf preferences with key : contacts_data_mailfromuser
         if (this.isJSONValid(response)) {
             //Store the response in conf preferences with key : contacts_data_mailfromuser
-            SplashActivity.DATA_STORAGE.putString(context.getResources().getString(R.string.KEY_POINTS_OF_INTEREST), response);
+            MainActivity.DATA_STORAGE.putString(context.getResources().getString(R.string.KEY_POINTS_OF_INTEREST), response);
         }
     }
 
@@ -117,14 +116,14 @@ public class SafegeesConnectionManager {
 
         if (this.isJSONValid(response)) {
             //Store the response in conf preferences with key : contacts_data_mailfromuser
-            SplashActivity.DATA_STORAGE.putString(context.getResources().getString(R.string.KEY_CONTACTS_DATA) + "_" + userEmail, response);
+            MainActivity.DATA_STORAGE.putString(context.getResources().getString(R.string.KEY_CONTACTS_DATA) + "_" + userEmail, response);
         }
     }
 
     public boolean updateUserPosition(Context context, String userEmail, String userPassword, String position){
         //Get user password and data from storage
-        //String user = SplashActivity.DATA_STORAGE.getString(context.getString(R.string.KEY_USER_MAIL));
-        //String password = SplashActivity.DATA_STORAGE.getString(context.getString(R.string.KEY_USER_PASSWORD));
+        //String user = MainActivity.DATA_STORAGE.getString(context.getString(R.string.KEY_USER_MAIL));
+        //String password = MainActivity.DATA_STORAGE.getString(context.getString(R.string.KEY_USER_PASSWORD));
 
         String url = WEB_BASE + SET_POSITION; HttpUrlConnection httpUrlConnection = new HttpUrlConnection();
         String response = null;
@@ -184,8 +183,8 @@ public class SafegeesConnectionManager {
     public boolean addNewContact(Context context, String userMail, String userPassword, String contactEmail){
         String url = WEB_BASE+AUTHORIZE_USER;
         //Get user password and data from storage
-        //String user = SplashActivity.DATA_STORAGE.getString(context.getString(R.string.KEY_USER_MAIL));
-        //String password = SplashActivity.DATA_STORAGE.getString(context.getString(R.string.KEY_USER_PASSWORD));
+        //String user = MainActivity.DATA_STORAGE.getString(context.getString(R.string.KEY_USER_MAIL));
+        //String password = MainActivity.DATA_STORAGE.getString(context.getString(R.string.KEY_USER_PASSWORD));
 
         HttpUrlConnection httpUrlConnection = new HttpUrlConnection();
         String response = null;

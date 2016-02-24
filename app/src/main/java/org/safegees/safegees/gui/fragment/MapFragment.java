@@ -192,13 +192,16 @@ public class MapFragment extends Fragment {
     public void refreshMap(){
 
         //Rebuild objects in sDAO
-        SafegeesDAO.refreshInstance(getContext());
+        this.sDAO = SafegeesDAO.refreshInstance(getContext());
+
         //Clear the map
         //this.mapView.invalidate();
         //Build mMap with local Tiles
         //buildMap(this.mMap);
         //Add markers
         this.refreshPointsInMap();
+
+
 
     }
 

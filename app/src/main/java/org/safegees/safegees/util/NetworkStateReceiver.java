@@ -28,7 +28,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import org.safegees.safegees.gui.view.MainActivity;
+import org.safegees.safegees.gui.view.PrincipalMapActivity;
 
 /**
  * Created by victor on 9/2/16.
@@ -38,10 +38,10 @@ public class NetworkStateReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d("Network", "Network connectivity change");
         if(Connectivity.isNetworkAvaiable(context)) {
-            if (MainActivity.getInstance() != null) MainActivity.getInstance().connectivityOn();
+            if (PrincipalMapActivity.getInstance() != null) PrincipalMapActivity.getInstance().connectivityOn();
         }
         else {
-            if (MainActivity.getInstance() != null)MainActivity.getInstance().connectivityOff();
+            if (PrincipalMapActivity.getInstance() != null) PrincipalMapActivity.getInstance().connectivityOff();
         }
     }
 }

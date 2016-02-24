@@ -24,7 +24,6 @@
 package org.safegees.safegees.gui.fragment;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -37,7 +36,6 @@ import android.view.ViewGroup;
 import org.safegees.safegees.R;
 import org.safegees.safegees.gui.adapters.MyAdapter;
 import org.safegees.safegees.gui.decoration.DividerItemDecoration;
-import org.safegees.safegees.gui.view.SplashActivity;
 import org.safegees.safegees.model.Contact;
 import org.safegees.safegees.util.SafegeesDAO;
 

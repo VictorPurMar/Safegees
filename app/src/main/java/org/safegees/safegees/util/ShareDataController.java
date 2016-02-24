@@ -31,7 +31,7 @@ import android.widget.Toast;
 
 
 import org.safegees.safegees.gui.view.MainActivity;
-import org.safegees.safegees.gui.view.SplashActivity;
+import org.safegees.safegees.gui.view.PrincipalMapActivity;
 import org.safegees.safegees.model.LatLng;
 
 import java.util.Iterator;
@@ -175,12 +175,12 @@ public class ShareDataController {
             if (success) {
                 //If the download was on splash
                 //When de download is finished, launch the app
-                if (this.context.getClass().equals(SplashActivity.class)) {
-                    SplashActivity splashActivity = (SplashActivity) this.context;
-                    splashActivity.launchTheApp();
-                } else if (this.context.getClass().equals(MainActivity.class)) {
+                if (this.context.getClass().equals(MainActivity.class)) {
                     MainActivity mainActivity = (MainActivity) this.context;
-                    mainActivity.refreshMap();
+                    mainActivity.launchTheApp();
+                } else if (this.context.getClass().equals(PrincipalMapActivity.class)) {
+                    PrincipalMapActivity principalMapActivity = (PrincipalMapActivity) this.context;
+                    principalMapActivity.refreshMap();
                 }
             } else {
 

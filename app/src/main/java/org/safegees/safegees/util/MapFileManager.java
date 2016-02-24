@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 
-import org.safegees.safegees.gui.view.SplashActivity;
+import org.safegees.safegees.gui.view.MainActivity;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -29,17 +29,26 @@ public class MapFileManager {
         return true;
     }
 
-    public static boolean mapExists(Context context) {
+    public static boolean isNewMapZip(){
+        String externalStorageDirectory =  getUserStorageriority();
+        File f = new File(externalStorageDirectory + File.separator + "osmdroid" + File.separator + "Safegees.zip");
+        if (f.exists()){
+            return true;
+        }
+        return false;
+    }
 
+    public static boolean buildAssetsMap(Context context) {
+
+
+        boolean isFileMooved = false;
 
         String externalStorageDirectory =  getUserStorageriority();
 
         String destination = externalStorageDirectory + File.separator + "osmdroid" + File.separator + "tiles" + File.separator + "Mapnik";
         File desFile = new File(destination);
         // 16788000 is the default size of maps zip
-        if (desFile.exists() && desFile.isDirectory() && desFile.length() > 1000) {
-            return true;
-        } else {
+
             String principalDestination = externalStorageDirectory + File.separator + "osmdroid";
             File principalFile = new File(principalDestination);
             principalFile.mkdirs();
@@ -62,19 +71,19 @@ public class MapFileManager {
                 FileOutputStream fos = new FileOutputStream(f);
                 fos.write(buffer);
                 fos.close();
-                checkAndUnZipTilesFile();
-                return true;
+                //checkAndUnZipTilesFile();sFile();
+                isFileMooved= true;
             } catch (IOException e) {
                 //       e.printStackT
                 //Map doesnt existrace();
+                Log.e("MapFileManager","Error mooving the zip");
             }
 
-        }
-        return false;
+        return isFileMooved;
     }
 
     public static String getUserStorageriority() {
-        boolean isSdCard = SplashActivity.DATA_STORAGE.getBoolean("SDCard");
+        boolean isSdCard = MainActivity.DATA_STORAGE.getBoolean("SDCard");
         String strSDCardPath = "";
         if (isSdCard) {
             strSDCardPath = System.getenv("SECONDARY_STORAGE");
@@ -124,8 +133,8 @@ public class MapFileManager {
             String tiles =  externalStorageDirectory+File.separator+"osmdroid"+File.separator+"tiles";
             File osmDroidFile = new File(osmdroid);
             File tilesFile = new File(tiles);
-            osmDroidFile.setWritable(true);
-            tilesFile.setWritable(true);
+            osmDroidFile.setWritable(true,false);
+            tilesFile.setWritable(true,false);
 
 
             try {
@@ -141,12 +150,13 @@ public class MapFileManager {
     }
 
     public static boolean unzip(File zipFile, File targetDirectory) throws IOException {
+        int BUFFER_SIZE = 64*1024;
         ZipInputStream zis = new ZipInputStream(
-                new BufferedInputStream(new FileInputStream(zipFile)));
+                new BufferedInputStream(new FileInputStream(zipFile), BUFFER_SIZE));
         try {
             ZipEntry ze;
             int count;
-            byte[] buffer = new byte[8192];
+            byte[] buffer = new byte[BUFFER_SIZE];
             while ((ze = zis.getNextEntry()) != null) {
                 File file = new File(targetDirectory, ze.getName());
                 File dir = ze.isDirectory() ? file : file.getParentFile();

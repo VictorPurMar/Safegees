@@ -185,8 +185,8 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener{
                 //If user is stored and password matches launch the activity
                 if(StoredDataQuequesManager.isPasswordMatch(this, email, password)){
                     //Save the user mail and password as active user data
-                    SplashActivity.DATA_STORAGE.putString(getResources().getString(R.string.KEY_USER_MAIL), email);
-                    SplashActivity.DATA_STORAGE.putString(getResources().getString(R.string.KEY_USER_PASSWORD), password);
+                    MainActivity.DATA_STORAGE.putString(getResources().getString(R.string.KEY_USER_MAIL), email);
+                    MainActivity.DATA_STORAGE.putString(getResources().getString(R.string.KEY_USER_PASSWORD), password);
 
                     Intent returnIntent = new Intent();
                     setResult(Activity.RESULT_OK,returnIntent);
@@ -296,13 +296,13 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener{
             showProgress(false);
             if (success) {
                 //Save the user mail and password as active user data
-                SplashActivity.DATA_STORAGE.putString(getResources().getString(R.string.KEY_USER_MAIL), mEmail);
-                SplashActivity.DATA_STORAGE.putString(getResources().getString(R.string.KEY_USER_PASSWORD), mPassword);
+                MainActivity.DATA_STORAGE.putString(getResources().getString(R.string.KEY_USER_MAIL), mEmail);
+                MainActivity.DATA_STORAGE.putString(getResources().getString(R.string.KEY_USER_PASSWORD), mPassword);
 
                 //Add the user and password to App Users
                 StoredDataQuequesManager.putUserAndKeyInAppUserQueque(this.context, mEmail, mPassword);
 
-                Log.i("APP_USERS", SplashActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_APP_USERS)));
+                Log.i("APP_USERS", MainActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_APP_USERS)));
 
 
                 Intent returnIntent = new Intent();
