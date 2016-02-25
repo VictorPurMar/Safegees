@@ -1,14 +1,22 @@
 package org.safegees.safegees.gui.fragment;
 
 import android.content.Context;
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -19,11 +27,26 @@ import android.widget.Toast;
 
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.api.IMapController;
+import org.osmdroid.bonuspack.kml.KmlDocument;
+import org.osmdroid.bonuspack.kml.KmlFeature;
+import org.osmdroid.bonuspack.kml.KmlFolder;
+import org.osmdroid.bonuspack.kml.KmlLineString;
+import org.osmdroid.bonuspack.kml.KmlPlacemark;
+import org.osmdroid.bonuspack.kml.KmlPoint;
+import org.osmdroid.bonuspack.kml.KmlPolygon;
+import org.osmdroid.bonuspack.kml.Style;
+import org.osmdroid.bonuspack.location.OverpassAPIProvider;
+import org.osmdroid.bonuspack.overlays.FolderOverlay;
+import org.osmdroid.bonuspack.overlays.Marker;
+import org.osmdroid.bonuspack.overlays.Polygon;
+import org.osmdroid.bonuspack.overlays.Polyline;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
+import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.ItemizedOverlay;
+import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
 import org.osmdroid.views.overlay.compass.CompassOverlay;
@@ -39,7 +62,16 @@ import org.safegees.safegees.util.MapFileManager;
 import org.safegees.safegees.util.SafegeesDAO;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by victor on 21/2/16.
@@ -74,6 +106,7 @@ public class MapFragment extends Fragment {
     private IMapController mapViewController;
     //This fragment view
     private View view;
+    private KmlDocument mKmlDocument;
 
     private int actionBarHeight = 90;
     public MapFragment() {
@@ -210,7 +243,7 @@ public class MapFragment extends Fragment {
      */
     private void refreshPointsInMap() {
 
-        mapView.invalidate();
+
         if (this.sDAO != null) {
             ArrayList<OverlayItem> poisList = new ArrayList<OverlayItem>();
             ArrayList<OverlayItem> contactList = new ArrayList<OverlayItem>();
@@ -282,9 +315,39 @@ public class MapFragment extends Fragment {
             mapView.getOverlays().add(poiOverlay);
 
         }
-
+        KMLTask kml = new KMLTask(this.getContext());
+        kml.execute();
+        mapView.invalidate();
 
     }
+
+
+
+
+    private File createFileFromInputStream(InputStream inputStream) {
+
+        try{
+            File f = new File("refugees.kml");
+            OutputStream outputStream = new FileOutputStream(f);
+            byte buffer[] = new byte[1024];
+            int length = 0;
+
+            while((length=inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer,0,length);
+            }
+
+            outputStream.close();
+            inputStream.close();
+
+            return f;
+        }catch (IOException e) {
+            //Logging exception
+        }
+
+        return null;
+    }
+
+
 
 
 
@@ -313,6 +376,47 @@ public class MapFragment extends Fragment {
         mListener = null;
     }
 
+    //13.2 Loading KML content - Advanced styling with Styler
+    class MyKmlStyler implements KmlFeature.Styler {
+        Style mDefaultStyle;
+
+        MyKmlStyler(Style defaultStyle) {
+            mDefaultStyle = defaultStyle;
+        }
+
+        @Override
+        public void onLineString(Polyline polyline, KmlPlacemark kmlPlacemark, KmlLineString kmlLineString) {
+            //Custom styling:
+            polyline.setColor(Color.GREEN);
+            polyline.setWidth(Math.max(kmlLineString.mCoordinates.size() / 200.0f, 3.0f));
+        }
+
+        @Override
+        public void onPolygon(Polygon polygon, KmlPlacemark kmlPlacemark, KmlPolygon kmlPolygon) {
+            //Keeping default styling:
+            kmlPolygon.applyDefaultStyling(polygon, mDefaultStyle, kmlPlacemark, mKmlDocument, mapView);
+        }
+
+        @Override
+        public void onPoint(Marker marker, KmlPlacemark kmlPlacemark, KmlPoint kmlPoint) {
+            //Styling based on ExtendedData properties:
+            //if (kmlPlacemark.getExtendedData("maxspeed") != null)
+            //    kmlPlacemark.mStyle = "maxspeed";
+            //kmlPoint.applyDefaultStyling(marker, mDefaultStyle, kmlPlacemark, mKmlDocument, mapView);
+            Drawable contactDrawable = getResources().getDrawable(R.drawable.ic_airline_seat_individual_suite_black_24dp);
+            kmlPlacemark.mStyle ="Estilo";
+            marker.setImage(contactDrawable);
+            marker.setIcon(contactDrawable);
+            marker.setEnabled(true);
+            kmlPoint.applyDefaultStyling(marker, mDefaultStyle, kmlPlacemark, mKmlDocument, mapView);
+        }
+
+        @Override
+        public void onFeature(Overlay overlay, KmlFeature kmlFeature) {
+            //If nothing to do, do nothing.
+        }
+    }
+
 
 
     /**
@@ -333,5 +437,74 @@ public class MapFragment extends Fragment {
     public static Fragment newInstance() {
         ContactsFragment mFrgment = new ContactsFragment();
         return mFrgment;
+    }
+
+
+    /**
+     * Represents an asynchronous login/registration task used to authenticate
+     * the user.
+     */
+    public class KMLTask extends AsyncTask<Void, Void, Boolean> {
+        private Context context;
+
+
+        KMLTask(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+           // String url = "http://mapsengine.google.com/map/kml?forcekml=1&mid=z6IJfj90QEd4.kUUY9FoHFRdE";
+            //String url = "http://mapsengine.google.com/map/kml?mid=z7Jqrnq1J1aA.kFPvSonz3mK0&forcekml=1";
+            //String url = "http://www.ruhr-uni-bochum.de/marem/dateien/marem_map/marem_map_04_08_2015.kmz";
+            String url = "http://geonode.state.gov/geoserver/wms/kml?layers=geonode%3ASyria_RefugeeSites_2016Jan21_HIU_DoS0&mode=download";
+            mKmlDocument = new KmlDocument();
+            boolean ok = mKmlDocument.parseKMLUrl(url);
+            return ok;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+
+
+            if (success) {
+                Drawable defaultMarker = getResources().getDrawable(R.drawable.ic_airline_seat_individual_suite_black_24dp);
+                Bitmap defaultBitmap = Bitmap.createBitmap(defaultMarker.getIntrinsicWidth(),
+                        defaultMarker.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+                Canvas canvas = new Canvas(defaultBitmap);
+                defaultMarker.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+                defaultMarker.draw(canvas);
+
+                //Bitmap defaultBitmap = ((BitmapDrawable) defaultMarker).getBitmap();
+                Style defaultStyle = new Style(defaultBitmap, 0x901010AA, 3.0f, 0x20AA1010);
+                //13.2 Advanced styling with Styler
+                KmlFeature.Styler styler = new MyKmlStyler(defaultStyle);
+
+                FolderOverlay kmlOverlay = (FolderOverlay) mKmlDocument.mKmlRoot.buildOverlay(mapView, null, styler, mKmlDocument);
+                List<Overlay> overlays = kmlOverlay.getItems();
+                FolderOverlay campaments = (FolderOverlay)overlays.get(0);
+                List<Overlay> capmList = kmlOverlay.getItems();
+                for (int i = 0 ; i < capmList.size() ; i++){
+                    Overlay ov = capmList.get(i);
+
+                }
+
+
+                mapView.getOverlays().add(campaments);
+                //BoundingBoxE6 bb = mKmlDocument.mKmlRoot.getBoundingBox();
+                //if (bb != null) {
+                    //map.zoomToBoundingBox(bb); => not working in onCreate - this is a well-known osmdroid bug.
+                    //Workaround:
+                    //mapView.getController().setCenter(bb.getCenter());
+                //}
+                mapView.invalidate();
+            } else {
+                Toast.makeText(this.context, "Error when loading KML", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+        }
     }
 }

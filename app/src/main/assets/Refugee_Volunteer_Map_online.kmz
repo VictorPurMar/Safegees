@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<kml xmlns='http://www.opengis.net/kml/2.2'>
+	<Document>
+		<name>Refugee Volunteer Map</name>
+		<description><![CDATA[www.RefugeeMap.com<br>click for more info...<br><br>Red markers are most urgent.<br>Orange less urgent.<br>Yellow has people onsite, but everything ok.<br>Blue is informational or places where not enough info is available.<br><br>Please be aware that while locations are as accurate as possible, some may be estimates.<br><br>"Like" us on Facebook: www.facebook.com/RefugeeMap<br>]]></description>
+		<NetworkLink>
+			<name>Refugee Volunteer Map</name>
+			<Link>
+				<href>http://mapsengine.google.com/map/kml?forcekml=1&amp;mid=zddfRUtGScOc.kQBgTQcoV5FM</href>
+			</Link>
+		</NetworkLink>
+	</Document>
+</kml>
