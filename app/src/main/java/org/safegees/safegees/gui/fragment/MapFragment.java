@@ -58,6 +58,7 @@ import org.safegees.safegees.model.Contact;
 import org.safegees.safegees.model.LatLng;
 import org.safegees.safegees.model.POI;
 import org.safegees.safegees.util.Connectivity;
+import org.safegees.safegees.util.FileManager;
 import org.safegees.safegees.util.MapFileManager;
 import org.safegees.safegees.util.SafegeesDAO;
 
@@ -233,9 +234,6 @@ public class MapFragment extends Fragment {
         //buildMap(this.mMap);
         //Add markers
         this.refreshPointsInMap();
-
-
-
     }
 
     /**
@@ -315,13 +313,50 @@ public class MapFragment extends Fragment {
             mapView.getOverlays().add(poiOverlay);
 
         }
-        KMLTask kml = new KMLTask(this.getContext());
-        kml.execute();
+        //KMLTask kml = new KMLTask(this.getContext());
+        //kml.execute();
+        //mapView.invalidate();
+
+        mKmlDocument = new KmlDocument();
+        mKmlDocument.parseKMLFile(FileManager.getFileStorePath("volunteers.kml"));
+        Drawable defaultMarker = getResources().getDrawable(R.drawable.ic_add_location_black_24dp);
+        FolderOverlay campaments = getFolderOverlay(defaultMarker);
+        mapView.getOverlays().add(campaments);
+
+        mKmlDocument = new KmlDocument();
+        mKmlDocument.parseKMLFile(FileManager.getFileStorePath("syrian.kml"));
+        defaultMarker = getResources().getDrawable(R.drawable.ic_airline_seat_individual_suite_black_24dp);
+        FolderOverlay syrian = getFolderOverlay(defaultMarker);
+        mapView.getOverlays().add(syrian);
+
+
         mapView.invalidate();
 
     }
 
+    private FolderOverlay getFolderOverlay(Drawable defaultMarker) {
 
+        Bitmap defaultBitmap = Bitmap.createBitmap(defaultMarker.getIntrinsicWidth(),
+                defaultMarker.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(defaultBitmap);
+        defaultMarker.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        defaultMarker.draw(canvas);
+
+        //Bitmap defaultBitmap = ((BitmapDrawable) defaultMarker).getBitmap();
+        Style defaultStyle = new Style(defaultBitmap, 0x901010AA, 3.0f, 0x20AA1010);
+        //13.2 Advanced styling with Styler
+        KmlFeature.Styler styler = new MyKmlStyler(defaultStyle);
+
+        FolderOverlay kmlOverlay = (FolderOverlay) mKmlDocument.mKmlRoot.buildOverlay(mapView, null, styler, mKmlDocument);
+        List<Overlay> overlays = kmlOverlay.getItems();
+        FolderOverlay folder = (FolderOverlay)overlays.get(0);
+        List<Overlay> capmList = kmlOverlay.getItems();
+        for (int i = 0 ; i < capmList.size() ; i++){
+            Overlay ov = capmList.get(i);
+
+        }
+        return folder;
+    }
 
 
     private File createFileFromInputStream(InputStream inputStream) {
@@ -439,72 +474,4 @@ public class MapFragment extends Fragment {
         return mFrgment;
     }
 
-
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    public class KMLTask extends AsyncTask<Void, Void, Boolean> {
-        private Context context;
-
-
-        KMLTask(Context context) {
-            this.context = context;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-           // String url = "http://mapsengine.google.com/map/kml?forcekml=1&mid=z6IJfj90QEd4.kUUY9FoHFRdE";
-            //String url = "http://mapsengine.google.com/map/kml?mid=z7Jqrnq1J1aA.kFPvSonz3mK0&forcekml=1";
-            //String url = "http://www.ruhr-uni-bochum.de/marem/dateien/marem_map/marem_map_04_08_2015.kmz";
-            String url = "http://geonode.state.gov/geoserver/wms/kml?layers=geonode%3ASyria_RefugeeSites_2016Jan21_HIU_DoS0&mode=download";
-            mKmlDocument = new KmlDocument();
-            boolean ok = mKmlDocument.parseKMLUrl(url);
-            return ok;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-
-
-            if (success) {
-                Drawable defaultMarker = getResources().getDrawable(R.drawable.ic_airline_seat_individual_suite_black_24dp);
-                Bitmap defaultBitmap = Bitmap.createBitmap(defaultMarker.getIntrinsicWidth(),
-                        defaultMarker.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-                Canvas canvas = new Canvas(defaultBitmap);
-                defaultMarker.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-                defaultMarker.draw(canvas);
-
-                //Bitmap defaultBitmap = ((BitmapDrawable) defaultMarker).getBitmap();
-                Style defaultStyle = new Style(defaultBitmap, 0x901010AA, 3.0f, 0x20AA1010);
-                //13.2 Advanced styling with Styler
-                KmlFeature.Styler styler = new MyKmlStyler(defaultStyle);
-
-                FolderOverlay kmlOverlay = (FolderOverlay) mKmlDocument.mKmlRoot.buildOverlay(mapView, null, styler, mKmlDocument);
-                List<Overlay> overlays = kmlOverlay.getItems();
-                FolderOverlay campaments = (FolderOverlay)overlays.get(0);
-                List<Overlay> capmList = kmlOverlay.getItems();
-                for (int i = 0 ; i < capmList.size() ; i++){
-                    Overlay ov = capmList.get(i);
-
-                }
-
-
-                mapView.getOverlays().add(campaments);
-                //BoundingBoxE6 bb = mKmlDocument.mKmlRoot.getBoundingBox();
-                //if (bb != null) {
-                    //map.zoomToBoundingBox(bb); => not working in onCreate - this is a well-known osmdroid bug.
-                    //Workaround:
-                    //mapView.getController().setCenter(bb.getCenter());
-                //}
-                mapView.invalidate();
-            } else {
-                Toast.makeText(this.context, "Error when loading KML", Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-        }
-    }
 }

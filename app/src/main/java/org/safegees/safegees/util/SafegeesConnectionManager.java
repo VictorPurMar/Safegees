@@ -66,14 +66,18 @@ package org.safegees.safegees.util;
 
 
 import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.osmdroid.bonuspack.kml.KmlDocument;
+import org.osmdroid.bonuspack.kml.KmlFolder;
 import org.safegees.safegees.R;
 import org.safegees.safegees.gui.view.MainActivity;
 
+import java.io.File;
 import java.util.HashMap;
 
 /**
@@ -135,7 +139,7 @@ public class SafegeesConnectionManager {
             Log.i("RESPONSE",response);
             return true;
         }else{
-            Log.e("LOGGIN","No logged");
+            Log.e("LOGGIN", "No logged");
             return false;
         }
 
@@ -197,7 +201,7 @@ public class SafegeesConnectionManager {
             Log.i("RESPONSE", response);
             return true;
         }else{
-            Log.e("ADD_CONTACT","Contact not added");
+            Log.e("ADD_CONTACT", "Contact not added");
             return false;
         }
     }
@@ -218,8 +222,27 @@ public class SafegeesConnectionManager {
     }
 
 
+    public void getThirdKLM(Context context) {
 
+        String syrian = "http://geonode.state.gov/geoserver/wms/kml?layers=geonode%3ASyria_RefugeeSites_2016Jan21_HIU_DoS0&mode=download";
+        String volunteers = "http://mapsengine.google.com/map/kml?mid=z7Jqrnq1J1aA.kFPvSonz3mK0&forcekml=1";
 
+        storeKlm("volunteers", volunteers);
+        storeKlm("syrian", syrian);
 
+    }
 
+    private boolean storeKlm(String fileName, String url){
+        KmlDocument mKmlDocument = new KmlDocument();
+        Boolean parsed = mKmlDocument.parseKMLUrl(url);
+        if(parsed){
+            if (mKmlDocument.mKmlRoot != null) {
+                KmlFolder root = (KmlFolder) mKmlDocument.mKmlRoot;
+                //15. Loading and saving of GeoJSON content
+                mKmlDocument.saveAsKML(FileManager.getKMLFileStore(fileName + ".kml"));
+                return true;
+            }
+        }
+        return false;
+    }
 }

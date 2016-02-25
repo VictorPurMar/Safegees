@@ -92,6 +92,12 @@ public class ShareDataController {
 
             if (Connectivity.isNetworkAvaiable(this.context)) {
 
+                //Get general data (POI)
+                scc.getPointsOfInterest(this.context);
+
+                //Get third partners klm to store as GeoJSON
+                scc.getThirdKLM(this.context);
+
                 //Get and store the contacts data from all the app users queque
                 getAppUsersData(scc);
 
@@ -102,8 +108,7 @@ public class ShareDataController {
 
                 //sendUserPositionsQueque(scc);
 
-                //Get general data (POI)
-                scc.getPointsOfInterest(this.context);
+
             }
 
             // TODO: register the new account here.
