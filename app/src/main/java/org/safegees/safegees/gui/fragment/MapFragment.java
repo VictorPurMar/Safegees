@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -151,13 +152,7 @@ public class MapFragment extends Fragment {
         sDAO = SafegeesDAO.getInstance(getContext());
 
         mapView = (MapView) this.view.findViewById(R.id.mapview);
-        //poisList = new ArrayList<OverlayItem>();
-        //contactList = new ArrayList<OverlayItem>();
-
-
-
         mapView = (MapView) this.view.findViewById(R.id.mapview);
-
         mapView.setMultiTouchControls(true);
         mapView.setMinZoomLevel(2);
 
@@ -174,6 +169,7 @@ public class MapFragment extends Fragment {
         myLocationOverlay.runOnFirstFix(new Runnable() {
             public void run() {
                 mapViewController.animateTo(myLocationOverlay.getMyLocation());
+                myLocationOverlay.enableFollowLocation();
             }
         });
 
@@ -195,8 +191,6 @@ public class MapFragment extends Fragment {
 
         refreshMap();
 
-        //mapView.getOverlays().add(myLocationOverlay);
-        //myLocationOverlay.enableFollowLocation();
 
         return view;
     }
@@ -228,10 +222,6 @@ public class MapFragment extends Fragment {
         //Rebuild objects in sDAO
         this.sDAO = SafegeesDAO.refreshInstance(getContext());
 
-        //Clear the map
-        //this.mapView.invalidate();
-        //Build mMap with local Tiles
-        //buildMap(this.mMap);
         //Add markers
         this.refreshPointsInMap();
     }
@@ -240,11 +230,24 @@ public class MapFragment extends Fragment {
      * Get the points from sDAO (SafeggeesDAO) and set the markers on Map
      */
     private void refreshPointsInMap() {
+        mKmlDocument = new KmlDocument();
+        mKmlDocument.parseKMLFile(FileManager.getFileStorePath("volunteers.kml"));
+        Drawable defaultMarker = getResources().getDrawable(R.drawable.ic_add_location_black_24dp);
+        FolderOverlay campaments = getFolderOverlay(defaultMarker);
+        mapView.getOverlays().add(campaments);
 
+
+        //mKmlDocument = new KmlDocument();
+        mKmlDocument.parseKMLFile(FileManager.getFileStorePath("syrian.kml"));
+        defaultMarker = getResources().getDrawable(R.drawable.ic_airline_seat_individual_suite_black_24dp);
+        FolderOverlay syrian = getFolderOverlay(defaultMarker);
+        mapView.getOverlays().add(syrian);
 
         if (this.sDAO != null) {
+
             ArrayList<OverlayItem> poisList = new ArrayList<OverlayItem>();
             ArrayList<OverlayItem> contactList = new ArrayList<OverlayItem>();
+            /*
             Drawable poiDrawable = getResources().getDrawable(R.drawable.ic_add_location_black_24dp);
             ArrayList<POI> pois = this.sDAO.getPois();
             for (int i = 0; i < pois.size(); i++) {
@@ -255,7 +258,7 @@ public class MapFragment extends Fragment {
                 item.setMarker(poiDrawable);
                 poisList.add(item);
             }
-
+            */
             Drawable contactDrawable = getResources().getDrawable(R.drawable.ic_person_pin_circle_black_24dp);
             ArrayList<Contact> contacts = this.sDAO.getContacts();
             for (int i = 0; i < contacts.size(); i++) {
@@ -272,8 +275,27 @@ public class MapFragment extends Fragment {
             if (getActivity().getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
                 actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
             }
+            /*
+            ItemizedIconOverlay poiOverlay = new ItemizedIconOverlay(poiList, poiDrawable, new ItemizedIconOverlay.OnItemGestureListener() {
+                @Override
+                public boolean onItemSingleTapUp(int index, Object item) {
+                    OverlayItem overlay = (OverlayItem) item;
+                    overlay.getTitle();
+                    overlay.getSnippet();
+                    Toast toast = Toast.makeText(getContext(), overlay.getTitle() + " | " + overlay.getSnippet(), Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.TOP | Gravity.RIGHT, 5, actionBarHeight + 10);
+                    toast.show();
+                    return false;
+                }
 
-            ItemizedIconOverlay contactOverlay = new ItemizedIconOverlay(contactList, poiDrawable, new ItemizedIconOverlay.OnItemGestureListener() {
+                @Override
+                public boolean onItemLongPress(int index, Object item) {
+                    return false;
+                }
+            }, new DefaultResourceProxyImpl(getContext()));
+            */
+
+            ItemizedIconOverlay contactOverlay = new ItemizedIconOverlay(contactList, contactDrawable, new ItemizedIconOverlay.OnItemGestureListener() {
                 @Override
                 public boolean onItemSingleTapUp(int index, Object item) {
                     OverlayItem overlay = (OverlayItem) item;
@@ -291,43 +313,17 @@ public class MapFragment extends Fragment {
                 }
             }, new DefaultResourceProxyImpl(getContext()));
 
-            ItemizedIconOverlay poiOverlay = new ItemizedIconOverlay(poisList, contactDrawable, new ItemizedIconOverlay.OnItemGestureListener() {
-                @Override
-                public boolean onItemSingleTapUp(int index, Object item) {
-                    OverlayItem overlay = (OverlayItem) item;
-                    overlay.getTitle();
-                    overlay.getSnippet();
-                    Toast toast = Toast.makeText(getContext(), overlay.getTitle() + " | " + overlay.getSnippet(), Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.TOP | Gravity.RIGHT, 5, actionBarHeight + 10);
-                    toast.show();
-                    return false;
-                }
-
-                @Override
-                public boolean onItemLongPress(int index, Object item) {
-                    return false;
-                }
-            }, new DefaultResourceProxyImpl(getContext()));
 
             mapView.getOverlays().add(contactOverlay);
+            /*
             mapView.getOverlays().add(poiOverlay);
-
+            */
         }
         //KMLTask kml = new KMLTask(this.getContext());
         //kml.execute();
         //mapView.invalidate();
 
-        mKmlDocument = new KmlDocument();
-        mKmlDocument.parseKMLFile(FileManager.getFileStorePath("volunteers.kml"));
-        Drawable defaultMarker = getResources().getDrawable(R.drawable.ic_add_location_black_24dp);
-        FolderOverlay campaments = getFolderOverlay(defaultMarker);
-        mapView.getOverlays().add(campaments);
 
-        mKmlDocument = new KmlDocument();
-        mKmlDocument.parseKMLFile(FileManager.getFileStorePath("syrian.kml"));
-        defaultMarker = getResources().getDrawable(R.drawable.ic_airline_seat_individual_suite_black_24dp);
-        FolderOverlay syrian = getFolderOverlay(defaultMarker);
-        mapView.getOverlays().add(syrian);
 
 
         mapView.invalidate();
@@ -336,26 +332,32 @@ public class MapFragment extends Fragment {
 
     private FolderOverlay getFolderOverlay(Drawable defaultMarker) {
 
-        Bitmap defaultBitmap = Bitmap.createBitmap(defaultMarker.getIntrinsicWidth(),
-                defaultMarker.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(defaultBitmap);
-        defaultMarker.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        defaultMarker.draw(canvas);
+        Bitmap defaultBitmap = getBitmapFromDrawable(defaultMarker);
 
         //Bitmap defaultBitmap = ((BitmapDrawable) defaultMarker).getBitmap();
         Style defaultStyle = new Style(defaultBitmap, 0x901010AA, 3.0f, 0x20AA1010);
         //13.2 Advanced styling with Styler
         KmlFeature.Styler styler = new MyKmlStyler(defaultStyle);
 
-        FolderOverlay kmlOverlay = (FolderOverlay) mKmlDocument.mKmlRoot.buildOverlay(mapView, null, styler, mKmlDocument);
+        FolderOverlay kmlOverlay = (FolderOverlay) mKmlDocument.mKmlRoot.buildOverlay(mapView, null, null, mKmlDocument);
+        //FolderOverlay kmlOverlay = (FolderOverlay) mKmlDocument.mKmlRoot.buildOverlay(mapView, null, styler, mKmlDocument);
         List<Overlay> overlays = kmlOverlay.getItems();
         FolderOverlay folder = (FolderOverlay)overlays.get(0);
         List<Overlay> capmList = kmlOverlay.getItems();
         for (int i = 0 ; i < capmList.size() ; i++){
             Overlay ov = capmList.get(i);
-
         }
         return folder;
+    }
+
+    @NonNull
+    private Bitmap getBitmapFromDrawable(Drawable defaultMarker) {
+        Bitmap defaultBitmap = Bitmap.createBitmap(defaultMarker.getIntrinsicWidth(),
+                defaultMarker.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(defaultBitmap);
+        defaultMarker.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        defaultMarker.draw(canvas);
+        return defaultBitmap;
     }
 
 
@@ -440,10 +442,23 @@ public class MapFragment extends Fragment {
             //kmlPoint.applyDefaultStyling(marker, mDefaultStyle, kmlPlacemark, mKmlDocument, mapView);
             Drawable contactDrawable = getResources().getDrawable(R.drawable.ic_airline_seat_individual_suite_black_24dp);
             kmlPlacemark.mStyle ="Estilo";
+            try {
+                //Log.e("MARKER image", marker.getImage() != null ? marker.getImage().toString() : "none");
+                Log.e("MARKER image", marker.getInfoWindow() != null ? marker.getInfoWindow().toString() : "none");
+            }catch(Exception e){}
+
+
+
+            /*
+            marker.getClass();
             marker.setImage(contactDrawable);
             marker.setIcon(contactDrawable);
             marker.setEnabled(true);
-            kmlPoint.applyDefaultStyling(marker, mDefaultStyle, kmlPlacemark, mKmlDocument, mapView);
+            */
+
+            kmlPoint.applyDefaultStyling(marker, null, kmlPlacemark, mKmlDocument, mapView);
+
+
         }
 
         @Override
