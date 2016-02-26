@@ -185,7 +185,7 @@ public class ShareDataController {
                     mainActivity.launchTheApp();
                 } else if (this.context.getClass().equals(PrincipalMapActivity.class)) {
                     PrincipalMapActivity principalMapActivity = (PrincipalMapActivity) this.context;
-                    principalMapActivity.refreshMap();
+                    principalMapActivity.getMapFragment().refreshMap();
                 }
             } else {
 

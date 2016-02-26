@@ -82,23 +82,9 @@ public class PrincipalMapActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,ProfileUserFragment.OnFragmentInteractionListener, NewsFragment.OnFragmentInteractionListener, ContactsFragment.OnFragmentInteractionListener, AddContactFragment.OnFragmentInteractionListener, ProfileContactFragment.OnFragmentInteractionListener , View.OnClickListener, MapFragment.OnFragmentInteractionListener{
 
 
-    /*
-    private SupportMapFragment mapFragment;
-    private GoogleMap mMap;*/
     private MapFragment mapFragment;
-    private MapView nMap;
-    private SafegeesDAO sDAO;
     private FloatingActionButton floatingUpdateButton;
-
-    private static PrincipalMapActivity instance;           //Singleton
-    private static float MAX_ZOOM = 7.9F;             //This MaxZoom can change depending the max depth of stored tile Maps
-    private static float INIT_ZOOM = 3.0F;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    //private GoogleApiClient client;
-
+    private static PrincipalMapActivity instance;       //Singleton
     //For image getting
     private static final int REQUEST_CODE = 1;
     private Bitmap bitmap;
@@ -121,8 +107,9 @@ public class PrincipalMapActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //init the object builder
+        SafegeesDAO.getInstance(this);
 
-        sDAO = SafegeesDAO.getInstance(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -155,26 +142,8 @@ public class PrincipalMapActivity extends AppCompatActivity
         // Store the header view to update
         headerView = navigationView.inflateHeaderView(R.layout.nav_header_main);
 
-
-        //Open Street Map View
-
-
+        //Start the Map fragment
         mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        /*
-        //Google Map
-        mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-        /*
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-
-        loadStoredStoredImage();
-        */
-
-
-
 
         instance = this;
     }
@@ -283,8 +252,6 @@ public class PrincipalMapActivity extends AppCompatActivity
     //---------------------------------
 
 
-    //GOOGLE MAPS API
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -387,63 +354,6 @@ public class PrincipalMapActivity extends AppCompatActivity
         return true;
     }
 
-    //GOOGLE MAPS API
-    /**
-     * Check if MAX ZOOM is passed to fix it updating the camera
-     * @param cameraPosition
-     */
-    /*
-    @Override
-    public void onCameraChange(CameraPosition cameraPosition) {
-        if (cameraPosition.zoom > MAX_ZOOM){
-            CameraUpdate upd = CameraUpdateFactory.newLatLngZoom(new LatLng(cameraPosition.target.latitude, cameraPosition.target.longitude), MAX_ZOOM);
-            mMap.moveCamera(upd);
-        }
-    }*/
-
-    //GOOGLE MAPS API
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
-    /*
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-
-        //Build the Map
-        buildMap(googleMap);
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            mMap.setMyLocationEnabled(true);
-            //Move the camera to the user's location and zoom in!
-            //mMap.getUiSettings().setMyLocationButtonEnabled(true);
-        } else {
-            Log.i("PERMISSION", "No User Location Enabled");
-        }
-        //Add markers
-        this.refreshPointsInMap();
-        //Toast.makeText(this, SafegeesDAO.getInstance(this).getPois().toString(), Toast.LENGTH_LONG).show();
-
-        //First time stablish the initial Zoom Level
-        this.setUpMap();
-
-    }
-    */
-    //GOOGLE MAPS API
-    /*
-    @Override
-    public void onMapLoaded() {
-        //Log.i("MAP LOADING", "Loading");
-        setUpMap();
-    }
-    */
-
     //---------------------------------
     // Public
     //---------------------------------
@@ -503,16 +413,6 @@ public class PrincipalMapActivity extends AppCompatActivity
         if (mapFragment != null) mapFragment.setMapViewDependingConnection();
     }
 
-    //Deshabilited for testing
-    /**
-     * It will called by CustomMapTileProvider to stablish the Max Zoom depending the map depth avaiablility
-     * @param maxZoom float with the max zoom depth
-     */
-    public static void setMaxZoom(float maxZoom){
-        if (MAX_ZOOM < maxZoom) /* MAX_ZOOM = maxZoom*/;
-    }
-
-
 
     //---------------------------------
     // Private
@@ -528,25 +428,9 @@ public class PrincipalMapActivity extends AppCompatActivity
                 ShareDataController sddm = new ShareDataController();
                 sddm.run(this);
 
-                //Refresh Map
-                mapFragment.refreshMap();
+                //Refresh Map (The map is actually refreshed diectly by ShareDataController on success
+                //mapFragment.refreshMap();
             }
-
-            /*
-            //Only for DEVELOPE
-            //Show the log if no connection
-            Map<String,String> appUsersMap = StoredDataQuequesManager.getAppUsersMap(this);
-            Iterator it = appUsersMap.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry pair = (Map.Entry)it.next();
-                String userMail =  (String) pair.getKey();
-                String contactsData = MainActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_CONTACTS_DATA)+"_"+userMail);
-                Log.i("CONTACTS_DATA", "User:" + userMail + "    Data:" + contactsData);
-                it.remove(); // avoids a ConcurrentModificationException
-            }
-            String generalData = MainActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_POINTS_OF_INTEREST));
-            Log.i("GENERAL_DATA", "Data:" + generalData);
-            */
     }
 
 
@@ -566,45 +450,6 @@ public class PrincipalMapActivity extends AppCompatActivity
         finish();
     }
 
-    /**
-     * Build the Gooogle Map with local Tiles (Using CustomMapTileProvider)
-     * @param googleMap
-     */
-    /*
-    private void buildMap(GoogleMap googleMap) {
-        mMap = googleMap;
-        mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
-        //Set custom tiles
-        mMap.addTileOverlay(new TileOverlayOptions().tileProvider(new CustomMapTileProvider(getResources().getAssets())));
-        mMap.setOnCameraChangeListener(this);
-    }
-    */
-
-    /**
-     * Get the points from DAO (SafeggeesDAO) and set the markers on Map
-     */
-    private void refreshPointsInMap() {
-        /*
-        if (this.sDAO != null) {
-            ArrayList<POI> pois = this.sDAO.getPois();
-            for (int i = 0; i < pois.size(); i++) {
-                POI poi = pois.get(i);
-                Bitmap bitmap = getBitmap(R.drawable.ic_add_location_black_24dp);
-                this.mMap.addMarker(new MarkerOptions().position(poi.getPosition()).title(poi.getName()).snippet(poi.getDescription()).alpha(0.9f).icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
-            }
-
-            ArrayList<Contact> contacts = this.sDAO.getContacts();
-            for (int i = 0; i < contacts.size(); i++) {
-                Contact contact = contacts.get(i);
-                Bitmap bitmap = getBitmap(R.drawable.ic_person_pin_circle_black_24dp);
-                if (contact.getPosition() != null && contact.getLast_connection_date() != null)
-                    this.mMap.addMarker(new MarkerOptions().position(contact.getPosition()).title(contact.getEmail()).snippet(contact.getLast_connection_date().toString()).alpha(1f).icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
-                else if (contact.getPosition() != null)
-                    this.mMap.addMarker(new MarkerOptions().position(contact.getPosition()).title(contact.getEmail()).alpha(1f).icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
-            }
-        }
-        */
-    }
 
     @NonNull
     private Bitmap getBitmap(int drawable) {
@@ -631,70 +476,6 @@ public class PrincipalMapActivity extends AppCompatActivity
         return paint;
     }
 
-    /**
-     * Stablish the ZoomLevel as INIT_ZOOM and move Camera
-     */
-    private void setUpMap() {
-        /*
-        LatLng latLng = this.getUserLocation();
-        if (latLng == null) {
-            CameraUpdate upd = CameraUpdateFactory.newLatLngZoom(mMap.getCameraPosition().target, INIT_ZOOM);
-            mMap.moveCamera(upd);
-        }else{
-            //TEST
-            //Send user position
-            ShareDataController sdc = new ShareDataController();
-            sdc.sendUserPosition(this, MainActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)), latLng);
-            //The server is defined in this way
-            String userPosition = latLng.latitude + ","+latLng.longitude;
-            StoredDataQuequesManager.putUserPositionInPositionsQueque(this, MainActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)), userPosition);
-
-            //Move the camera to user position with init zoom
-            CameraUpdate upd = CameraUpdateFactory.newLatLngZoom(latLng, INIT_ZOOM);
-            mMap.moveCamera(upd);}
-            */
-    }
-
-    /**
-     * Fixing tile's y index (reversing order)
-     */
-    /**
-    private int fixYCoordinate(int y, int zoom) {
-        int size = 1 << zoom; // size = 2^zoom
-        return size - 1 - y;
-    }
-     */
-
-    /**
-     * Get Coarse Location if permission is granted
-     * @return latLng LatLong with the position
-     */
-     /*
-    private LatLng getUserLocation() {
-
-        LatLng latLng = null;
-        // Get the location manager
-        try {
-            LocationManager locationManager = (LocationManager)
-                    getSystemService(LOCATION_SERVICE);
-            Criteria criteria = new Criteria();
-            String bestProvider = locationManager.getBestProvider(criteria, false);
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED) {
-                Location location = locationManager.getLastKnownLocation(bestProvider);
-                latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                return latLng;
-            } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED) {
-                Location location = locationManager.getLastKnownLocation(bestProvider);
-                latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                return latLng;
-            }
-        }catch (Exception e){
-            return null;
-        }
-        return latLng;
-    }*/
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -849,5 +630,9 @@ public class PrincipalMapActivity extends AppCompatActivity
         //pickImage(v);
         Log.i("Clicked", "true");
 
+    }
+
+    public MapFragment getMapFragment(){
+        return mapFragment;
     }
 }
