@@ -151,6 +151,8 @@ public class MapFragment extends Fragment {
         this.view = inflater.inflate(R.layout.fragment_map, container, false);
         sDAO = SafegeesDAO.getInstance(getContext());
 
+        mKmlDocument = new KmlDocument();
+
         mapView = (MapView) this.view.findViewById(R.id.mapview);
         mapView = (MapView) this.view.findViewById(R.id.mapview);
         mapView.setMultiTouchControls(true);
@@ -169,7 +171,11 @@ public class MapFragment extends Fragment {
         myLocationOverlay.runOnFirstFix(new Runnable() {
             public void run() {
                 mapViewController.animateTo(myLocationOverlay.getMyLocation());
-                myLocationOverlay.enableFollowLocation();
+                //myLocationOverlay.disableFollowLocation();
+                myLocationOverlay.setPersonIcon(getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_user_position)));
+                myLocationOverlay.setDrawAccuracyEnabled(false);
+                mapView.getOverlays().add(myLocationOverlay);
+
             }
         });
 
@@ -230,7 +236,10 @@ public class MapFragment extends Fragment {
      * Get the points from sDAO (SafeggeesDAO) and set the markers on Map
      */
     private void refreshPointsInMap() {
-        mKmlDocument = new KmlDocument();
+
+
+        setStyles();
+
         mKmlDocument.parseKMLFile(FileManager.getFileStorePath("volunteers.kml"));
         Drawable defaultMarker = getResources().getDrawable(R.drawable.ic_add_location_black_24dp);
         FolderOverlay campaments = getFolderOverlay(defaultMarker);
@@ -242,6 +251,8 @@ public class MapFragment extends Fragment {
         defaultMarker = getResources().getDrawable(R.drawable.ic_airline_seat_individual_suite_black_24dp);
         FolderOverlay syrian = getFolderOverlay(defaultMarker);
         mapView.getOverlays().add(syrian);
+
+
 
         if (this.sDAO != null) {
 
@@ -259,7 +270,7 @@ public class MapFragment extends Fragment {
                 poisList.add(item);
             }
             */
-            Drawable contactDrawable = getResources().getDrawable(R.drawable.ic_person_pin_circle_black_24dp);
+            Drawable contactDrawable = getResources().getDrawable(R.drawable.ic_friend);
             ArrayList<Contact> contacts = this.sDAO.getContacts();
             for (int i = 0; i < contacts.size(); i++) {
                 Contact contact = contacts.get(i);
@@ -330,6 +341,27 @@ public class MapFragment extends Fragment {
 
     }
 
+    private void setStyles() {
+
+        Style style = new Style(getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_info)), 0x901010AA, 3.0f, 0x2010AA10);
+        mKmlDocument.putStyle("location_info",style);
+
+        style = new Style(getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_place_gray)), 0x901010AA, 3.0f, 0x2010AA10);
+        mKmlDocument.putStyle("location_gray",style);
+
+        style = new Style(getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_place_green)), 0x901010AA, 3.0f, 0x2010AA10);
+        mKmlDocument.putStyle("location_green",style);
+
+        style = new Style(getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_place_red)), 0x901010AA, 3.0f, 0x2010AA10);
+        mKmlDocument.putStyle("location_red",style);
+
+        style = new Style(getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_place_orange)), 0x901010AA, 3.0f, 0x2010AA10);
+        mKmlDocument.putStyle("location_orange",style);
+
+        style = new Style(getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_place_volunteers)), 0x901010AA, 3.0f, 0x2010AA10);
+        mKmlDocument.putStyle("location_volunteers",style);
+    }
+
     private FolderOverlay getFolderOverlay(Drawable defaultMarker) {
 
         Bitmap defaultBitmap = getBitmapFromDrawable(defaultMarker);
@@ -339,10 +371,11 @@ public class MapFragment extends Fragment {
         //13.2 Advanced styling with Styler
         KmlFeature.Styler styler = new MyKmlStyler(defaultStyle);
 
-        FolderOverlay kmlOverlay = (FolderOverlay) mKmlDocument.mKmlRoot.buildOverlay(mapView, null, null, mKmlDocument);
-        //FolderOverlay kmlOverlay = (FolderOverlay) mKmlDocument.mKmlRoot.buildOverlay(mapView, null, styler, mKmlDocument);
+        //FolderOverlay kmlOverlay = (FolderOverlay) mKmlDocument.mKmlRoot.buildOverlay(mapView, null, null, mKmlDocument);
+        FolderOverlay kmlOverlay = (FolderOverlay) mKmlDocument.mKmlRoot.buildOverlay(mapView, null, styler, mKmlDocument);
         List<Overlay> overlays = kmlOverlay.getItems();
         FolderOverlay folder = (FolderOverlay)overlays.get(0);
+
         List<Overlay> capmList = kmlOverlay.getItems();
         for (int i = 0 ; i < capmList.size() ; i++){
             Overlay ov = capmList.get(i);
@@ -441,20 +474,32 @@ public class MapFragment extends Fragment {
             //    kmlPlacemark.mStyle = "maxspeed";
             //kmlPoint.applyDefaultStyling(marker, mDefaultStyle, kmlPlacemark, mKmlDocument, mapView);
             Drawable contactDrawable = getResources().getDrawable(R.drawable.ic_airline_seat_individual_suite_black_24dp);
-            kmlPlacemark.mStyle ="Estilo";
+            //kmlPlacemark.mStyle ="Estilo";
             try {
+                Log.e("MARKER style", kmlPlacemark.mStyle != null ?  kmlPlacemark.mStyle.toString() : "none");
+
                 //Log.e("MARKER image", marker.getImage() != null ? marker.getImage().toString() : "none");
                 Log.e("MARKER image", marker.getInfoWindow() != null ? marker.getInfoWindow().toString() : "none");
             }catch(Exception e){}
 
-
-
-            /*
-            marker.getClass();
-            marker.setImage(contactDrawable);
-            marker.setIcon(contactDrawable);
-            marker.setEnabled(true);
+            if (kmlPlacemark.mStyle.equals("icon-503-F4EB37")){
+                kmlPlacemark.mStyle = "location_green";
+            }
+            /*else if (kmlPlacemark.mStyle.equals("icon-503-4186F0")){
+                kmlPlacemark.mStyle = "location_yellow";
+            }
             */
+            else if (kmlPlacemark.mStyle.equals("icon-503-DB4436")){
+                kmlPlacemark.mStyle = "location_red";
+            }else if(kmlPlacemark.mStyle.equals("icon-1255")) {
+                kmlPlacemark.mStyle = "location_volunteers";
+            }else if(kmlPlacemark.mStyle.equals("icon-503-4186F0")) {
+                kmlPlacemark.mStyle = "location_info";
+            }else {
+                kmlPlacemark.mStyle = "location_gray";
+            }
+
+            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_TOP);
 
             kmlPoint.applyDefaultStyling(marker, null, kmlPlacemark, mKmlDocument, mapView);
 
