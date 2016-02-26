@@ -1,22 +1,16 @@
 package org.safegees.safegees.gui.fragment;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.VectorDrawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -38,6 +32,7 @@ import org.osmdroid.bonuspack.kml.KmlPolygon;
 import org.osmdroid.bonuspack.kml.Style;
 import org.osmdroid.bonuspack.location.OverpassAPIProvider;
 import org.osmdroid.bonuspack.overlays.FolderOverlay;
+import org.osmdroid.bonuspack.overlays.InfoWindow;
 import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.bonuspack.overlays.Polygon;
 import org.osmdroid.bonuspack.overlays.Polyline;
@@ -55,6 +50,7 @@ import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import org.safegees.safegees.R;
+import org.safegees.safegees.gui.gui_utils.MapInfoWindow;
 import org.safegees.safegees.model.Contact;
 import org.safegees.safegees.model.LatLng;
 import org.safegees.safegees.model.POI;
@@ -171,9 +167,9 @@ public class MapFragment extends Fragment {
         myLocationOverlay.runOnFirstFix(new Runnable() {
             public void run() {
                 mapViewController.animateTo(myLocationOverlay.getMyLocation());
-                //myLocationOverlay.disableFollowLocation();
+                myLocationOverlay.disableFollowLocation();
                 myLocationOverlay.setPersonIcon(getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_user_position)));
-                myLocationOverlay.setDrawAccuracyEnabled(false);
+
                 mapView.getOverlays().add(myLocationOverlay);
 
             }
@@ -476,15 +472,18 @@ public class MapFragment extends Fragment {
             Drawable contactDrawable = getResources().getDrawable(R.drawable.ic_airline_seat_individual_suite_black_24dp);
             //kmlPlacemark.mStyle ="Estilo";
             try {
-                Log.e("MARKER style", kmlPlacemark.mStyle != null ?  kmlPlacemark.mStyle.toString() : "none");
+                //Log.e("MARKER subdescription", marker.getSubDescription() != null ?  marker.getSubDescription() : "none");
+                //Log.e("MARKER infowindow", marker.getInfoWindow() != null ?  marker.getInfoWindow().toString() : "none");
+                //Log.e("MARKER snippet", marker.getSnippet() != null ?  marker.getSnippet().toString() : "none");
+
 
                 //Log.e("MARKER image", marker.getImage() != null ? marker.getImage().toString() : "none");
-                Log.e("MARKER image", marker.getInfoWindow() != null ? marker.getInfoWindow().toString() : "none");
             }catch(Exception e){}
 
             if (kmlPlacemark.mStyle.equals("icon-503-F4EB37")){
                 kmlPlacemark.mStyle = "location_green";
             }
+
             /*else if (kmlPlacemark.mStyle.equals("icon-503-4186F0")){
                 kmlPlacemark.mStyle = "location_yellow";
             }
@@ -499,6 +498,8 @@ public class MapFragment extends Fragment {
                 kmlPlacemark.mStyle = "location_gray";
             }
 
+            //marker.getInfoWindow();
+            marker.setInfoWindow(new MapInfoWindow(mapView));
             marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_TOP);
 
             kmlPoint.applyDefaultStyling(marker, null, kmlPlacemark, mKmlDocument, mapView);
