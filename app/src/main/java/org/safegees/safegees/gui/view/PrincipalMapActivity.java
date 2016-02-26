@@ -48,6 +48,7 @@ import org.safegees.safegees.gui.fragment.MapFragment;
 import org.safegees.safegees.gui.fragment.NewsFragment;
 import org.safegees.safegees.gui.fragment.ProfileContactFragment;
 import org.safegees.safegees.gui.fragment.ProfileUserFragment;
+import org.safegees.safegees.gui.preferences.SettingsActivity;
 import org.safegees.safegees.util.Connectivity;
 import org.safegees.safegees.util.SafegeesDAO;
 import org.safegees.safegees.util.ShareDataController;
@@ -238,6 +239,10 @@ public class PrincipalMapActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
+            case R.id.action_settings:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+                return true;
             case R.id.action_close_session:
                 closeSession();
                 return true;
