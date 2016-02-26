@@ -527,6 +527,9 @@ public class PrincipalMapActivity extends AppCompatActivity
                 //Download data
                 ShareDataController sddm = new ShareDataController();
                 sddm.run(this);
+
+                //Refresh Map
+                mapFragment.refreshMap();
             }
 
             /*

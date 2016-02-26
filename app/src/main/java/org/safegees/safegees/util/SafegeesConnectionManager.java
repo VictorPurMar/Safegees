@@ -78,6 +78,9 @@ import org.safegees.safegees.R;
 import org.safegees.safegees.gui.view.MainActivity;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashMap;
 
 /**
@@ -233,16 +236,48 @@ public class SafegeesConnectionManager {
     }
 
     private boolean storeKlm(String fileName, String url){
+
+        //Prevent an unnecesary download
+        /*
+        int fileLenght = getFileLength(url);
+        if (!FileManager.getKMLFileStore(fileName + ".kml").exists() || MainActivity.DATA_STORAGE.getInt(fileName) != 0){
+        */
         KmlDocument mKmlDocument = new KmlDocument();
         Boolean parsed = mKmlDocument.parseKMLUrl(url);
         if(parsed){
             if (mKmlDocument.mKmlRoot != null) {
                 KmlFolder root = (KmlFolder) mKmlDocument.mKmlRoot;
-                //15. Loading and saving of GeoJSON content
                 mKmlDocument.saveAsKML(FileManager.getKMLFileStore(fileName + ".kml"));
+                //MainActivity.DATA_STORAGE.putInt(fileName, fileLenght);
+                //Log.e("STORED", "FILE " + fileName + " DATA SIZE " + fileLenght);
                 return true;
             }
         }
         return false;
+        /*
+        }
+
+        return true;*/
+    }
+
+    private int getFileLength(String fileUrl) {
+         int contentLegth = 0;
+        try {
+            URL url = new URL(fileUrl);
+            HttpURLConnection conn;
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.getInputStream();
+            contentLegth = conn.getContentLength();
+            if (contentLegth == -1 || contentLegth == 0){
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("HEAD");
+                conn.getInputStream();
+                contentLegth = conn.getContentLength();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return contentLegth;
     }
 }
