@@ -3,219 +3,166 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".gui.view.PrincipalMapActivity"
-    android:background="@color/colorPrimaryExtraLight"
+    android:background="@color/colorPrimaryBright"
     android:clickable="true">
+
+
+        <!-- NOTE: EditTextPreference accepts EditText attributes. -->
+        <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
+
+
+
+
     <ScrollView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary">
-    <ImageView
-        android:id="@+id/result"
-        android:layout_margin="20dp"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/default_user_rounded"
-        android:scaleType="centerCrop"
-        android:clickable="true"
-        android:onClick="pickImage"/>
-    </RelativeLayout>
-        <RelativeLayout
-            android:paddingTop="@dimen/fab_margin"
-            android:layout_margin="@dimen/nav_header_vertical_spacing"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <ImageView
-                android:id="@+id/edit_name"
-                android:clickable="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:layout_centerVertical="true"
-                android:scaleType="fitCenter"
-                android:layout_width="20sp"
-                android:layout_height="20sp"
-                android:src="@android:drawable/ic_menu_edit"
-                android:layout_marginStart="@dimen/fab_margin"
-                android:layout_marginLeft="@dimen/fab_margin"
-                android:tint="@color/colorPrimaryDark"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+        <ImageView
+            android:id="@+id/result"
+            android:layout_margin="20dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/default_user_rounded"
+            android:scaleType="centerCrop"
+            android:clickable="true"
+            android:onClick="pickImage"
+            android:layout_gravity="end"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Name"
+                android:layout_marginTop="5dp"
+                />
+
             <EditText
-                android:id="@+id/name"
-                android:layout_alignParentTop="true"
-                android:layout_centerVertical="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:background="@color/colorPrimaryExtraLight"
+                android:id="@+id/editName"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="Name"
-                android:ellipsize="end"
+                android:layout_height="wrap_content"
+                android:capitalize="words"
+                android:defaultValue="@string/pref_default_display_name"
+                android:key="example_text"
+                android:maxLines="1"
+                android:hint="your name"
+                android:onClick="setProfileField"
+                android:tag="1"
+                android:editable="false"
+                android:selectAllOnFocus="false"
                 android:singleLine="true"
-                android:textSize="14sp"
-                android:layout_toLeftOf="@+id/edit_name"
-                android:editable="false"
-                android:focusable="false"/>
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_margin="@dimen/nav_header_vertical_spacing"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <ImageView
-                android:id="@+id/edit_surname"
-                android:clickable="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:layout_centerVertical="true"
-                android:scaleType="fitCenter"
-                android:layout_width="20sp"
-                android:layout_height="20sp"
-                android:src="@android:drawable/ic_menu_edit"
-                android:layout_marginStart="@dimen/fab_margin"
-                android:layout_marginLeft="@dimen/fab_margin"
-                android:tint="@color/colorPrimaryDark"/>
-            <EditText
-                android:id="@+id/surname"
-                android:layout_alignParentTop="true"
-                android:layout_centerVertical="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:background="@color/colorPrimaryExtraLight"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="Surname"
-                android:ellipsize="end"
-                android:singleLine="true"
-                android:textSize="14sp"
-                android:layout_toLeftOf="@+id/edit_surname"
-                android:editable="false"
-                android:focusable="false"/>
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_margin="@dimen/nav_header_vertical_spacing"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <ImageView
-                android:id="@+id/edit_email"
-                android:clickable="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:layout_centerVertical="true"
-                android:scaleType="fitCenter"
-                android:layout_width="20sp"
-                android:layout_height="20sp"
-                android:src="@android:drawable/ic_menu_edit"
-                android:layout_marginStart="@dimen/fab_margin"
-                android:layout_marginLeft="@dimen/fab_margin"
-                android:tint="@color/colorPrimaryDark"/>
-            <EditText
-                android:id="@+id/email"
-                android:layout_alignParentTop="true"
-                android:layout_centerVertical="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:background="@color/colorPrimaryExtraLight"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="Email"
-                android:ellipsize="end"
-                android:singleLine="true"
-                android:textSize="14sp"
-                android:layout_toLeftOf="@+id/edit_email"
-                android:editable="false"
-                android:focusable="false"/>
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_margin="@dimen/nav_header_vertical_spacing"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <ImageView
-                android:id="@+id/edit_phone"
-                android:clickable="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:layout_centerVertical="true"
-                android:scaleType="fitCenter"
-                android:layout_width="20sp"
-                android:layout_height="20sp"
-                android:src="@android:drawable/ic_menu_edit"
-                android:layout_marginStart="@dimen/fab_margin"
-                android:layout_marginLeft="@dimen/fab_margin"
-                android:tint="@color/colorPrimaryDark"/>
-            <EditText
-                android:id="@+id/phone"
-                android:layout_alignParentTop="true"
-                android:layout_centerVertical="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:background="@color/colorPrimaryExtraLight"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="Phone"
-                android:ellipsize="end"
-                android:singleLine="true"
-                android:textSize="14sp"
-                android:layout_toLeftOf="@+id/edit_phone"
-                android:editable="false"
-                android:focusable="false"/>
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_margin="@dimen/nav_header_vertical_spacing"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <ImageView
-                android:id="@+id/edit_about"
-                android:clickable="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:layout_centerVertical="true"
-                android:scaleType="fitCenter"
-                android:layout_width="20sp"
-                android:layout_height="20sp"
-                android:src="@android:drawable/ic_menu_edit"
-                android:layout_marginStart="@dimen/fab_margin"
-                android:layout_marginLeft="@dimen/fab_margin"
-                android:tint="@color/colorPrimaryDark"/>
-            <EditText
-                android:id="@+id/about"
-                android:layout_alignParentTop="true"
-                android:layout_centerVertical="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:background="@color/colorPrimaryExtraLight"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="About me"
-                android:ellipsize="end"
-                android:singleLine="false"
-                android:lines="6"
-                android:maxLength="140"
-                android:textSize="14sp"
-                android:layout_toLeftOf="@+id/edit_about"
-                android:editable="false"
+                android:inputType="none"
                 android:focusable="false"
-                android:gravity="start"/>
+                android:background="@android:color/transparent"
+                android:layout_marginTop="10dp"/>
 
-        </RelativeLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#c0c0c0"
+                android:layout_marginTop="5dp" />
 
-    </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Surname"
+                android:layout_marginTop="5dp"
+                />
+
+            <EditText
+                android:id="@+id/editSurname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:capitalize="words"
+                android:defaultValue="@string/pref_default_display_name"
+                android:key="example_text"
+                android:maxLines="1"
+                android:hint="your surname"
+                android:onClick="setProfileField"
+                android:tag="2"
+                android:editable="false"
+                android:selectAllOnFocus="false"
+                android:singleLine="true"
+                android:inputType="none"
+                android:focusable="false"
+                android:background="@android:color/transparent"
+                android:layout_marginTop="10dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#c0c0c0"
+                android:layout_marginTop="5dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Email"
+                android:layout_marginTop="5dp"
+                />
+
+            <EditText
+                android:id="@+id/editEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:capitalize="words"
+                android:key="example_text"
+                android:maxLines="1"
+                android:hint="your email"
+                android:onClick="setProfileField"
+                android:tag="1"
+                android:editable="false"
+                android:selectAllOnFocus="false"
+                android:singleLine="true"
+                android:inputType="none"
+                android:focusable="false"
+                android:background="@android:color/transparent"
+                android:layout_marginTop="10dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#c0c0c0"
+                android:layout_marginTop="5dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Phone Number"
+                android:layout_marginTop="5dp"/>
+
+            <EditText
+                android:id="@+id/editPhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:capitalize="words"
+                android:defaultValue="@string/pref_default_display_name"
+                android:key="example_text"
+                android:maxLines="1"
+                android:hint="your phone"
+                android:onClick="setProfileField"
+                android:tag="4"
+                android:editable="false"
+                android:selectAllOnFocus="false"
+                android:singleLine="true"
+                android:inputType="none"
+                android:focusable="false"
+                android:background="@android:color/transparent"
+                android:layout_marginTop="10dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#c0c0c0"
+                android:layout_marginTop="5dp" />
+
+
+
+        </LinearLayout>
+
+
     </ScrollView>
 
 </FrameLayout>

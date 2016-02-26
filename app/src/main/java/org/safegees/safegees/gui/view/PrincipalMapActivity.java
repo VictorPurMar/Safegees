@@ -84,6 +84,7 @@ public class PrincipalMapActivity extends AppCompatActivity
 
 
     private MapFragment mapFragment;
+    private ProfileUserFragment profileFragment;
     private FloatingActionButton floatingUpdateButton;
     private static PrincipalMapActivity instance;       //Singleton
     //For image getting
@@ -149,7 +150,7 @@ public class PrincipalMapActivity extends AppCompatActivity
         instance = this;
     }
 
-    private void loadStoredStoredImage() {
+    private void loadStoredImage() {
         try {
 
             String filename = getUserImageFileName();
@@ -277,8 +278,8 @@ public class PrincipalMapActivity extends AppCompatActivity
             transaction.replace(R.id.map, fg,  "profile").addToBackStack("profile");
             transaction.commit();
             //Set the imageBitMap
-            ProfileUserFragment fgP = (ProfileUserFragment) fg;
-            fgP.setImageBitmap(bitmap);
+            this.profileFragment = (ProfileUserFragment) fg;
+            profileFragment.setImageBitmap(bitmap);
 
             mapFragment.onPause();
 
@@ -494,7 +495,7 @@ public class PrincipalMapActivity extends AppCompatActivity
             //Store in /images
             storeUserImage();
             //Reload the header image
-            loadStoredStoredImage();
+            loadStoredImage();
 
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -635,6 +636,12 @@ public class PrincipalMapActivity extends AppCompatActivity
         //pickImage(v);
         Log.i("Clicked", "true");
 
+    }
+
+    public void setProfileField(View v) {
+        if (profileFragment != null){
+            profileFragment.setProfileField(v);
+        }
     }
 
     public MapFragment getMapFragment(){

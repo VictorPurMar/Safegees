@@ -24,16 +24,20 @@
 package org.safegees.safegees.gui.fragment;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import org.safegees.safegees.R;
+import org.safegees.safegees.gui.view.PrincipalMapActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -54,6 +58,12 @@ public class ProfileUserFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    //Fields
+    private EditText editName;      //Tag 1
+    private EditText editSurname;   //Tag 2
+    private EditText editEmail;     //Tag 3
+    private EditText editPhone;     //Tag 4
 
     //Image selector
     private ImageView imageView;
@@ -97,6 +107,7 @@ public class ProfileUserFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile_user, container, false);
         imageView = (ImageView) view.findViewById(R.id.result);
+        editName = (EditText) view.findViewById(R.id.editName);
 
 
         if (this.bitmap != null){
@@ -168,5 +179,35 @@ public class ProfileUserFragment extends Fragment {
     public static Fragment newInstance() {
         ProfileUserFragment mFrgment = new ProfileUserFragment();
         return mFrgment;
+    }
+
+    public void setProfileField(View v){
+        AlertDialog.Builder builder = new AlertDialog.Builder(PrincipalMapActivity.getInstance());
+        // Get the layout inflater
+        LayoutInflater inflater = PrincipalMapActivity.getInstance().getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.profile_alert, null);
+        builder.setView(dialogView);
+
+        final EditText edt = (EditText) dialogView.findViewById(R.id.edit1);
+
+        if(Integer.parseInt((String)v.getTag())==1) {
+            edt.setText(editName.getText());
+            edt.setHint(editName.getHint());
+            builder.setTitle("Name");
+            builder.setMessage("Enter text below");
+            builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    editName.setText(edt.getText());
+                    editName.setHint(edt.getHint());
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                }
+            });
+        }
+        AlertDialog b = builder.create();
+        b.show();
+
     }
 }
