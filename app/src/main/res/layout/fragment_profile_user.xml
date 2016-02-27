@@ -9,13 +9,10 @@
 
         <!-- NOTE: EditTextPreference accepts EditText attributes. -->
         <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
-
-
-
-
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -32,31 +29,38 @@
             android:onClick="pickImage"
             android:layout_gravity="end"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Name"
-                android:layout_marginTop="5dp"
-                />
-
-            <EditText
-                android:id="@+id/editName"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:capitalize="words"
-                android:defaultValue="@string/pref_default_display_name"
-                android:key="example_text"
-                android:maxLines="1"
-                android:hint="your name"
+                android:orientation="vertical"
                 android:onClick="setProfileField"
-                android:tag="1"
-                android:editable="false"
-                android:selectAllOnFocus="false"
-                android:singleLine="true"
-                android:inputType="none"
-                android:focusable="false"
-                android:background="@android:color/transparent"
-                android:layout_marginTop="10dp"/>
+                android:tag="name">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Name"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/colorAccent"
+                    />
+                <EditText
+                    android:id="@+id/editName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:capitalize="words"
+                    android:maxLines="1"
+                    android:hint="your name"
+                    android:editable="false"
+                    android:selectAllOnFocus="false"
+                    android:singleLine="true"
+                    android:inputType="none"
+                    android:focusable="false"
+                    android:background="@android:color/transparent"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/colorPrimaryExtraDark"
+                    android:onClick="setProfileField"
+                    android:tag="name"/>
+
+            </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"
@@ -64,31 +68,38 @@
                 android:background="#c0c0c0"
                 android:layout_marginTop="5dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Surname"
-                android:layout_marginTop="5dp"
-                />
-
-            <EditText
-                android:id="@+id/editSurname"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:capitalize="words"
-                android:defaultValue="@string/pref_default_display_name"
-                android:key="example_text"
-                android:maxLines="1"
-                android:hint="your surname"
+                android:orientation="vertical"
                 android:onClick="setProfileField"
-                android:tag="2"
-                android:editable="false"
-                android:selectAllOnFocus="false"
-                android:singleLine="true"
-                android:inputType="none"
-                android:focusable="false"
-                android:background="@android:color/transparent"
-                android:layout_marginTop="10dp"/>
+                android:tag="surname">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Surname"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/colorAccent"
+                    />
+                <EditText
+                    android:id="@+id/editSurname"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:capitalize="words"
+                    android:maxLines="1"
+                    android:hint="your surname"
+                    android:editable="false"
+                    android:selectAllOnFocus="false"
+                    android:singleLine="true"
+                    android:inputType="none"
+                    android:focusable="false"
+                    android:background="@android:color/transparent"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/colorPrimaryExtraDark"
+                    android:onClick="setProfileField"
+                    android:tag="surname"/>
+
+            </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"
@@ -96,30 +107,38 @@
                 android:background="#c0c0c0"
                 android:layout_marginTop="5dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Email"
-                android:layout_marginTop="5dp"
-                />
-
-            <EditText
-                android:id="@+id/editEmail"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:capitalize="words"
-                android:key="example_text"
-                android:maxLines="1"
-                android:hint="your email"
+                android:orientation="vertical"
                 android:onClick="setProfileField"
-                android:tag="1"
-                android:editable="false"
-                android:selectAllOnFocus="false"
-                android:singleLine="true"
-                android:inputType="none"
-                android:focusable="false"
-                android:background="@android:color/transparent"
-                android:layout_marginTop="10dp"/>
+                android:tag="email">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Email"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/colorAccent"
+                    />
+                <EditText
+                    android:id="@+id/editEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:capitalize="words"
+                    android:maxLines="1"
+                    android:hint="your contact email"
+                    android:editable="false"
+                    android:selectAllOnFocus="false"
+                    android:singleLine="true"
+                    android:inputType="none"
+                    android:focusable="false"
+                    android:background="@android:color/transparent"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/colorPrimaryExtraDark"
+                    android:onClick="setProfileField"
+                    android:tag="email"/>
+
+            </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"
@@ -127,30 +146,76 @@
                 android:background="#c0c0c0"
                 android:layout_marginTop="5dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Phone Number"
-                android:layout_marginTop="5dp"/>
-
-            <EditText
-                android:id="@+id/editPhone"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:capitalize="words"
-                android:defaultValue="@string/pref_default_display_name"
-                android:key="example_text"
-                android:maxLines="1"
-                android:hint="your phone"
+                android:orientation="vertical"
                 android:onClick="setProfileField"
-                android:tag="4"
-                android:editable="false"
-                android:selectAllOnFocus="false"
-                android:singleLine="true"
-                android:inputType="none"
-                android:focusable="false"
-                android:background="@android:color/transparent"
-                android:layout_marginTop="10dp"/>
+                android:tag="phone">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Phone"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/colorAccent"
+                    />
+                <EditText
+                    android:id="@+id/editPhone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:capitalize="words"
+                    android:maxLines="1"
+                    android:hint="your contact phone"
+                    android:editable="false"
+                    android:selectAllOnFocus="false"
+                    android:singleLine="true"
+                    android:inputType="none"
+                    android:focusable="false"
+                    android:background="@android:color/transparent"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/colorPrimaryExtraDark"
+                    android:onClick="setProfileField"
+                    android:tag="phone"/>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#c0c0c0"
+                android:layout_marginTop="5dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:onClick="setProfileField"
+                android:tag="topic">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Public message"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/colorAccent"
+                    />
+                <EditText
+                    android:id="@+id/editTopic"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:capitalize="sentences"
+                    android:maxLines="5"
+                    android:hint="your public message"
+                    android:editable="false"
+                    android:selectAllOnFocus="false"
+                    android:singleLine="false"
+                    android:inputType="none"
+                    android:focusable="false"
+                    android:background="@android:color/transparent"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/colorPrimaryExtraDark"
+                    android:onClick="setProfileField"
+                    android:tag="topic"
+                    />
+            </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"

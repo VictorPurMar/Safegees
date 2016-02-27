@@ -150,7 +150,7 @@ public class PrincipalMapActivity extends AppCompatActivity
         instance = this;
     }
 
-    private void loadStoredImage() {
+    private void loadStoredStoredImage() {
         try {
 
             String filename = getUserImageFileName();
@@ -495,7 +495,7 @@ public class PrincipalMapActivity extends AppCompatActivity
             //Store in /images
             storeUserImage();
             //Reload the header image
-            loadStoredImage();
+            loadStoredStoredImage();
 
         }
         super.onActivityResult(requestCode, resultCode, data);

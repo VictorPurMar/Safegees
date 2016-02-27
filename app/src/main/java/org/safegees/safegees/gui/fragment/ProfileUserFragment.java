@@ -60,10 +60,11 @@ public class ProfileUserFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     //Fields
-    private EditText editName;      //Tag 1
-    private EditText editSurname;   //Tag 2
-    private EditText editEmail;     //Tag 3
-    private EditText editPhone;     //Tag 4
+    private EditText editName;      //Tag name
+    private EditText editSurname;   //Tag surname
+    private EditText editEmail;     //Tag email
+    private EditText editPhone;     //Tag phone
+    private EditText editTopic;     //Tag topic
 
     //Image selector
     private ImageView imageView;
@@ -108,6 +109,10 @@ public class ProfileUserFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_profile_user, container, false);
         imageView = (ImageView) view.findViewById(R.id.result);
         editName = (EditText) view.findViewById(R.id.editName);
+        editSurname = (EditText) view.findViewById(R.id.editSurname);
+        editEmail = (EditText) view.findViewById(R.id.editEmail);
+        editPhone = (EditText) view.findViewById(R.id.editPhone);
+        editTopic = (EditText) view.findViewById(R.id.editTopic);
 
 
         if (this.bitmap != null){
@@ -190,11 +195,11 @@ public class ProfileUserFragment extends Fragment {
 
         final EditText edt = (EditText) dialogView.findViewById(R.id.edit1);
 
-        if(Integer.parseInt((String)v.getTag())==1) {
+        if(v.getTag().equals("name")) {
             edt.setText(editName.getText());
             edt.setHint(editName.getHint());
             builder.setTitle("Name");
-            builder.setMessage("Enter text below");
+            //builder.setMessage("Enter text below");
             builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     editName.setText(edt.getText());
@@ -205,9 +210,75 @@ public class ProfileUserFragment extends Fragment {
                 public void onClick(DialogInterface dialog, int whichButton) {
                 }
             });
+            AlertDialog b = builder.create();
+            b.show();
+        }else if(v.getTag().equals("surname")) {
+            edt.setText(editSurname.getText());
+            edt.setHint(editSurname.getHint());
+            builder.setTitle("Surname");
+            builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    editSurname.setText(edt.getText());
+                    editSurname.setHint(edt.getHint());
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                }
+            });
+            AlertDialog b = builder.create();
+            b.show();
+        }else if(v.getTag().equals("email")) {
+            edt.setText(editEmail.getText());
+            edt.setHint(editEmail.getHint());
+            builder.setTitle("Public email");
+            builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    editEmail.setText(edt.getText());
+                    editEmail.setHint(edt.getHint());
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                }
+            });
+            AlertDialog b = builder.create();
+            b.show();
+        }else if(v.getTag().equals("phone")) {
+            edt.setText(editPhone.getText());
+            edt.setHint(editPhone.getHint());
+            builder.setTitle("Surname");
+            builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    editPhone.setText(edt.getText());
+                    editPhone.setHint(edt.getHint());
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                }
+            });
+            AlertDialog b = builder.create();
+            b.show();
+        }else if(v.getTag().equals("topic")) {
+            edt.setText(editTopic.getText());
+            edt.setHint(editTopic.getHint());
+            builder.setTitle("Public message");
+            builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    editTopic.setText(edt.getText());
+                    editTopic.setHint(edt.getHint());
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                }
+            });
+            AlertDialog b = builder.create();
+            b.show();
         }
-        AlertDialog b = builder.create();
-        b.show();
+
+
 
     }
 }
