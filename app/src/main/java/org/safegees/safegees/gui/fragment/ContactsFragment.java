@@ -24,6 +24,8 @@
 package org.safegees.safegees.gui.fragment;
 
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -108,8 +110,10 @@ public class ContactsFragment extends Fragment {
 
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), null));
 
+        //mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), R.drawable.line_separator));
+        //mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), null));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), R.drawable.line_separator,false,true));
         SafegeesDAO sDAO = SafegeesDAO.getInstance(getActivity());
         ArrayList<Contact> contacts = sDAO.getContacts();
 
