@@ -252,7 +252,7 @@ public class StoredDataQuequesManager {
 
         } catch (JSONException e) {
             //e.printStackTrace();
-            Log.e("StoredDataQuequesManager", "getStoredMap" + " failed to parse a JSON " + jsonTitle);
+            Log.e("StoredDataQuequesManage", "getStoredMap" + " failed to parse a JSON " + jsonTitle);
         }
         Log.i("JSON_GET_MAP", "Title:"+jsonTitle+ "Map:"+ userMap.toString());
         return userMap;

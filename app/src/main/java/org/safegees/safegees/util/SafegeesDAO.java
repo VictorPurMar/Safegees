@@ -34,6 +34,7 @@ import org.safegees.safegees.gui.view.MainActivity;
 import org.safegees.safegees.model.Contact;
 import org.safegees.safegees.model.LatLng;
 import org.safegees.safegees.model.POI;
+import org.safegees.safegees.model.User;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -46,6 +47,7 @@ public class SafegeesDAO {
 
     private static SafegeesDAO instance;
     private Context context;
+    private User userObjet;
     private ArrayList<Contact> contacts;
     private ArrayList<POI> pois;
 
@@ -71,8 +73,12 @@ public class SafegeesDAO {
 
 
     private void run() {
+
         this.pois = this.getPoisArray();
         this.contacts = this.getContactsArray();
+
+        //this will store and unique userObject with all the neccesary data
+        //this.userObjet = new User(null,null,this.contacts,MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_MAIL)),)
     }
 
     private ArrayList<Contact> getContactsArray() {
