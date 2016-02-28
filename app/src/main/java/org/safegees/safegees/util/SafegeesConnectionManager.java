@@ -89,6 +89,7 @@ import java.util.HashMap;
 public class SafegeesConnectionManager {
 
     private static final String SEPARATOR = File.separator;
+
     //URL
     static String WEB_BASE = "https://safegees.appspot.com/v1/";
     static String SERVICE_POSITION = "position";
@@ -96,23 +97,29 @@ public class SafegeesConnectionManager {
     static String SERVICE_KEY_USER = "user";
     static String SERVICE_AUTHORIZE = "authorized";
     static String SERVICE_POI = "map";
+    static String SERVICE_UPDATE = "update";
 
 
+    //GET AND POST FIELDS
+    static String KEY_MAIL = "email";
+    static String KEY_PASSWORD = "password";
+    static String KEY_POSITION = "position";
+    static String KEY_AUTHORIZED_EMAIL = "authorized_email";
     //Not implemented on server
     static String KEY_NAME = "name";
     static String KEY_SURNAME = "surname";
     static String KEY_PHONE = "telephone";
     static String KEY_BIO = "topic";
-    static String KEY_MAIL = "email";
-    static String KEY_PASSWORD = "password";
-    static String KEY_POSITION = "position";
+    static String KEY_DELETE = "delete";
+
+
 
 
 
     public void getPointsOfInterest(Context context){
         String url = WEB_BASE + SERVICE_POI;
         HashMap<String, String> mp = new HashMap<String, String>();
-        String response = new HttpUrlConnection().performGetCall(context, url, mp, null);
+        String response = new HttpUrlConnection().performGetCall(url, mp, null);
         //Store the response in conf preferences with key : contacts_data_mailfromuser
         if (this.isJSONValid(response)) {
             //Store the response in conf preferences with key : contacts_data_mailfromuser
@@ -124,7 +131,7 @@ public class SafegeesConnectionManager {
         String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_POSITION;
         HashMap<String, String> mp = new HashMap<String, String>();
         String auth = userEmail+":"+password;
-        String response  = new HttpUrlConnection().performGetCall(context, url, mp, auth);
+        String response  = new HttpUrlConnection().performGetCall(url, mp, auth);
 
         if (this.isJSONValid(response)) {
             //Store the response in conf preferences with key : contacts_data_mailfromuser
@@ -140,7 +147,7 @@ public class SafegeesConnectionManager {
         String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_AUTHORIZE;
         HashMap<String, String> mp = new HashMap<String, String>();
         String auth = user.getAuth();
-        String response  = new HttpUrlConnection().performGetCall(context, url, mp, auth);
+        String response  = new HttpUrlConnection().performGetCall(url, mp, auth);
 
         if (this.isJSONValid(response)) {
             //Store the response in conf preferences with key : contacts_data_mailfromuser
@@ -157,7 +164,7 @@ public class SafegeesConnectionManager {
         String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_POSITION;
         HashMap<String, String> mp = new HashMap<String, String>();
         String auth = user.getAuth();
-        String response  = new HttpUrlConnection().performGetCall(context, url, mp, auth);
+        String response  = new HttpUrlConnection().performGetCall(url, mp, auth);
         if (this.isJSONValid(response)) {
             //Store the response in conf preferences with key : contacts_data_mailfromuser
             MainActivity.DATA_STORAGE.putString(context.getResources().getString(R.string.KEY_USER_BASIC) + "_" + user.getEmail(), response);
@@ -173,7 +180,7 @@ public class SafegeesConnectionManager {
         HashMap<String, String> mp = new HashMap<String, String>();
         mp.put(KEY_POSITION,position);
         String auth = userEmail+":"+userPassword;
-        String response = new HttpUrlConnection().performPostCall(context, url, mp, auth);
+        String response = new HttpUrlConnection().performPostCall(url, mp, auth);
         if (response != null){
             Log.i("RESPONSE",response);
             return true;
@@ -194,7 +201,7 @@ public class SafegeesConnectionManager {
         HashMap<String, String> mp = new HashMap<String, String>();
         mp.put(KEY_NAME, user.getName());
         String auth = user.getAuth();
-        String response = new HttpUrlConnection().performPostCall(context, url, mp, auth);
+        String response = new HttpUrlConnection().performPostCall(url, mp, auth);
         if (response != null) {
             Log.i("RESPONSE", response);
             return true;
@@ -209,7 +216,7 @@ public class SafegeesConnectionManager {
         HashMap<String, String> mp = new HashMap<String, String>();
         mp.put(KEY_SURNAME, user.getSurname());
         String auth = user.getAuth();
-        String response = new HttpUrlConnection().performPostCall(context, url, mp, auth);
+        String response = new HttpUrlConnection().performPostCall(url, mp, auth);
         if (response != null) {
             Log.i("RESPONSE", response);
             return true;
@@ -224,7 +231,7 @@ public class SafegeesConnectionManager {
         HashMap<String, String> mp = new HashMap<String, String>();
         mp.put(KEY_BIO, user.getBio());
         String auth = user.getAuth();
-        String response = new HttpUrlConnection().performPostCall(context, url, mp, auth);
+        String response = new HttpUrlConnection().performPostCall(url, mp, auth);
         if (response != null) {
             Log.i("RESPONSE", response);
             return true;
@@ -239,7 +246,7 @@ public class SafegeesConnectionManager {
         HashMap<String, String> mp = new HashMap<String, String>();
         mp.put(KEY_PHONE, user.getPhoneNumber());
         String auth = user.getAuth();
-        String response = new HttpUrlConnection().performPostCall(context, url, mp, auth);
+        String response = new HttpUrlConnection().performPostCall( url, mp, auth);
         if (response != null) {
             Log.i("RESPONSE", response);
             return true;
@@ -262,7 +269,7 @@ public class SafegeesConnectionManager {
         mp.put(KEY_SURNAME, surname);
         mp.put(KEY_PHONE, telephone);
         mp.put(KEY_BIO, topic);
-        String response = new HttpUrlConnection().performPostCall(context, url, mp, null);
+        String response = new HttpUrlConnection().performPostCall(url, mp, null);
         if (response != null){
             Log.i("RESPONSE",response);
             return true;
@@ -272,13 +279,33 @@ public class SafegeesConnectionManager {
         }
     }
 
+    //TO CHANGE IN SERVER
+    ////////////////////////////////////////////////////////////////////
+    //NOT IMPLEMENTED ON SERVER
+    ////////////////////////////////////////////////////////////////////
+    public boolean userUnRegister(Context context, User user){
+        String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR;
+        HashMap<String, String> mp = new HashMap<String, String>();
+        mp.put(KEY_DELETE,user.getEmail());
+        String auth = user.getAuth();
+        String response = new HttpUrlConnection().performPostCall(url, mp, auth);
+        if (response != null){
+            Log.i("RESPONSE",response);
+            return true;
+        }else{
+            Log.e("REGISTER","Not registered");
+            return false;
+        }
+    }
+    ////////////////////////////////////////////////////////////////////
+
     public boolean checkLogging(Context context, String user, String password){
         String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_LOGIN + SEPARATOR;
         HashMap<String, String> mp = new HashMap<String, String>();
         mp.put(KEY_MAIL,user);
         mp.put(KEY_PASSWORD, password);
         String auth = user+":"+password;
-        String response  = new HttpUrlConnection().performPostCall(context, url, mp, auth);
+        String response  = new HttpUrlConnection().performPostCall(url, mp, auth);
 
         if (response != null){
             Log.i("RESPONSE",response);
@@ -294,11 +321,10 @@ public class SafegeesConnectionManager {
 
     public boolean addNewContact(Context context, String userMail, String userPassword, String contactEmail){
         String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_AUTHORIZE + SEPARATOR;
-
         HashMap<String, String> mp = new HashMap<String, String>();
-        mp.put( context.getResources().getString(R.string.POST_KEY_BODY_AUTHORIZED_EMAIL),contactEmail);
+        mp.put(KEY_AUTHORIZED_EMAIL,contactEmail);
         String auth = userMail+":"+userPassword;
-        String response  = new HttpUrlConnection().performPostCall(context, url, mp, auth);
+        String response  = new HttpUrlConnection().performPostCall(url, mp, auth);
 
         if (response != null){
             Log.i("RESPONSE", response);
@@ -316,9 +342,9 @@ public class SafegeesConnectionManager {
     public boolean deleteContact(Context context, User user, String contactEmail){
         String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_AUTHORIZE + SEPARATOR;
         HashMap<String, String> mp = new HashMap<String, String>();
-        mp.put( context.getResources().getString(R.string.POST_KEY_BODY_UNAUTHORIZED_EMAIL),contactEmail);
+        mp.put(KEY_DELETE,contactEmail);
         String auth = user.getAuth();
-        String response  = new HttpUrlConnection().performPostCall(context, url, mp, auth);
+        String response  = new HttpUrlConnection().performPostCall(url, mp, auth);
 
         if (response != null){
             Log.i("RESPONSE", response);
@@ -328,6 +354,45 @@ public class SafegeesConnectionManager {
             return false;
         }
     }
+    ////////////////////////////////////////////////////////////////////
+
+    //TO CHANGE IN SERVER
+    ////////////////////////////////////////////////////////////////////
+    //NOT IMPLEMENTED ON SERVER
+    ////////////////////////////////////////////////////////////////////
+
+    public boolean updateUserPassword(User user){
+        String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_UPDATE + SEPARATOR;
+        HashMap<String, String> mp = new HashMap<String, String>();
+        mp.put(KEY_PASSWORD,user.getPassword());
+        String auth = user.getAuth();
+        String response  = new HttpUrlConnection().performPostCall(url, mp, auth);
+
+        if (response != null){
+            Log.i("RESPONSE", response);
+            return true;
+        }else{
+            Log.e("UPDATE_PASSWORD", "Password not updated");
+            return false;
+        }
+    }
+
+    public boolean updateUserEmail(User user){
+        String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_UPDATE + SEPARATOR;
+        HashMap<String, String> mp = new HashMap<String, String>();
+        mp.put(KEY_MAIL,user.getEmail());
+        String auth = user.getAuth();
+        String response  = new HttpUrlConnection().performPostCall(url, mp, auth);
+
+        if (response != null){
+            Log.i("RESPONSE", response);
+            return true;
+        }else{
+            Log.e("UPDATE_PASSWORD", "Password not updated");
+            return false;
+        }
+    }
+
     ////////////////////////////////////////////////////////////////////
 
     public boolean isJSONValid(String test) {

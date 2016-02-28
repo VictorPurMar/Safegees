@@ -51,9 +51,10 @@ import java.util.Map;
 public class HttpUrlConnection {
     private static final int READ_TIMEOUT = 150000;
     private static final int CONNECTION_TIMEOUT = 150000;
+    private static String KEY_HEADER_AUTHORIZED = "auth";
 
 
-    public String performGetCall(Context context, String requestURL,
+    public String performGetCall(String requestURL,
                                  HashMap<String, String> postDataParams, String userCredentials) {
 
         DefaultHttpClient httpclient = new DefaultHttpClient();
@@ -80,7 +81,7 @@ public class HttpUrlConnection {
 
     }
 
-    public String performPostCall(Context context, String requestURL,
+    public String performPostCall(String requestURL,
                                  HashMap<String, String> postDataParams, String userCredentials) {
 
         DefaultHttpClient httpclient = new DefaultHttpClient();
@@ -95,7 +96,7 @@ public class HttpUrlConnection {
              httpPost.setHeader("Accept", "application/json");
              httpPost.setHeader("Content-type", "application/x-www-form-urlencoded; charset=UTF-8");
             //Add the auth header
-            if (userCredentials != null) httpPost.addHeader("auth" , userCredentials);
+            if (userCredentials != null) httpPost.addHeader(KEY_HEADER_AUTHORIZED, userCredentials);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
