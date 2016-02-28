@@ -104,6 +104,9 @@ public class ShareDataController {
                 //Send all the Add Contacts Queque fields
                 sendAddContactsQueque(scc);
 
+                //send user info basic data
+                //name, surname, 
+
                 //Send all the User Positions Queque
 
                 //sendUserPositionsQueque(scc);
@@ -286,7 +289,7 @@ public class ShareDataController {
 
             if (Connectivity.isNetworkAvaiable(this.context)) {
                 String userPassword = StoredDataQuequesManager.getUserPassword(this.context, this.userEmail);
-                String latLongString = this.latLng.getLatitude()+","+this.latLng.getLongitude();
+                String latLongString = this.latLng.toString();
                 return (scc.updateUserPosition(this.context, this.userEmail, userPassword,latLongString));
             }
             return false;

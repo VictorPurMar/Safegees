@@ -149,4 +149,8 @@ public class User {
     public int hashCode() {
         return email.hashCode();
     }
+
+    public String getAuth(){
+        return this.name+":"+this.password;
+    }
 }

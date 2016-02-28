@@ -87,7 +87,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         }else if(emailStr.length() <= 3 && passwordStr.length() <= 3){
             Toast.makeText(this, "Email or password no valid", Toast.LENGTH_SHORT).show();
         }else{
-            UserRegisterTask urt = new UserRegisterTask(this, emailStr, passwordStr);
+            UserRegisterTask urt = new UserRegisterTask(this,email2Str,password2Str,nameStr,surnameStr,phoneStr,bioStr);
             urt.execute();
         }
 
@@ -100,13 +100,21 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
 
         private Context context;
-        private final String mEmail;
-        private final String mPassword;
+        private String name;
+        private String surname;
+        private String email;
+        private String password;
+        private String phone;
+        private String bio;
 
-        UserRegisterTask(Context context, String email, String password) {
+        UserRegisterTask(Context context, String email, String password, String name, String surname, String phone, String bio) {
             this.context = context;
-            this.mEmail = email;
-            this.mPassword = password;
+            this.email = email;
+            this.password = password;
+            this.name = name;
+            this.surname = surname;
+            this.phone = phone;
+            this.bio = bio;
         }
 
         @Override
@@ -117,7 +125,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             try {
                 // Simulate network access.
                 SafegeesConnectionManager scc = new SafegeesConnectionManager();
-                isRegistered = scc.userRegister(this.context, this.mEmail, this.mPassword);
+                isRegistered = scc.userRegister(this.context,this.email,this.password,this.name,this.surname,this.phone,this.bio);
             } catch (Exception e) {
                 return false;
             }
