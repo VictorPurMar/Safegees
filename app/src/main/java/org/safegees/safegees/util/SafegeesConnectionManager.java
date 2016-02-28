@@ -105,7 +105,7 @@ public class SafegeesConnectionManager {
     static String KEY_BIO = "topic";
     static String KEY_MAIL = "email";
     static String KEY_PASSWORD = "password";
-    static String KEY_USER = "user";
+    static String KEY_POSITION = "position";
 
 
 
@@ -132,6 +132,24 @@ public class SafegeesConnectionManager {
         }
     }
 
+    //TO CHANGE IN SERVER
+    ////////////////////////////////////////////////////////////////////
+    //NOT IMPLEMENTED ON SERVER
+    ////////////////////////////////////////////////////////////////////
+    public void getAuthorizedByUserContacts(Context context, User user){
+        String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_AUTHORIZE;
+        HashMap<String, String> mp = new HashMap<String, String>();
+        String auth = user.getAuth();
+        String response  = new HttpUrlConnection().performGetCall(context, url, mp, auth);
+
+        if (this.isJSONValid(response)) {
+            //Store the response in conf preferences with key : contacts_data_mailfromuser
+            MainActivity.DATA_STORAGE.putString(context.getResources().getString(R.string.KEY_AUTHORIZED) + "_" + user.getEmail(), response);
+        }
+    }
+    /////////////////////////////////////////////////////////////////////
+
+    //TO CHANGE IN SERVER
     ////////////////////////////////////////////////////////////////////
     //NOT IMPLEMENTED ON SERVER
     ////////////////////////////////////////////////////////////////////
@@ -153,7 +171,7 @@ public class SafegeesConnectionManager {
         //Get user password and data from storage
         String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_POSITION + SEPARATOR;
         HashMap<String, String> mp = new HashMap<String, String>();
-        mp.put("position",position);
+        mp.put(KEY_POSITION,position);
         String auth = userEmail+":"+userPassword;
         String response = new HttpUrlConnection().performPostCall(context, url, mp, auth);
         if (response != null){
@@ -166,6 +184,7 @@ public class SafegeesConnectionManager {
 
     }
 
+    //TO CHANGE IN SERVER
     ////////////////////////////////////////////////////////////////////
     //NOT IMPLEMENTED ON SERVER
     ////////////////////////////////////////////////////////////////////
@@ -232,6 +251,7 @@ public class SafegeesConnectionManager {
     ////////////////////////////////////////////////////////////////////
 
 
+    //TO CHANGE IN SERVER
     //Actually the server only stores email and passowd
     public boolean userRegister(Context context, String user, String password, String name, String surname, String telephone, String topic){
         String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR;
@@ -255,8 +275,8 @@ public class SafegeesConnectionManager {
     public boolean checkLogging(Context context, String user, String password){
         String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_LOGIN + SEPARATOR;
         HashMap<String, String> mp = new HashMap<String, String>();
-        mp.put("email",user);
-        mp.put("password", password);
+        mp.put(KEY_MAIL,user);
+        mp.put(KEY_PASSWORD, password);
         String auth = user+":"+password;
         String response  = new HttpUrlConnection().performPostCall(context, url, mp, auth);
 
@@ -288,6 +308,27 @@ public class SafegeesConnectionManager {
             return false;
         }
     }
+
+    //TO CHANGE IN SERVER
+    ////////////////////////////////////////////////////////////////////
+    //NOT IMPLEMENTED ON SERVER
+    ////////////////////////////////////////////////////////////////////
+    public boolean deleteContact(Context context, User user, String contactEmail){
+        String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_AUTHORIZE + SEPARATOR;
+        HashMap<String, String> mp = new HashMap<String, String>();
+        mp.put( context.getResources().getString(R.string.POST_KEY_BODY_UNAUTHORIZED_EMAIL),contactEmail);
+        String auth = user.getAuth();
+        String response  = new HttpUrlConnection().performPostCall(context, url, mp, auth);
+
+        if (response != null){
+            Log.i("RESPONSE", response);
+            return true;
+        }else{
+            Log.e("ADD_CONTACT", "Contact not added");
+            return false;
+        }
+    }
+    ////////////////////////////////////////////////////////////////////
 
     public boolean isJSONValid(String test) {
         try {

@@ -45,10 +45,12 @@
     <string name="POST_KEY_BODY_EMAIL">email</string>
     <string name="POST_KEY_BODY_PASSWORD">password</string>
     <string name="POST_KEY_BODY_AUTHORIZED_EMAIL">authorized_email</string>
+    <string name="POST_KEY_BODY_UNAUTHORIZED_EMAIL">unauthorized_email</string>
     <string name="POST_KEY_BODY_POSITION">position</string>
 
     <!-- Connection controller messages (get - post) -->
     <string name="KEY_CONTACTS_DATA">friends</string>
+    <string name="KEY_AUTHORIZED">authorized</string>
     <string name="KEY_USER_BASIC">user</string>
     <string name="KEY_POINTS_OF_INTEREST">organitations</string>
     <string name="KEY_IS_LOGED">isLoged</string>
