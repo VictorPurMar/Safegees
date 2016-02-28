@@ -30,10 +30,12 @@ import android.view.Gravity;
 import android.widget.Toast;
 
 
+import org.safegees.safegees.R;
 import org.safegees.safegees.gui.view.MainActivity;
 import org.safegees.safegees.gui.view.PrincipalMapActivity;
 import org.safegees.safegees.model.LatLng;
 import org.safegees.safegees.model.PrivateUser;
+import org.safegees.safegees.model.PublicUser;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -110,8 +112,8 @@ public class ShareDataController {
                 sendAddContactsQueque(scc);
 
                 //NOT IMPLEMENTED IN SERVER
-                //Send all the Remove Contact Queque fields
-                //sendDeleteContactsQueque(scc);
+                //Send all the Remove PublicUser Queque fields
+                sendDeleteContactsQueque(scc);
 
                 //Send all the PrivateUser Positions Queque
                 sendUserPositionsQueque(scc);
@@ -131,12 +133,19 @@ public class ShareDataController {
                 while (it.hasNext()) {
                     Map.Entry pair = (Map.Entry) it.next();
                     String userMail = (String) pair.getKey();
-                    String userPosition = (String) pair.getValue();
-                    String userPassword = StoredDataQuequesManager.getUserPassword(context, userMail);
+                    String userPassword = (String) pair.getValue();
                     try {
-                        scc.updateUserPosition(this.context, userMail, userPassword, userPosition);
+                        String publicUserStr = this.context.getResources().getString(R.string.KEY_USER_BASIC) + "_" + userEmail;
+                        if (publicUserStr!= null){
+                            PublicUser pu = PublicUser.getPublicUserFromJSON(publicUserStr);
+                            if (pu != null){
+                                PrivateUser pr = new PrivateUser(userMail, userPassword,pu);
+                                if (pr != null)scc.updateUserBasic(pr);
+                            }
+                        }
+                        scc.getUserBasic(this.context, userMail, userPassword);
                     } catch (Exception e) {
-                        Log.e("UPDATE_USER_POSITION", e.getMessage());
+                        Log.e("sendUserPositionsQueque", e.getMessage());
                     }
                     it.remove(); // avoids a ConcurrentModificationException
                 }
@@ -151,9 +160,17 @@ public class ShareDataController {
                 String userMail = (String) pair.getKey();
                 String userPassword = (String) pair.getValue();
                 try {
+                    String publicUserStr = this.context.getResources().getString(R.string.KEY_USER_BASIC) + "_" + userEmail;
+                    if (publicUserStr!= null){
+                        PublicUser pu = PublicUser.getPublicUserFromJSON(publicUserStr);
+                        if (pu != null){
+                            PrivateUser pr = new PrivateUser(userMail, userPassword,pu);
+                            if (pr != null)scc.updateUserBasic(pr);
+                        }
+                    }
                     scc.getUserBasic(this.context, userMail, userPassword);
                 } catch (Exception e) {
-                    Log.e("GetContactsData", e.getMessage());
+                    Log.e("sendUserDataQueque", e.getMessage());
                 }
                 it.remove(); // avoids a ConcurrentModificationException
             }
@@ -174,7 +191,7 @@ public class ShareDataController {
                             StoredDataQuequesManager.removeContactToAddInQueque(this.context, userMail, contactEmail);
                         }
                     } catch (Exception e) {
-                        Log.e("GetContactsData", e.getMessage());
+                        Log.e("sendAddContactsQueque", e.getMessage());
                     }
                     it.remove(); // avoids a ConcurrentModificationException
                 }
@@ -188,20 +205,22 @@ public class ShareDataController {
         private void sendDeleteContactsQueque(SafegeesConnectionManager scc) {
 
             Map<String, String> adContactsMap = StoredDataQuequesManager.getDeleteContactsMapQueque(this.context);
-            Iterator it = adContactsMap.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry pair = (Map.Entry) it.next();
-                String userMail = (String) pair.getKey();
-                String contactEmail = (String) pair.getValue();
-                String userPassword = StoredDataQuequesManager.getUserPassword(context, userMail);
-                try {
-                    if (scc.deleteContact(userMail, userPassword, contactEmail)) {
-                        StoredDataQuequesManager.removeContactToDeleteInQueque(this.context, userMail, contactEmail);
+            if (adContactsMap != null) {
+                Iterator it = adContactsMap.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry pair = (Map.Entry) it.next();
+                    String userMail = (String) pair.getKey();
+                    String contactEmail = (String) pair.getValue();
+                    String userPassword = StoredDataQuequesManager.getUserPassword(context, userMail);
+                    try {
+                        if (scc.deleteContact(userMail, userPassword, contactEmail)) {
+                            StoredDataQuequesManager.removeContactToDeleteInQueque(this.context, userMail, contactEmail);
+                        }
+                    } catch (Exception e) {
+                        Log.e("sendDeleteContactsQu", e.getMessage());
                     }
-                } catch (Exception e) {
-                    Log.e("GetContactsData", e.getMessage());
+                    it.remove(); // avoids a ConcurrentModificationException
                 }
-                it.remove(); // avoids a ConcurrentModificationException
             }
         }
 
@@ -215,7 +234,7 @@ public class ShareDataController {
                 Iterator it = appUsersMap.entrySet().iterator();
 
                 //NOT IMPLEMENTED ON SERVER YET
-            /*
+
             while (it.hasNext()) {
                 Map.Entry pair = (Map.Entry) it.next();
                 String userMail = (String) pair.getKey();
@@ -223,11 +242,11 @@ public class ShareDataController {
                 try {
                     scc.getUserBasic(this.context, userMail, userPassword);
                 } catch (Exception e) {
-                    Log.e("GetContactsData", e.getMessage());
+                    Log.e("getAppUsersData", e.getMessage());
                 }
                 it.remove();
             }
-            */
+
 
 
                 //Get and store contacts data from all the app users

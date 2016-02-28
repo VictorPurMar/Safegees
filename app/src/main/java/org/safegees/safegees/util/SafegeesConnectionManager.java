@@ -196,6 +196,29 @@ public class SafegeesConnectionManager {
     //NOT IMPLEMENTED ON SERVER
     ////////////////////////////////////////////////////////////////////
 
+    public boolean updateUserBasic(PrivateUser privateUser){
+        String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_UPDATE + SEPARATOR;
+        HashMap<String, String> mp = new HashMap<String, String>();
+        mp.put(KEY_MAIL,privateUser.getPublicEmail());
+        mp.put(KEY_NAME, privateUser.getName());
+        mp.put(KEY_SURNAME, privateUser.getSurname());
+        mp.put(KEY_PHONE, privateUser.getPhoneNumber());
+        mp.put(KEY_BIO, privateUser.getBio());
+        mp.put(KEY_POSITION, privateUser.getPosition().toString());
+        String auth = this.getAuth(privateUser.getPrivateEmail(), privateUser.getPassword());
+        String response = new HttpUrlConnection().performPostCall(url, mp, auth);
+        if (response != null){
+            Log.i("RESPONSE",response);
+            return true;
+        }else{
+            Log.e("UPDATE USER BASIC","Not updated");
+            return false;
+        }
+
+    }
+
+    /*
+
     public boolean updateUserName(Context context, PrivateUser privateUser) {
         String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + KEY_NAME + SEPARATOR;
         HashMap<String, String> mp = new HashMap<String, String>();
@@ -255,6 +278,7 @@ public class SafegeesConnectionManager {
             return false;
         }
     }
+    */
     ////////////////////////////////////////////////////////////////////
 
 

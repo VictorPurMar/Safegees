@@ -24,21 +24,31 @@
 package org.safegees.safegees.model;
 
 
+import android.util.Log;
+
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 /**
  * Created by victor on 2/1/16.
  */
-public class PrivateUser extends Contact {
+public class PrivateUser extends PublicUser {
     private String privateEmail;
     private String password;
     private ArrayList <Friend> friends;
     private ArrayList <AllowedContact> allowedContacts;
 
     public PrivateUser(ArrayList<AllowedContact> allowedContacts, String bio, ArrayList<Friend> friends, String privateEmail, String imagePath, String name, String password, String phoneNumber, LatLng position, String publicEmail, String surname) {
-        super (bio,publicEmail, imagePath, name,phoneNumber,position,surname);
+        super (bio,publicEmail, name,phoneNumber,position,surname);
         this.allowedContacts = allowedContacts;
         this.friends = friends;
+        this.privateEmail = privateEmail;
+        this.password = password;
+    }
+
+    public PrivateUser(String privateEmail,String password, PublicUser pu) {
+        super (pu.getBio(),pu.getPublicEmail(), pu.getName(),pu.getPhoneNumber(),pu.getPosition(),pu.getSurname());
         this.privateEmail = privateEmail;
         this.password = password;
     }
@@ -95,8 +105,5 @@ public class PrivateUser extends Contact {
         return this.getPrivateEmail()+":"+this.password;
     }
 
-    public static PrivateUser getPrivateUserFromJSON(String privateUserJSON){
 
-        return null;
-    }
 }
