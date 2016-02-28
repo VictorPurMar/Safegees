@@ -33,6 +33,7 @@ import android.widget.Toast;
 import org.safegees.safegees.gui.view.MainActivity;
 import org.safegees.safegees.gui.view.PrincipalMapActivity;
 import org.safegees.safegees.model.LatLng;
+import org.safegees.safegees.model.PrivateUser;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -111,11 +112,10 @@ public class ShareDataController {
 
                 //sendUserPositionsQueque(scc);
 
-
+                return true;
             }
 
-            // TODO: register the new account here.
-            return true;
+            return false;
         }
 
         private void sendUserPositionsQueque(SafegeesConnectionManager scc) {
@@ -277,8 +277,6 @@ public class ShareDataController {
             this.context = context;
             this.userEmail = userEmail;
             this.latLng = latLng;
-
-
         }
 
         @Override

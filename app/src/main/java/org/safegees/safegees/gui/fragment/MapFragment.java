@@ -47,6 +47,7 @@ import org.safegees.safegees.R;
 import org.safegees.safegees.gui.gui_utils.MapInfoWindow;
 import org.safegees.safegees.model.Friend;
 import org.safegees.safegees.model.LatLng;
+import org.safegees.safegees.model.POI;
 import org.safegees.safegees.util.Connectivity;
 import org.safegees.safegees.util.FileManager;
 import org.safegees.safegees.util.SafegeesDAO;
@@ -232,7 +233,7 @@ public class MapFragment extends Fragment {
 
         //mKmlDocument = new KmlDocument();
         mKmlDocument.parseKMLFile(FileManager.getFileStorePath("syrian.kml"));
-        defaultMarker = getResources().getDrawable(R.drawable.ic_airline_seat_individual_suite_black_24dp);
+        defaultMarker = getResources().getDrawable(R.drawable.ic_place_gray);
         FolderOverlay syrian = getFolderOverlay(defaultMarker);
         mapView.getOverlays().add(syrian);
 
@@ -240,10 +241,10 @@ public class MapFragment extends Fragment {
 
         if (this.sDAO != null) {
 
-            ArrayList<OverlayItem> poisList = new ArrayList<OverlayItem>();
+            ArrayList<OverlayItem> poiList = new ArrayList<OverlayItem>();
             ArrayList<OverlayItem> contactList = new ArrayList<OverlayItem>();
-            /*
-            Drawable poiDrawable = getResources().getDrawable(R.drawable.ic_add_location_black_24dp);
+
+            Drawable poiDrawable = getResources().getDrawable(R.drawable.ic_default_safegees);
             ArrayList<POI> pois = this.sDAO.getPois();
             for (int i = 0; i < pois.size(); i++) {
                 POI poi = pois.get(i);
@@ -251,9 +252,9 @@ public class MapFragment extends Fragment {
                 GeoPoint geopoint = new GeoPoint(latLng.getLatitude(), latLng.getLongitude());
                 OverlayItem item = new OverlayItem(poi.getName(), poi.getDescription(), geopoint);
                 item.setMarker(poiDrawable);
-                poisList.add(item);
+                poiList.add(item);
             }
-            */
+
             Drawable contactDrawable = getResources().getDrawable(R.drawable.ic_friend);
             ArrayList<Friend> friends = this.sDAO.getFriends();
             for (int i = 0; i < friends.size(); i++) {
@@ -270,7 +271,7 @@ public class MapFragment extends Fragment {
             if (getActivity().getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
                 actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
             }
-            /*
+
             ItemizedIconOverlay poiOverlay = new ItemizedIconOverlay(poiList, poiDrawable, new ItemizedIconOverlay.OnItemGestureListener() {
                 @Override
                 public boolean onItemSingleTapUp(int index, Object item) {
@@ -288,7 +289,7 @@ public class MapFragment extends Fragment {
                     return false;
                 }
             }, new DefaultResourceProxyImpl(getContext()));
-            */
+
 
             ItemizedIconOverlay contactOverlay = new ItemizedIconOverlay(contactList, contactDrawable, new ItemizedIconOverlay.OnItemGestureListener() {
                 @Override
@@ -310,9 +311,8 @@ public class MapFragment extends Fragment {
 
 
             mapView.getOverlays().add(contactOverlay);
-            /*
             mapView.getOverlays().add(poiOverlay);
-            */
+
         }
         //KMLTask kml = new KMLTask(this.getContext());
         //kml.execute();
