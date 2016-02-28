@@ -112,7 +112,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:onClick="setProfileField"
-                android:tag="email">
+                android:tag="publicEmail">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -126,7 +126,7 @@
                     android:layout_height="wrap_content"
                     android:capitalize="words"
                     android:maxLines="1"
-                    android:hint="your contact email"
+                    android:hint="your friend publicEmail"
                     android:editable="false"
                     android:selectAllOnFocus="false"
                     android:singleLine="true"
@@ -136,7 +136,7 @@
                     android:layout_marginTop="10dp"
                     android:textColor="@color/colorPrimaryExtraDark"
                     android:onClick="setProfileField"
-                    android:tag="email"/>
+                    android:tag="publicEmail"/>
 
             </LinearLayout>
 
@@ -165,7 +165,7 @@
                     android:layout_height="wrap_content"
                     android:capitalize="words"
                     android:maxLines="1"
-                    android:hint="your contact phone"
+                    android:hint="your friend phone"
                     android:editable="false"
                     android:selectAllOnFocus="false"
                     android:singleLine="true"

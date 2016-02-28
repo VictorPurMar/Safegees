@@ -1,53 +1,24 @@
-/**
- *   Contact.java
- *
- *   Future class description
- *
- *
- *   Copyright (C) 2016  Victor Purcallas <vpurcallas@gmail.com>
- *
- *   Safegees is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   Safegees is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with ARcowabungaproject.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
 package org.safegees.safegees.model;
 
-
-
-import java.util.Date;
-
 /**
- * Created by victor on 2/1/16.
+ * Created by victor on 28/2/16.
  */
 public class Contact {
+    public String name;
+    public String surname;
+    public String publicEmail;
+    public String imagePath;
+    public String phoneNumber;
+    public String bio;
+    public LatLng position;
 
-    private String name;
-    private String surname;
-    private String phoneNumber;
-    private String email;
-    private String image_path;
-    private String bio;
-    private LatLng position;
-    private Date last_connection_date; //millis
-
-    public Contact(String bio, String email, String image_path, Date last_connection_date, LatLng position, String name, String phoneNumber, String surname) {
+    public Contact(String bio, String publicEmail, String imagePath, String name, String phoneNumber, LatLng position, String surname) {
         this.bio = bio;
-        this.email = email;
-        this.image_path = image_path;
-        this.last_connection_date = last_connection_date;
-        this.position = position;
+        this.publicEmail = publicEmail;
+        this.imagePath = imagePath;
         this.name = name;
         this.phoneNumber = phoneNumber;
+        this.position = position;
         this.surname = surname;
     }
 
@@ -59,36 +30,12 @@ public class Contact {
         this.bio = bio;
     }
 
-    public String getEmail() {
-        return email;
+    public String getImagePath() {
+        return imagePath;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getImage_path() {
-        return image_path;
-    }
-
-    public void setImage_path(String image_path) {
-        this.image_path = image_path;
-    }
-
-    public Date getLast_connection_date() {
-        return last_connection_date;
-    }
-
-    public void setLast_connection_date(Date last_connection_date) {
-        this.last_connection_date = last_connection_date;
-    }
-
-    public LatLng getPosition() {
-        return position;
-    }
-
-    public void setPosition(LatLng location) {
-        this.position = location;
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     public String getName() {
@@ -107,6 +54,22 @@ public class Contact {
         this.phoneNumber = phoneNumber;
     }
 
+    public LatLng getPosition() {
+        return position;
+    }
+
+    public void setPosition(LatLng position) {
+        this.position = position;
+    }
+
+    public String getPublicEmail() {
+        return publicEmail;
+    }
+
+    public void setPublicEmail(String publicEmail) {
+        this.publicEmail = publicEmail;
+    }
+
     public String getSurname() {
         return surname;
     }
@@ -122,12 +85,14 @@ public class Contact {
 
         Contact contact = (Contact) o;
 
-        return email.equals(contact.email);
+        return publicEmail.equals(contact.publicEmail);
 
     }
 
     @Override
     public int hashCode() {
-        return email.hashCode();
+        return publicEmail.hashCode();
     }
+
 }
+

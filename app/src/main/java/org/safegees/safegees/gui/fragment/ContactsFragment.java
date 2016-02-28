@@ -24,8 +24,6 @@
 package org.safegees.safegees.gui.fragment;
 
 import android.content.Context;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -38,7 +36,7 @@ import android.view.ViewGroup;
 import org.safegees.safegees.R;
 import org.safegees.safegees.gui.adapters.MyAdapter;
 import org.safegees.safegees.gui.decoration.DividerItemDecoration;
-import org.safegees.safegees.model.Contact;
+import org.safegees.safegees.model.Friend;
 import org.safegees.safegees.util.SafegeesDAO;
 
 import java.util.ArrayList;
@@ -115,7 +113,7 @@ public class ContactsFragment extends Fragment {
         //mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), null));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), R.drawable.line_separator,false,true));
         SafegeesDAO sDAO = SafegeesDAO.getInstance(getActivity());
-        ArrayList<Contact> contacts = sDAO.getContacts();
+        ArrayList<Friend> friends = sDAO.getFriends();
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -126,7 +124,7 @@ public class ContactsFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        mAdapter = new MyAdapter(contacts);
+        mAdapter = new MyAdapter(friends);
         mRecyclerView.setAdapter(mAdapter);
 
         return view;

@@ -31,10 +31,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.safegees.safegees.R;
 import org.safegees.safegees.gui.view.MainActivity;
-import org.safegees.safegees.model.Contact;
+import org.safegees.safegees.model.Friend;
 import org.safegees.safegees.model.LatLng;
 import org.safegees.safegees.model.POI;
-import org.safegees.safegees.model.User;
+import org.safegees.safegees.model.PrivateUser;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -47,13 +47,13 @@ public class SafegeesDAO {
 
     private static SafegeesDAO instance;
     private Context context;
-    private User userObjet;
-    private ArrayList<Contact> contacts;
+    private PrivateUser privateUserObjet;
+    private ArrayList<Friend> friends;
     private ArrayList<POI> pois;
 
     public SafegeesDAO(Context context){
         this.pois = new ArrayList<POI>();
-        this.contacts = new ArrayList<Contact>();
+        this.friends = new ArrayList<Friend>();
         this.context = context;
         this.run();
     }
@@ -75,14 +75,14 @@ public class SafegeesDAO {
     private void run() {
 
         this.pois = this.getPoisArray();
-        this.contacts = this.getContactsArray();
+        this.friends = this.getContactsArray();
 
         //this will store and unique userObject with all the neccesary data
-        //this.userObjet = new User(null,null,this.contacts,MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_MAIL)),)
+        //this.privateUserObjet = new PrivateUser(null,null,this.friends,MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_MAIL)),)
     }
 
-    private ArrayList<Contact> getContactsArray() {
-        this.contacts = new ArrayList<Contact>();
+    private ArrayList<Friend> getContactsArray() {
+        this.friends = new ArrayList<Friend>();
         String contactsData = MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_CONTACTS_DATA) + "_" + MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_MAIL)));
         JSONArray jsonArray = null;
         try {
@@ -108,8 +108,8 @@ public class SafegeesDAO {
                     String email = json.getString("email");
 
                     //Null values because are not implemented on server yet
-                    Contact contact = new Contact(null,email,null,dateLastPosition,position,name,phone,surname);
-                    this.contacts.add(contact);
+                    Friend friend = new Friend(null,email,null,dateLastPosition,position,name,phone,surname);
+                    this.friends.add(friend);
                 }catch(Exception e){
                     Log.e("Caused:", e.getCause().toString());
                 }
@@ -117,7 +117,7 @@ public class SafegeesDAO {
 
         }
 
-        return this.contacts;
+        return this.friends;
     }
 
     private ArrayList<POI> getPoisArray() {
@@ -192,8 +192,8 @@ public class SafegeesDAO {
 
     //Getters
 
-    public ArrayList<Contact> getContacts() {
-        return contacts;
+    public ArrayList<Friend> getFriends() {
+        return friends;
     }
 
     public ArrayList<POI> getPois() {

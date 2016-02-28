@@ -107,7 +107,7 @@ public class ShareDataController {
                 //send user info basic data
                 //name, surname, 
 
-                //Send all the User Positions Queque
+                //Send all the PrivateUser Positions Queque
 
                 //sendUserPositionsQueque(scc);
 

@@ -21,22 +21,22 @@
     <string name="action_sign_in">Sign in</string>
     <string name="action_register">Register</string>
     <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_email">This publicEmail address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
+    <string name="permission_rationale">"Contacts permissions are needed for providing publicEmail
         completions."
     </string>
 
     //CONNECTION STRINGS/////////////////////////////////////////////////
     //URL
     <string name="WEB_BASE">https://safegees.appspot.com/v1/</string>
-    <string name="GET_POSITION">user/position/</string>
-    <string name="GET_LOGIN">user/login</string>
-    <string name="SET_POSITION">user/position</string>
-    <string name="OWN_REGISTER">user/</string>
-    <string name="AUTHORIZE_USER">user/authorized/</string>
+    <string name="GET_POSITION">privateUser/position/</string>
+    <string name="GET_LOGIN">privateUser/login</string>
+    <string name="SET_POSITION">privateUser/position</string>
+    <string name="OWN_REGISTER">privateUser/</string>
+    <string name="AUTHORIZE_USER">privateUser/authorized/</string>
     <string name="GET_POINTS_OF_INTEREST">map</string>
 
 
@@ -46,7 +46,7 @@
     <!-- Connection controller messages (get - post) -->
     <string name="KEY_CONTACTS_DATA">friends</string>
     <string name="KEY_AUTHORIZED">authorized</string>
-    <string name="KEY_USER_BASIC">user</string>
+    <string name="KEY_USER_BASIC">privateUser</string>
     <string name="KEY_POINTS_OF_INTEREST">organitations</string>
     <string name="KEY_IS_LOGED">isLoged</string>
     <string name="KEY_USER_MAIL">user_mail</string>
@@ -65,7 +65,7 @@
     <string name="pref_header_general">General</string>
 
     <string name="pref_title_social_recommendations">Enable social recommendations</string>
-    <string name="pref_description_social_recommendations">Recommendations for people to contact
+    <string name="pref_description_social_recommendations">Recommendations for people to friend
         based on your message history
     </string>
 

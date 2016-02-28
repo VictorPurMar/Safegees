@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -24,51 +23,40 @@ import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.kml.KmlDocument;
 import org.osmdroid.bonuspack.kml.KmlFeature;
-import org.osmdroid.bonuspack.kml.KmlFolder;
 import org.osmdroid.bonuspack.kml.KmlLineString;
 import org.osmdroid.bonuspack.kml.KmlPlacemark;
 import org.osmdroid.bonuspack.kml.KmlPoint;
 import org.osmdroid.bonuspack.kml.KmlPolygon;
 import org.osmdroid.bonuspack.kml.Style;
-import org.osmdroid.bonuspack.location.OverpassAPIProvider;
 import org.osmdroid.bonuspack.overlays.FolderOverlay;
-import org.osmdroid.bonuspack.overlays.InfoWindow;
 import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.bonuspack.overlays.Polygon;
 import org.osmdroid.bonuspack.overlays.Polyline;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
-import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.ItemizedOverlay;
 import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.OverlayItem;
-import org.osmdroid.views.overlay.ScaleBarOverlay;
 import org.osmdroid.views.overlay.compass.CompassOverlay;
 import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import org.safegees.safegees.R;
 import org.safegees.safegees.gui.gui_utils.MapInfoWindow;
-import org.safegees.safegees.model.Contact;
+import org.safegees.safegees.model.Friend;
 import org.safegees.safegees.model.LatLng;
-import org.safegees.safegees.model.POI;
 import org.safegees.safegees.util.Connectivity;
 import org.safegees.safegees.util.FileManager;
-import org.safegees.safegees.util.MapFileManager;
 import org.safegees.safegees.util.SafegeesDAO;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -267,12 +255,12 @@ public class MapFragment extends Fragment {
             }
             */
             Drawable contactDrawable = getResources().getDrawable(R.drawable.ic_friend);
-            ArrayList<Contact> contacts = this.sDAO.getContacts();
-            for (int i = 0; i < contacts.size(); i++) {
-                Contact contact = contacts.get(i);
-                LatLng latLng = contact.getPosition();
+            ArrayList<Friend> friends = this.sDAO.getFriends();
+            for (int i = 0; i < friends.size(); i++) {
+                Friend friend = friends.get(i);
+                LatLng latLng = friend.getPosition();
                 GeoPoint geopoint = new GeoPoint(latLng.getLatitude(), latLng.getLongitude());
-                OverlayItem item = new OverlayItem(contact.getName(), contact.getEmail(), geopoint);
+                OverlayItem item = new OverlayItem(friend.getName(), friend.getPublicEmail(), geopoint);
                 item.setMarker(contactDrawable);
                 contactList.add(item);
             }

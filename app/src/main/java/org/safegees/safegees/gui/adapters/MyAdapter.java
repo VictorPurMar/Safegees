@@ -10,10 +10,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.safegees.safegees.R;
-import org.safegees.safegees.model.Contact;
+import org.safegees.safegees.model.Friend;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
-    private ArrayList<Contact> mDataset;
+    private ArrayList<Friend> mDataset;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -30,19 +30,19 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         }
     }
 
-    public void add(int position, Contact contact) {
-        mDataset.add(position, contact);
+    public void add(int position, Friend friend) {
+        mDataset.add(position, friend);
         notifyItemInserted(position);
     }
 
-    public void remove(Contact item) {
+    public void remove(Friend item) {
         int position = mDataset.indexOf(item);
         mDataset.remove(position);
         notifyItemRemoved(position);
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public MyAdapter(ArrayList<Contact> myDataset) {
+    public MyAdapter(ArrayList<Friend> myDataset) {
         mDataset = myDataset;
     }
 
@@ -62,18 +62,18 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        final Contact contact = mDataset.get(position);
+        final Friend friend = mDataset.get(position);
         //To change
         holder.txtHeader.setText("NAME SURNAME SURNAME" + mDataset.get(position).getName());
         holder.txtHeader.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                //remove(contact);
-                Log.i("Contact touched", "" + mDataset.get(position));
+                //remove(friend);
+                Log.i("Friend touched", "" + mDataset.get(position));
             }
         });
 
-        holder.txtFooter.setText("Email: " + mDataset.get(position).getEmail());
+        holder.txtFooter.setText("Email: " + mDataset.get(position).getPublicEmail());
 
     }
 
