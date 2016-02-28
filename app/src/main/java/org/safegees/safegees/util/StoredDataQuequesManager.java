@@ -54,15 +54,18 @@ import java.util.Map;
 public class StoredDataQuequesManager {
     private static int KEY_APP_USER_JSON = R.string.KEY_APP_USERS;
     private static int KEY_ADD_USER_JSON = R.string.KEY_ADD_USERS;
+    private static int KEY_DELETE_USER_JSON = R.string.KEY_DELETE_USERS;
     private static int KEY_USER_POSITION_JSON = R.string.KEY_USER_POSITIONS;
 
     //JSON keys
     private static String KEY_JSON_ADD_USERS_TITLE = "addUsersJSON";
+    private static String KEY_JSON_DELETE_USERS_TITLE = "deleteUsersJSON";
     private static String KEY_JSON_APP_USERS_TITLE = "appUsersJSON";
     private static String KEY_JSON_USER_POSITION_TITLE = "setUserPositionJSON";
 
     private static String KEY_JSON_USER_EMAIL = "userEmail";
     private static String KEY_JSON_CONTACT_TO_ADD = "contactToAdd";
+    private static String KEY_JSON_CONTACT_TO_DELETE = "contactToDelete";
     private static String KEY_JSON_USER_PASSWORD = "password";
     private static String KEY_JSON_USER_POSITION = "position";
 
@@ -165,6 +168,12 @@ public class StoredDataQuequesManager {
         return removeFromStoredQuequeByTwoValues(userMail, emailForAdd, storedJSON, jsonResourceKey, KEY_JSON_ADD_USERS_TITLE, KEY_JSON_USER_EMAIL, KEY_JSON_CONTACT_TO_ADD);
     }
 
+    public static boolean removeContactToDeleteInQueque(Context context, String userMail, String emailForDelete){
+        String storedJSON = MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_DELETE_USERS));
+        String jsonResourceKey = context.getResources().getString(KEY_DELETE_USER_JSON);
+        return removeFromStoredQuequeByTwoValues(userMail, emailForDelete, storedJSON, jsonResourceKey, KEY_JSON_DELETE_USERS_TITLE, KEY_JSON_USER_EMAIL, KEY_JSON_CONTACT_TO_DELETE);
+    }
+
     private static boolean removeFromStoredQuequeByTwoValues(String userMail, String userValue, String storedJSON, String jsonResourceKey, String storedJSONTitle, String userMailJSONKey, String valueJSONKey) {
         boolean isRemoved = false;
         if (storedJSON != null && !storedJSON.equals("")){
@@ -232,7 +241,17 @@ public class StoredDataQuequesManager {
         return getStoredMap(KEY_JSON_USER_EMAIL, KEY_JSON_CONTACT_TO_ADD,KEY_JSON_ADD_USERS_TITLE, addContact);
     }
 
+    public static Map<String, String> getDeleteContactsMapQueque(Context context){
+        String deleteContact = MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_DELETE_USERS));
+        return getStoredMap(KEY_JSON_USER_EMAIL, KEY_JSON_CONTACT_TO_DELETE,KEY_JSON_DELETE_USERS_TITLE, deleteContact);
+    }
+
     public static Map<String, String> getUserPositionsMap(Context context){
+        String userPositions = MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_POSITIONS));
+        return getStoredMap(KEY_JSON_USER_EMAIL, KEY_JSON_USER_POSITION, KEY_JSON_USER_POSITION_TITLE, userPositions);
+    }
+
+    public static Map<String, String> getBasicUserMAP(Context context){
         String userPositions = MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_POSITIONS));
         return getStoredMap(KEY_JSON_USER_EMAIL, KEY_JSON_USER_POSITION, KEY_JSON_USER_POSITION_TITLE, userPositions);
     }

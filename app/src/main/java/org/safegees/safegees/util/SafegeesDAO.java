@@ -190,6 +190,7 @@ public class SafegeesDAO {
 
 
 
+
     //Getters
 
     public ArrayList<Friend> getFriends() {

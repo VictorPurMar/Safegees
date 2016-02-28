@@ -93,6 +93,10 @@ public class ShareDataController {
 
             if (Connectivity.isNetworkAvaiable(this.context)) {
 
+                //To do
+                //User public data if new
+                sendUserDataQueque(scc);
+
                 //Get general data (POI)
                 scc.getPointsOfInterest(this.context);
 
@@ -105,12 +109,12 @@ public class ShareDataController {
                 //Send all the Add Contacts Queque fields
                 sendAddContactsQueque(scc);
 
-                //send user info basic data
-                //name, surname, 
+                //NOT IMPLEMENTED IN SERVER
+                //Send all the Remove Contact Queque fields
+                //sendDeleteContactsQueque(scc);
 
                 //Send all the PrivateUser Positions Queque
-
-                //sendUserPositionsQueque(scc);
+                sendUserPositionsQueque(scc);
 
                 return true;
             }
@@ -118,18 +122,38 @@ public class ShareDataController {
             return false;
         }
 
+
+
         private void sendUserPositionsQueque(SafegeesConnectionManager scc) {
             Map<String, String> userPositionsMap = StoredDataQuequesManager.getUserPositionsMap(this.context);
-            Iterator it = userPositionsMap.entrySet().iterator();
+            if (userPositionsMap != null) {
+                Iterator it = userPositionsMap.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry pair = (Map.Entry) it.next();
+                    String userMail = (String) pair.getKey();
+                    String userPosition = (String) pair.getValue();
+                    String userPassword = StoredDataQuequesManager.getUserPassword(context, userMail);
+                    try {
+                        scc.updateUserPosition(this.context, userMail, userPassword, userPosition);
+                    } catch (Exception e) {
+                        Log.e("UPDATE_USER_POSITION", e.getMessage());
+                    }
+                    it.remove(); // avoids a ConcurrentModificationException
+                }
+            }
+        }
+
+        private void sendUserDataQueque(SafegeesConnectionManager scc) {
+            Map<String, String> appUsersMap = StoredDataQuequesManager.getAppUsersMap(this.context);
+            Iterator it = appUsersMap.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry pair = (Map.Entry) it.next();
                 String userMail = (String) pair.getKey();
-                String userPosition = (String) pair.getValue();
-                String userPassword = StoredDataQuequesManager.getUserPassword(context, userMail);
+                String userPassword = (String) pair.getValue();
                 try {
-                    scc.updateUserPosition(this.context, userMail, userPassword, userPosition);
+                    scc.getUserBasic(this.context, userMail, userPassword);
                 } catch (Exception e) {
-                    Log.e("UPDATE_USER_POSITION", e.getMessage());
+                    Log.e("GetContactsData", e.getMessage());
                 }
                 it.remove(); // avoids a ConcurrentModificationException
             }
@@ -138,6 +162,32 @@ public class ShareDataController {
         private void sendAddContactsQueque(SafegeesConnectionManager scc) {
 
             Map<String, String> adContactsMap = StoredDataQuequesManager.getAddContactsMapQueque(this.context);
+            if (adContactsMap != null) {
+                Iterator it = adContactsMap.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry pair = (Map.Entry) it.next();
+                    String userMail = (String) pair.getKey();
+                    String contactEmail = (String) pair.getValue();
+                    String userPassword = StoredDataQuequesManager.getUserPassword(context, userMail);
+                    try {
+                        if (scc.addNewContact(userMail, userPassword, contactEmail)) {
+                            StoredDataQuequesManager.removeContactToAddInQueque(this.context, userMail, contactEmail);
+                        }
+                    } catch (Exception e) {
+                        Log.e("GetContactsData", e.getMessage());
+                    }
+                    it.remove(); // avoids a ConcurrentModificationException
+                }
+            }
+        }
+
+        ///////////////////////////
+        //NOT IMPLEMENTED IN SERVER
+        ///////////////////////////
+
+        private void sendDeleteContactsQueque(SafegeesConnectionManager scc) {
+
+            Map<String, String> adContactsMap = StoredDataQuequesManager.getDeleteContactsMapQueque(this.context);
             Iterator it = adContactsMap.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry pair = (Map.Entry) it.next();
@@ -145,33 +195,54 @@ public class ShareDataController {
                 String contactEmail = (String) pair.getValue();
                 String userPassword = StoredDataQuequesManager.getUserPassword(context, userMail);
                 try {
-                    if (scc.addNewContact(this.context, userMail, userPassword, contactEmail)) {
-                        StoredDataQuequesManager.removeContactToAddInQueque(this.context, userMail, contactEmail);
+                    if (scc.deleteContact(userMail, userPassword, contactEmail)) {
+                        StoredDataQuequesManager.removeContactToDeleteInQueque(this.context, userMail, contactEmail);
                     }
                 } catch (Exception e) {
                     Log.e("GetContactsData", e.getMessage());
                 }
                 it.remove(); // avoids a ConcurrentModificationException
             }
-
         }
 
 
         private void getAppUsersData(SafegeesConnectionManager scc) {
-            Map<String, String> appUsersMap = StoredDataQuequesManager.getAppUsersMap(this.context);
 
-            //Get and store contacts data from all the app users
-            Iterator it = appUsersMap.entrySet().iterator();
+
+            Map<String, String> appUsersMap = StoredDataQuequesManager.getAppUsersMap(this.context);
+            if (appUsersMap!= null) {
+                //Get app Users Basic Data
+                Iterator it = appUsersMap.entrySet().iterator();
+
+                //NOT IMPLEMENTED ON SERVER YET
+            /*
             while (it.hasNext()) {
                 Map.Entry pair = (Map.Entry) it.next();
                 String userMail = (String) pair.getKey();
                 String userPassword = (String) pair.getValue();
                 try {
-                    scc.getContactsData(this.context, userMail, userPassword);
+                    scc.getUserBasic(this.context, userMail, userPassword);
                 } catch (Exception e) {
                     Log.e("GetContactsData", e.getMessage());
                 }
-                it.remove(); // avoids a ConcurrentModificationException
+                it.remove();
+            }
+            */
+
+
+                //Get and store contacts data from all the app users
+                it = appUsersMap.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry pair = (Map.Entry) it.next();
+                    String userMail = (String) pair.getKey();
+                    String userPassword = (String) pair.getValue();
+                    try {
+                        scc.getContactsData(this.context, userMail, userPassword);
+                    } catch (Exception e) {
+                        Log.e("GetContactsData", e.getMessage());
+                    }
+                    it.remove(); // avoids a ConcurrentModificationException
+                }
             }
         }
 
@@ -224,7 +295,7 @@ public class ShareDataController {
             SafegeesConnectionManager scc = new SafegeesConnectionManager();
             String userPassword = StoredDataQuequesManager.getUserPassword(context, this.userEmail);
             if (Connectivity.isNetworkAvaiable(this.context)) {
-                return scc.addNewContact(this.context, userEmail, userPassword, contactToAdd);
+                return scc.addNewContact(userEmail, userPassword, contactToAdd);
             }else{
                 return false;
             }

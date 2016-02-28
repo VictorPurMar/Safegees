@@ -160,14 +160,14 @@ public class SafegeesConnectionManager {
     ////////////////////////////////////////////////////////////////////
     //NOT IMPLEMENTED ON SERVER
     ////////////////////////////////////////////////////////////////////
-    public void getUserBasic(Context context, PrivateUser privateUser){
+    public void getUserBasic(Context context, String userEmail, String userPassword){
         String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_POSITION;
         HashMap<String, String> mp = new HashMap<String, String>();
-        String auth = privateUser.getAuth();
+        String auth = this.getAuth(userEmail, userPassword);
         String response  = new HttpUrlConnection().performGetCall(url, mp, auth);
         if (this.isJSONValid(response)) {
             //Store the response in conf preferences with key : contacts_data_mailfromuser
-            MainActivity.DATA_STORAGE.putString(context.getResources().getString(R.string.KEY_USER_BASIC) + "_" + privateUser.getPrivateEmail(), response);
+            MainActivity.DATA_STORAGE.putString(context.getResources().getString(R.string.KEY_USER_BASIC) + "_" + userEmail, response);
         }
     }
     ////////////////////////////////////////////////////////////////////
@@ -319,7 +319,7 @@ public class SafegeesConnectionManager {
 
 
 
-    public boolean addNewContact(Context context, String userMail, String userPassword, String contactEmail){
+    public boolean addNewContact(String userMail, String userPassword, String contactEmail){
         String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_AUTHORIZE + SEPARATOR;
         HashMap<String, String> mp = new HashMap<String, String>();
         mp.put(KEY_AUTHORIZED_EMAIL,contactEmail);
@@ -339,11 +339,11 @@ public class SafegeesConnectionManager {
     ////////////////////////////////////////////////////////////////////
     //NOT IMPLEMENTED ON SERVER
     ////////////////////////////////////////////////////////////////////
-    public boolean deleteContact(Context context, PrivateUser privateUser, String contactEmail){
+    public boolean deleteContact(String userMail, String userPassword, String contactEmail){
         String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_AUTHORIZE + SEPARATOR;
         HashMap<String, String> mp = new HashMap<String, String>();
         mp.put(KEY_DELETE,contactEmail);
-        String auth = privateUser.getAuth();
+        String auth = this.getAuth(userMail, userPassword);
         String response  = new HttpUrlConnection().performPostCall(url, mp, auth);
 
         if (response != null){
@@ -465,5 +465,9 @@ public class SafegeesConnectionManager {
             e.printStackTrace();
         }
         return contentLegth;
+    }
+
+    private String getAuth(String emailUser, String emailPassword){
+        return emailUser+":"+emailPassword;
     }
 }

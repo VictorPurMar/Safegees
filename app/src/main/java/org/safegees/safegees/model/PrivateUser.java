@@ -94,4 +94,9 @@ public class PrivateUser extends Contact {
     public String getAuth(){
         return this.getPrivateEmail()+":"+this.password;
     }
+
+    public static PrivateUser getPrivateUserFromJSON(String privateUserJSON){
+
+        return null;
+    }
 }

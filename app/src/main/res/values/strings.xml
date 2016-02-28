@@ -30,29 +30,21 @@
     </string>
 
     //CONNECTION STRINGS/////////////////////////////////////////////////
-    //URL
-    <string name="WEB_BASE">https://safegees.appspot.com/v1/</string>
-    <string name="GET_POSITION">privateUser/position/</string>
-    <string name="GET_LOGIN">privateUser/login</string>
-    <string name="SET_POSITION">privateUser/position</string>
-    <string name="OWN_REGISTER">privateUser/</string>
-    <string name="AUTHORIZE_USER">privateUser/authorized/</string>
-    <string name="GET_POINTS_OF_INTEREST">map</string>
+
 
 
     //POST keys
-
-
     <!-- Connection controller messages (get - post) -->
     <string name="KEY_CONTACTS_DATA">friends</string>
     <string name="KEY_AUTHORIZED">authorized</string>
-    <string name="KEY_USER_BASIC">privateUser</string>
+    <string name="KEY_USER_BASIC">user</string>
     <string name="KEY_POINTS_OF_INTEREST">organitations</string>
     <string name="KEY_IS_LOGED">isLoged</string>
     <string name="KEY_USER_MAIL">user_mail</string>
     <string name="KEY_USER_PASSWORD">user_password</string>
     <string name="KEY_APP_USERS">app_users</string>
     <string name="KEY_ADD_USERS">add_users</string>
+    <string name="KEY_DELETE_USERS">delete_users</string>
     <string name="KEY_USER_POSITIONS">user_position</string>
 
     //Last camera position
