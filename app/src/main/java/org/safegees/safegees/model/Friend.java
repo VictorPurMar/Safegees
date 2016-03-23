@@ -34,7 +34,7 @@ public class Friend extends PublicUser {
     private Date last_connection_date; //millis
 
     public Friend(String bio, String publicEmail, String imagePath, Date last_connection_date, LatLng position, String name, String phoneNumber, String surname) {
-        super(bio,publicEmail,name,phoneNumber,position,surname);
+        super(bio, publicEmail,name,phoneNumber,position,surname);
         this.last_connection_date = last_connection_date;
 
     }

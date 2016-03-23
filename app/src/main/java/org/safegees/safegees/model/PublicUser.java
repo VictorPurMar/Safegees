@@ -16,7 +16,7 @@ public class PublicUser {
     public String bio;
     public LatLng position;
 
-    public PublicUser(String bio, String publicEmail, String name, String phoneNumber, LatLng position, String surname) {
+    public PublicUser(String bio, String publicEmail,  String name, String phoneNumber, LatLng position, String surname) {
         this.bio = bio;
         this.publicEmail = publicEmail;
         //this.imagePath = imagePath;
@@ -105,7 +105,7 @@ public class PublicUser {
         try {
             JSONObject json = new JSONObject(privateUserJSON);
             String bio = json.getString("topic")!=null?json.getString("topic"):"";
-            String publicEmail = json.getString("public_email")!=null?json.getString("public_email"):"";
+            String publicEmail = json.getString("email")!=null?json.getString("public_email"):"";
             String name = json.getString("name")!=null?json.getString("name"):"";
             String surname = json.getString("surname")!=null?json.getString("surname"):"";
             String phoneNumber = json.getString("telephone")!=null?json.getString("telephone"):"";

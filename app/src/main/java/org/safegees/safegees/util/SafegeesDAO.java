@@ -35,6 +35,7 @@ import org.safegees.safegees.model.Friend;
 import org.safegees.safegees.model.LatLng;
 import org.safegees.safegees.model.POI;
 import org.safegees.safegees.model.PrivateUser;
+import org.safegees.safegees.model.PublicUser;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -47,7 +48,8 @@ public class SafegeesDAO {
 
     private static SafegeesDAO instance;
     private Context context;
-    private PrivateUser privateUserObjet;
+ //   private PrivateUser privateUser;
+    private PublicUser publicUser;
     private ArrayList<Friend> friends;
     private ArrayList<POI> pois;
 
@@ -76,10 +78,74 @@ public class SafegeesDAO {
 
         this.pois = this.getPoisArray();
         this.friends = this.getContactsArray();
+        this.publicUser = this.getPublicUserObject();
+  //      this.privateUser = this.getPrivateUserObjet();
 
-        //this will store and unique userObject with all the neccesary data
-        //this.privateUserObjet = new PrivateUser(null,null,this.friends,MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_MAIL)),)
     }
+
+    private PrivateUser getPrivateUserObjet(){
+        return new PrivateUser(null,this.publicUser.getBio(), this.friends, MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_MAIL)), null,this.publicUser.getName(),MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_PASSWORD)),this.publicUser.getPhoneNumber(), this.publicUser.getPosition(),this.publicUser.getSurname());
+    }
+
+    private PublicUser getPublicUserObject() {
+        Log.e("getPublicUserObject()", "Start method");
+        String contactsData = MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_BASIC) + "_" + MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_MAIL)));
+        JSONObject pubUserJSON = null;
+        PublicUser pu = null;
+        try{
+            pubUserJSON = new JSONObject(contactsData);
+            String name = "";
+            String surname = "";
+            String phone = "";
+            String publicEmail = "";
+
+            try{
+                name = pubUserJSON.getString("name");
+            }catch (Exception e){
+                Log.e("Error in Name", e.getMessage());
+            }
+
+            try{
+                surname = pubUserJSON.getString("surname");
+            }catch (Exception e){
+                Log.e("Error in surname", e.getMessage());
+            }
+
+            try{
+                phone = pubUserJSON.getString("telephone");
+            }catch (Exception e){
+                Log.e("Error in phone", e.getMessage());
+            }
+
+            try{
+                publicEmail = pubUserJSON.getString("email");
+            }catch (Exception e){
+                Log.e("Error in email", e.getMessage());
+            }
+
+
+            //String email = json.getString("email");
+            String bio ="";
+            try {
+                bio = pubUserJSON.getString("topic");
+            }catch (Exception e){
+                Log.e("Error in topic", e.getMessage());
+            }
+            LatLng lntLng = null;
+            try {
+                lntLng = new LatLng(pubUserJSON.getString("position"));
+            }catch (Exception e){
+                Log.e("Error in position", e.getMessage());
+            }
+
+            pu = new PublicUser(bio,publicEmail,name,phone,null,surname);
+        }catch (Exception e){
+
+        }
+
+        return pu;
+    }
+
 
     private ArrayList<Friend> getContactsArray() {
         this.friends = new ArrayList<Friend>();
@@ -105,10 +171,17 @@ public class SafegeesDAO {
                     String name = json.getString("name");
                     String surname = json.getString("surname");
                     String phone = json.getString("telephone");
-                    String email = json.getString("email");
+                    //String email = json.getString("email");
+                    String bio =null;
+                    try {
+                        bio = json.getString("topic");
+                    }catch (Exception e){
+                        Log.e("Error in topic", e.getMessage());
+                    }
+                    String publicEmail = json.getString("email");
 
                     //Null values because are not implemented on server yet
-                    Friend friend = new Friend(null,email,null,dateLastPosition,position,name,phone,surname);
+                    Friend friend = new Friend(bio,publicEmail,null,dateLastPosition, position, name, phone, surname);
                     this.friends.add(friend);
                 }catch(Exception e){
                     Log.e("Caused:", e.getCause().toString());
@@ -201,8 +274,15 @@ public class SafegeesDAO {
         return pois;
     }
 
+
+    public PublicUser getPublicUser() {
+        return publicUser;
+    }
+
     public static void close(){
         instance = null;
     }
+
+
 
 }

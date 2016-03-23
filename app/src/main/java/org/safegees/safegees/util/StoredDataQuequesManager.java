@@ -252,7 +252,7 @@ public class StoredDataQuequesManager {
     }
 
     public static Map<String, String> getBasicUserMAP(Context context){
-        String userPositions = MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_POSITIONS));
+        String userPositions = MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_BASIC));
         return getStoredMap(KEY_JSON_USER_EMAIL, KEY_JSON_USER_POSITION, KEY_JSON_USER_POSITION_TITLE, userPositions);
     }
 

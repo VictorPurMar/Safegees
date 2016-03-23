@@ -144,7 +144,7 @@ public class SafegeesConnectionManager {
     //NOT IMPLEMENTED ON SERVER
     ////////////////////////////////////////////////////////////////////
     public void getAuthorizedByUserContacts(Context context, PrivateUser privateUser){
-        String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_AUTHORIZE;
+        String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_AUTHORIZE + SEPARATOR;
         HashMap<String, String> mp = new HashMap<String, String>();
         String auth = privateUser.getAuth();
         String response  = new HttpUrlConnection().performGetCall(url, mp, auth);
@@ -161,10 +161,11 @@ public class SafegeesConnectionManager {
     //NOT IMPLEMENTED ON SERVER
     ////////////////////////////////////////////////////////////////////
     public void getUserBasic(Context context, String userEmail, String userPassword){
-        String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_POSITION;
+        String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR ;
         HashMap<String, String> mp = new HashMap<String, String>();
         String auth = this.getAuth(userEmail, userPassword);
         String response  = new HttpUrlConnection().performGetCall(url, mp, auth);
+        Log.e("GET_USER_BASIC",response.toString());
         if (this.isJSONValid(response)) {
             //Store the response in conf preferences with key : contacts_data_mailfromuser
             MainActivity.DATA_STORAGE.putString(context.getResources().getString(R.string.KEY_USER_BASIC) + "_" + userEmail, response);
@@ -199,14 +200,15 @@ public class SafegeesConnectionManager {
     public boolean updateUserBasic(PrivateUser privateUser){
         String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_UPDATE + SEPARATOR;
         HashMap<String, String> mp = new HashMap<String, String>();
-        mp.put(KEY_MAIL,privateUser.getPublicEmail());
+        mp.put(KEY_MAIL, privateUser.getPublicEmail());
         mp.put(KEY_NAME, privateUser.getName());
         mp.put(KEY_SURNAME, privateUser.getSurname());
         mp.put(KEY_PHONE, privateUser.getPhoneNumber());
         mp.put(KEY_BIO, privateUser.getBio());
-        mp.put(KEY_POSITION, privateUser.getPosition().toString());
+        //mp.put(KEY_POSITION, privateUser.getPosition().toString());
         String auth = this.getAuth(privateUser.getPrivateEmail(), privateUser.getPassword());
-        String response = new HttpUrlConnection().performPostCall(url, mp, auth);
+        String response = new HttpUrlConnection().performPutCall(url, mp, auth);
+        Log.e("UPDATE_USER",response.toString());
         if (response != null){
             Log.i("RESPONSE",response);
             return true;
@@ -217,71 +219,7 @@ public class SafegeesConnectionManager {
 
     }
 
-    /*
-
-    public boolean updateUserName(Context context, PrivateUser privateUser) {
-        String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + KEY_NAME + SEPARATOR;
-        HashMap<String, String> mp = new HashMap<String, String>();
-        mp.put(KEY_NAME, privateUser.getName());
-        String auth = privateUser.getAuth();
-        String response = new HttpUrlConnection().performPostCall(url, mp, auth);
-        if (response != null) {
-            Log.i("RESPONSE", response);
-            return true;
-        } else {
-            Log.e("NAME", "Not updated");
-            return false;
-        }
-    }
-
-    public boolean updateUserSurname(Context context, PrivateUser privateUser) {
-        String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + KEY_SURNAME + SEPARATOR;
-        HashMap<String, String> mp = new HashMap<String, String>();
-        mp.put(KEY_SURNAME, privateUser.getSurname());
-        String auth = privateUser.getAuth();
-        String response = new HttpUrlConnection().performPostCall(url, mp, auth);
-        if (response != null) {
-            Log.i("RESPONSE", response);
-            return true;
-        } else {
-            Log.e("NAME", "Not updated");
-            return false;
-        }
-    }
-
-    public boolean updateUserBio(Context context, PrivateUser privateUser) {
-        String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + KEY_BIO + SEPARATOR;
-        HashMap<String, String> mp = new HashMap<String, String>();
-        mp.put(KEY_BIO, privateUser.getBio());
-        String auth = privateUser.getAuth();
-        String response = new HttpUrlConnection().performPostCall(url, mp, auth);
-        if (response != null) {
-            Log.i("RESPONSE", response);
-            return true;
-        } else {
-            Log.e("NAME", "Not updated");
-            return false;
-        }
-    }
-
-    public boolean updateUserPhone(Context context, PrivateUser privateUser) {
-        String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + KEY_BIO + SEPARATOR;
-        HashMap<String, String> mp = new HashMap<String, String>();
-        mp.put(KEY_PHONE, privateUser.getPhoneNumber());
-        String auth = privateUser.getAuth();
-        String response = new HttpUrlConnection().performPostCall( url, mp, auth);
-        if (response != null) {
-            Log.i("RESPONSE", response);
-            return true;
-        } else {
-            Log.e("NAME", "Not updated");
-            return false;
-        }
-    }
-    */
     ////////////////////////////////////////////////////////////////////
-
-
     //TO CHANGE IN SERVER
     //Actually the server only stores email and passowd
     public boolean userRegister(Context context, String user, String password, String name, String surname, String telephone, String topic){

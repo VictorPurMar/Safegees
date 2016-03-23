@@ -257,13 +257,15 @@ public class MapFragment extends Fragment {
 
             Drawable contactDrawable = getResources().getDrawable(R.drawable.ic_friend);
             ArrayList<Friend> friends = this.sDAO.getFriends();
-            for (int i = 0; i < friends.size(); i++) {
-                Friend friend = friends.get(i);
-                LatLng latLng = friend.getPosition();
-                GeoPoint geopoint = new GeoPoint(latLng.getLatitude(), latLng.getLongitude());
-                OverlayItem item = new OverlayItem(friend.getName(), friend.getPublicEmail(), geopoint);
-                item.setMarker(contactDrawable);
-                contactList.add(item);
+            if (friends != null) {
+                for (int i = 0; i < friends.size(); i++) {
+                    Friend friend = friends.get(i);
+                    LatLng latLng = friend.getPosition();
+                    GeoPoint geopoint = new GeoPoint(latLng.getLatitude(), latLng.getLongitude());
+                    OverlayItem item = new OverlayItem(friend.getName(), friend.getPublicEmail(), geopoint);
+                    item.setMarker(contactDrawable);
+                    contactList.add(item);
+                }
             }
 
 

@@ -95,6 +95,9 @@ public class ShareDataController {
 
             if (Connectivity.isNetworkAvaiable(this.context)) {
 
+                //Get and store the contacts data from all the app users queque
+                getAppUsersData(scc);
+
                 //To do
                 //User public data if new
                 sendUserDataQueque(scc);
@@ -105,9 +108,6 @@ public class ShareDataController {
                 //Get third partners klm to store as GeoJSON
                 scc.getThirdKLM(this.context);
 
-                //Get and store the contacts data from all the app users queque
-                getAppUsersData(scc);
-
                 //Send all the Add Contacts Queque fields
                 sendAddContactsQueque(scc);
 
@@ -116,7 +116,8 @@ public class ShareDataController {
                 sendDeleteContactsQueque(scc);
 
                 //Send all the PrivateUser Positions Queque
-                sendUserPositionsQueque(scc);
+                //In send the basic user data the position will be sended
+                //sendUserPositionsQueque(scc);
 
                 return true;
             }
@@ -126,6 +127,7 @@ public class ShareDataController {
 
 
 
+        /*
         private void sendUserPositionsQueque(SafegeesConnectionManager scc) {
             Map<String, String> userPositionsMap = StoredDataQuequesManager.getUserPositionsMap(this.context);
             if (userPositionsMap != null) {
@@ -151,6 +153,7 @@ public class ShareDataController {
                 }
             }
         }
+        */
 
         private void sendUserDataQueque(SafegeesConnectionManager scc) {
             Map<String, String> appUsersMap = StoredDataQuequesManager.getAppUsersMap(this.context);
@@ -160,9 +163,13 @@ public class ShareDataController {
                 String userMail = (String) pair.getKey();
                 String userPassword = (String) pair.getValue();
                 try {
-                    String publicUserStr = this.context.getResources().getString(R.string.KEY_USER_BASIC) + "_" + userEmail;
+                    String publicUserStr = this.context.getResources().getString(R.string.KEY_USER_BASIC)+ "_" + userMail;
                     if (publicUserStr!= null){
-                        PublicUser pu = PublicUser.getPublicUserFromJSON(publicUserStr);
+                        //NEW
+                        String userJson = MainActivity.DATA_STORAGE.getString(publicUserStr);
+                        Log.e("USER_JSON", userJson);
+                        //PublicUser pu = PublicUser.getPublicUserFromJSON(publicUserStr);
+                        PublicUser pu = PublicUser.getPublicUserFromJSON(userJson);
                         if (pu != null){
                             PrivateUser pr = new PrivateUser(userMail, userPassword,pu);
                             if (pr != null)scc.updateUserBasic(pr);
@@ -231,12 +238,12 @@ public class ShareDataController {
             Map<String, String> appUsersMap = StoredDataQuequesManager.getAppUsersMap(this.context);
             if (appUsersMap!= null) {
                 //Get app Users Basic Data
-                Iterator it = appUsersMap.entrySet().iterator();
+                Iterator itBasicUserData = appUsersMap.entrySet().iterator();
 
                 //NOT IMPLEMENTED ON SERVER YET
 
-            while (it.hasNext()) {
-                Map.Entry pair = (Map.Entry) it.next();
+            while (itBasicUserData.hasNext()) {
+                Map.Entry pair = (Map.Entry) itBasicUserData.next();
                 String userMail = (String) pair.getKey();
                 String userPassword = (String) pair.getValue();
                 try {
@@ -244,15 +251,16 @@ public class ShareDataController {
                 } catch (Exception e) {
                     Log.e("getAppUsersData", e.getMessage());
                 }
-                it.remove();
+                //it removes the a
+                //itBasicUserData.remove();
             }
 
 
 
                 //Get and store contacts data from all the app users
-                it = appUsersMap.entrySet().iterator();
-                while (it.hasNext()) {
-                    Map.Entry pair = (Map.Entry) it.next();
+                Iterator itContacts = appUsersMap.entrySet().iterator();
+                while (itContacts.hasNext()) {
+                    Map.Entry pair = (Map.Entry) itContacts.next();
                     String userMail = (String) pair.getKey();
                     String userPassword = (String) pair.getValue();
                     try {
@@ -260,7 +268,7 @@ public class ShareDataController {
                     } catch (Exception e) {
                         Log.e("GetContactsData", e.getMessage());
                     }
-                    it.remove(); // avoids a ConcurrentModificationException
+                    itContacts.remove(); // avoids a ConcurrentModificationException
                 }
             }
         }
@@ -281,7 +289,9 @@ public class ShareDataController {
                     principalMapActivity.getMapFragment().refreshMap();
                 }
             } else {
-
+                Log.i("NO_CONN_START", "Starting app with no conection");
+                MainActivity mainActivity = (MainActivity) this.context;
+                mainActivity.launchTheApp();
             }
         }
 

@@ -38,6 +38,8 @@ import android.widget.ImageView;
 
 import org.safegees.safegees.R;
 import org.safegees.safegees.gui.view.PrincipalMapActivity;
+import org.safegees.safegees.model.PublicUser;
+import org.safegees.safegees.util.SafegeesDAO;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -52,6 +54,7 @@ public class ProfileUserFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private boolean isChanged;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -104,6 +107,7 @@ public class ProfileUserFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        isChanged = false;
         // Inflate the layout for this fragment
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile_user, container, false);
@@ -113,6 +117,17 @@ public class ProfileUserFragment extends Fragment {
         editEmail = (EditText) view.findViewById(R.id.editEmail);
         editPhone = (EditText) view.findViewById(R.id.editPhone);
         editTopic = (EditText) view.findViewById(R.id.editTopic);
+
+        SafegeesDAO sDAO = SafegeesDAO.getInstance(this.getContext());
+        PublicUser pu = sDAO.getPublicUser();
+        if (pu != null) {
+            this.editName.setText(pu.getName() != null ? pu.getName() : "");
+            this.editSurname.setText(pu.getSurname() != null ? pu.getSurname() : "");
+            this.editEmail.setText(pu.getPublicEmail() != null ? pu.getPublicEmail() : "");
+            this.editPhone.setText(pu.getPhoneNumber() != null ? pu.getPhoneNumber() : "");
+            this.editTopic.setText(pu.getBio() != null ? pu.getBio() : "");
+        }
+
 
 
         if (this.bitmap != null){
@@ -147,6 +162,12 @@ public class ProfileUserFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+
+        if (isChanged){
+            //Send new values
+
+        }
+
         mListener = null;
 
 
@@ -204,6 +225,7 @@ public class ProfileUserFragment extends Fragment {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     editName.setText(edt.getText());
                     editName.setHint(edt.getHint());
+                    isChanged = true;
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -220,6 +242,7 @@ public class ProfileUserFragment extends Fragment {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     editSurname.setText(edt.getText());
                     editSurname.setHint(edt.getHint());
+                    isChanged = true;
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -236,6 +259,7 @@ public class ProfileUserFragment extends Fragment {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     editEmail.setText(edt.getText());
                     editEmail.setHint(edt.getHint());
+                    isChanged = true;
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -252,6 +276,7 @@ public class ProfileUserFragment extends Fragment {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     editPhone.setText(edt.getText());
                     editPhone.setHint(edt.getHint());
+                    isChanged = true;
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -268,6 +293,7 @@ public class ProfileUserFragment extends Fragment {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     editTopic.setText(edt.getText());
                     editTopic.setHint(edt.getHint());
+                    isChanged = true;
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

@@ -31,6 +31,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
@@ -135,5 +136,41 @@ public class HttpUrlConnection {
         }
 
         return result.toString();
+    }
+
+    public String performPutCall(String requestURL,
+                                 HashMap<String, String> postDataParams, String userCredentials) {
+        DefaultHttpClient httpclient = new DefaultHttpClient();
+        final HttpParams httpConnParams = httpclient.getParams();
+        HttpConnectionParams.setConnectionTimeout(httpConnParams, CONNECTION_TIMEOUT);
+        HttpConnectionParams.setSoTimeout(httpConnParams, READ_TIMEOUT);
+        HttpPut httpPut = new HttpPut(requestURL);
+
+        try {
+            String postDataParamsString = getDataString(postDataParams);
+            httpPut.setEntity(new StringEntity(postDataParamsString));
+            httpPut.setHeader("Accept", "application/json");
+            httpPut.setHeader("Content-type", "application/x-www-form-urlencoded; charset=UTF-8");
+            //Add the auth header
+            if (userCredentials != null) httpPut.addHeader(KEY_HEADER_AUTHORIZED, userCredentials);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        HttpResponse response = null;
+        String responseStr = null;
+        try {
+            response = httpclient.execute(httpPut);
+            StatusLine statusLine = response.getStatusLine();
+            if (statusLine.getStatusCode() == 200  || statusLine.getStatusCode() == 201) {
+                //responseStr = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
+                responseStr = statusLine.getReasonPhrase();
+            }else{
+                Log.e("POST ERROR", response.getStatusLine().toString());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return responseStr;
     }
 }
