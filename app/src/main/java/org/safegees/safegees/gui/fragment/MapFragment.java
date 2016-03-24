@@ -1,6 +1,7 @@
 package org.safegees.safegees.gui.fragment;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -45,6 +46,7 @@ import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import org.safegees.safegees.R;
 import org.safegees.safegees.gui.gui_utils.MapInfoWindow;
+import org.safegees.safegees.gui.view.PrincipalMapActivity;
 import org.safegees.safegees.model.Friend;
 import org.safegees.safegees.model.LatLng;
 import org.safegees.safegees.model.POI;
@@ -188,9 +190,9 @@ public class MapFragment extends Fragment {
 
     public void setMapViewDependingConnection() {
 
-            if (Connectivity.isWifiConnection(getContext())) {
+            if (Connectivity.isNetworkAvaiable(getContext())) {
                 mapView.setTileSource(new XYTileSource("Mapnik",
-                        2, 18, 384, ".png", new String[]{
+                        2, 18, 256, ".png", new String[]{
                         "http://a.tile.openstreetmap.org/",
                         "http://b.tile.openstreetmap.org/",
                         "http://c.tile.openstreetmap.org/"}));
@@ -200,7 +202,7 @@ public class MapFragment extends Fragment {
                 //String externalStorageDirectory =  MapFileManager.getUserStorageriority();
                 //String destination = externalStorageDirectory + File.separator + "osmdroid" + File.separator + "tiles" + File.separator + "Mapnik"+File.separator;
                 //mapView.setTileSource(new XYTileSource("Mapnik", 2, 18, 384, ".png", new String[]{}));
-                mapView.setTileSource(new XYTileSource("Mapnik", 0, 18, 384, ".png", new String[]{}));
+                mapView.setTileSource(new XYTileSource("Mapnik", 0, 18, 256, ".png", new String[]{}));
                 mapView.setUseDataConnection(false);
 
             }

@@ -23,9 +23,11 @@
 
 package org.safegees.safegees.util;
 
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.content.Context;
 import android.net.NetworkInfo;
+import android.preference.PreferenceManager;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -49,16 +51,26 @@ public class Connectivity {
      * @return true if the device has internet connection
      */
     public static boolean isNetworkAvaiable(Context context){
+
+
+        //Get shared preferences wifi connection allowed
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean mobileAllowed = prefs.getBoolean("pref_switch_mobile", false);
+
+
         ConnectivityManager cm;
         NetworkInfo info = null;
         try {
             cm = (ConnectivityManager) context.getSystemService(context.CONNECTIVITY_SERVICE);
             info = cm.getActiveNetworkInfo();
+
         }catch(Exception e){
             e.printStackTrace();
         }
-        if (info != null) return true;
+        if (info != null && mobileAllowed) return true;
+        else if (info != null) return (info.isConnected() && info.getType() == ConnectivityManager.TYPE_WIFI);
         else return false;
+
 
     }
 
@@ -105,7 +117,6 @@ public class Connectivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
             if (info != null) {
                 return (info != null && info.isConnected() && info.getType() == ConnectivityManager.TYPE_WIFI);
             }
@@ -129,9 +140,8 @@ public class Connectivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
             if (info != null) {
-                return (info != null && info.isConnected() && info.getType() == ConnectivityManager.TYPE_MOBILE);
+                return (info != null && info.isConnected() && info.getType() == ConnectivityManager.TYPE_MOBILE );
             }
         }
         return false;

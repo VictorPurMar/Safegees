@@ -55,6 +55,7 @@ import org.safegees.safegees.util.ShareDataController;
 
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceActivity;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -241,7 +242,7 @@ public class PrincipalMapActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.action_settings:
-                Intent intent = new Intent(this, SettingsActivity.class);
+                Intent intent = new Intent(this, PreferencesActivity.class);
                 startActivity(intent);
                 return true;
             case R.id.action_close_session:

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
@@ -18,5 +19,19 @@
     <!--<Preference android:title="@string/pref_title_system_sync_settings">
         <intent android:action="android.settings.SYNC_SETTINGS" />
     </Preference>-->
+    <PreferenceCategory android:title="Data tansmission">
+<!--
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="pref_switch_wifi"
+            android:summary="@string/pref_wifi_comment"
+            android:title="@string/pref_wifi_connection" />-->
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="pref_switch_mobile"
+            android:summary="@string/pref_mobile_comment"
+            android:title="@string/pref_mobile_connection" />
+    </PreferenceCategory>
+
 
 </PreferenceScreen>

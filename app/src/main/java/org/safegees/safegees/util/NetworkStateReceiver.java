@@ -39,8 +39,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
         Log.d("Network", "Network connectivity change");
         if(Connectivity.isNetworkAvaiable(context)) {
             if (PrincipalMapActivity.getInstance() != null) PrincipalMapActivity.getInstance().connectivityOn();
-        }
-        else {
+        }else {
             if (PrincipalMapActivity.getInstance() != null) PrincipalMapActivity.getInstance().connectivityOff();
         }
     }

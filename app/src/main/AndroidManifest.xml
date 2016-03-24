@@ -15,14 +15,12 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <receiver android:name=".util.NetworkStateReceiver" >
+        <receiver android:name=".util.NetworkStateReceiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
             </intent-filter>
         </receiver>
-
 
         <activity
             android:name=".gui.view.MainActivity"
@@ -39,17 +37,17 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".gui.view.LoginActivity"
             android:label="@string/title_activity_login"
             android:screenOrientation="portrait" />
-        <activity android:name=".gui.view.RegisterActivity"></activity>
-
+        <activity android:name=".gui.view.RegisterActivity" />
         <activity
             android:name=".gui.preferences.SettingsActivity"
-            android:label="@string/app_name">
-        </activity>
+            android:label="@string/app_name"></activity>
+        <activity
+            android:name=".gui.view.PreferencesActivity"
+            android:label="@string/title_activity_preferences"></activity>
     </application>
 
 </manifest>

@@ -32,7 +32,6 @@
     //CONNECTION STRINGS/////////////////////////////////////////////////
 
 
-
     //POST keys
     <!-- Connection controller messages (get - post) -->
     <string name="KEY_CONTACTS_DATA">friends</string>
@@ -103,11 +102,17 @@
     <string name="pref_header_notifications">Notifications</string>
 
     <string name="pref_title_new_message_notifications">New message notifications</string>
-
     <string name="pref_title_ringtone">Ringtone</string>
     <string name="pref_ringtone_silent">Silent</string>
-
     <string name="pref_title_vibrate">Vibrate</string>
+
+
+    <!-- PREFERENCES -->
+    <string name="pref_wifi_connection">Wifi connection</string>
+    <string name="pref_wifi_comment">Allows the wifi connection to download content (as maps). Recomendable.</string>
+    <string name="pref_mobile_connection">Mobile connection (4g, 3g, ... )</string>
+    <string name="pref_mobile_comment">Important: Using mobile connection online get the maps can consume too much of your internet fee.</string>
+    <string name="title_activity_preferences">PreferencesActivity</string>
 
 
 </resources>
