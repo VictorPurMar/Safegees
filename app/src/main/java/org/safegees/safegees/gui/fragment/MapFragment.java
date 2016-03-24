@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
@@ -46,6 +47,7 @@ import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import org.safegees.safegees.R;
 import org.safegees.safegees.gui.gui_utils.MapInfoWindow;
+import org.safegees.safegees.gui.view.MainActivity;
 import org.safegees.safegees.gui.view.PrincipalMapActivity;
 import org.safegees.safegees.model.Friend;
 import org.safegees.safegees.model.LatLng;
@@ -53,6 +55,7 @@ import org.safegees.safegees.model.POI;
 import org.safegees.safegees.util.Connectivity;
 import org.safegees.safegees.util.FileManager;
 import org.safegees.safegees.util.SafegeesDAO;
+import org.safegees.safegees.util.ShareDataController;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -162,6 +165,14 @@ public class MapFragment extends Fragment {
                 myLocationOverlay.setPersonIcon(getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_user_position)));
 
                 mapView.getOverlays().add(myLocationOverlay);
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+                boolean mobileAllowed = prefs.getBoolean("pref_position_share", false);
+                if(mobileAllowed) {
+                    LatLng latLng = new LatLng(myLocationOverlay.getMyLocation().getLatitude(), myLocationOverlay.getMyLocation().getLatitude());
+                    //Add the contact
+                    //ShareDataController sssdc = new ShareDataController();
+                    //sssdc.sendUserPosition(getContext(), SafegeesDAO.getInstance(getContext()).getPublicUser().getPublicEmail(), latLng);
+                }
 
             }
         });

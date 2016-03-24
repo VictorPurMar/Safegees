@@ -94,51 +94,7 @@ public class SafegeesDAO {
         PublicUser pu = null;
         try{
             pubUserJSON = new JSONObject(contactsData);
-            String name = "";
-            String surname = "";
-            String phone = "";
-            String publicEmail = "";
-
-            try{
-                name = pubUserJSON.getString("name");
-            }catch (Exception e){
-                Log.e("Error in Name", e.getMessage());
-            }
-
-            try{
-                surname = pubUserJSON.getString("surname");
-            }catch (Exception e){
-                Log.e("Error in surname", e.getMessage());
-            }
-
-            try{
-                phone = pubUserJSON.getString("telephone");
-            }catch (Exception e){
-                Log.e("Error in phone", e.getMessage());
-            }
-
-            try{
-                publicEmail = pubUserJSON.getString("email");
-            }catch (Exception e){
-                Log.e("Error in email", e.getMessage());
-            }
-
-
-            //String email = json.getString("email");
-            String bio ="";
-            try {
-                bio = pubUserJSON.getString("topic");
-            }catch (Exception e){
-                Log.e("Error in topic", e.getMessage());
-            }
-            LatLng lntLng = null;
-            try {
-                lntLng = new LatLng(pubUserJSON.getString("position"));
-            }catch (Exception e){
-                Log.e("Error in position", e.getMessage());
-            }
-
-            pu = new PublicUser(bio,publicEmail,name,phone,null,surname);
+            pu = PublicUser.getPublicUserFromJSON(pubUserJSON.toString());
         }catch (Exception e){
 
         }

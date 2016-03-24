@@ -68,6 +68,7 @@ package org.safegees.safegees.util;
 import android.content.Context;
 import android.util.Log;
 
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -198,16 +199,16 @@ public class SafegeesConnectionManager {
     ////////////////////////////////////////////////////////////////////
 
     public boolean updateUserBasic(PrivateUser privateUser){
-        String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_UPDATE + SEPARATOR;
+        String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_UPDATE + SEPARATOR ;
         HashMap<String, String> mp = new HashMap<String, String>();
-        mp.put(KEY_MAIL, privateUser.getPublicEmail());
+        //mp.put(KEY_MAIL, privateUser.getPublicEmail());
         mp.put(KEY_NAME, privateUser.getName());
         mp.put(KEY_SURNAME, privateUser.getSurname());
         mp.put(KEY_PHONE, privateUser.getPhoneNumber());
         mp.put(KEY_BIO, privateUser.getBio());
-        //mp.put(KEY_POSITION, privateUser.getPosition().toString());
+        mp.put(KEY_POSITION, privateUser.getPosition().toString());
         String auth = this.getAuth(privateUser.getPrivateEmail(), privateUser.getPassword());
-        String response = new HttpUrlConnection().performPutCall(url, mp, auth);
+        String response = new HttpUrlConnection().performPostCall(url, mp, auth);
         Log.e("UPDATE_USER",response.toString());
         if (response != null){
             Log.i("RESPONSE",response);

@@ -67,7 +67,7 @@ public class Connectivity {
         }catch(Exception e){
             e.printStackTrace();
         }
-        if (info != null && mobileAllowed) return true;
+        if (info != null && mobileAllowed) return info.isConnected();
         else if (info != null) return (info.isConnected() && info.getType() == ConnectivityManager.TYPE_WIFI);
         else return false;
 

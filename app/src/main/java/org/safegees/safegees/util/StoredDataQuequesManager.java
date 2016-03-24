@@ -56,18 +56,21 @@ public class StoredDataQuequesManager {
     private static int KEY_ADD_USER_JSON = R.string.KEY_ADD_USERS;
     private static int KEY_DELETE_USER_JSON = R.string.KEY_DELETE_USERS;
     private static int KEY_USER_POSITION_JSON = R.string.KEY_USER_POSITIONS;
+    private static int KEY_USER_BASIC_DATA_JSON = R.string.KEY_USER_BASIC_DATA;
 
     //JSON keys
     private static String KEY_JSON_ADD_USERS_TITLE = "addUsersJSON";
     private static String KEY_JSON_DELETE_USERS_TITLE = "deleteUsersJSON";
     private static String KEY_JSON_APP_USERS_TITLE = "appUsersJSON";
     private static String KEY_JSON_USER_POSITION_TITLE = "setUserPositionJSON";
+    private static String KEY_JSON_USER_BASIC_DATA_TITLE = "setUserBasicDataJSON";
 
     private static String KEY_JSON_USER_EMAIL = "userEmail";
     private static String KEY_JSON_CONTACT_TO_ADD = "contactToAdd";
     private static String KEY_JSON_CONTACT_TO_DELETE = "contactToDelete";
     private static String KEY_JSON_USER_PASSWORD = "password";
     private static String KEY_JSON_USER_POSITION = "position";
+    private static String KEY_JSON_USER_BASIC_DATA = "userData";
 
 
     public static String getUserPassword(Context context, String userMail){
@@ -87,6 +90,7 @@ public class StoredDataQuequesManager {
         return false;
     }
 
+
     public static boolean putUserAndKeyInAppUserQueque(Context context, String userMail, String password){
         String storedJSONStringKEY = context.getResources().getString(R.string.KEY_APP_USERS);
         String jsonResourceKey = context.getResources().getString(KEY_APP_USER_JSON);
@@ -103,6 +107,12 @@ public class StoredDataQuequesManager {
         String storedJSONStringKEY = context.getResources().getString(R.string.KEY_ADD_USERS);
         String jsonResourceKey = context.getResources().getString(KEY_ADD_USER_JSON);
         return putInStorageJSON(userMail, emailForAdd, storedJSONStringKEY, jsonResourceKey, KEY_JSON_ADD_USERS_TITLE, KEY_JSON_USER_EMAIL, KEY_JSON_CONTACT_TO_ADD, false);
+    }
+
+    public static boolean putUserInBasicDataQueque(Context context, String userMail, String jsonBasicUserData){
+        String storedJSONStringKEY = context.getResources().getString(R.string.KEY_USER_BASIC_DATA);
+        String jsonResourceKey = context.getResources().getString(KEY_USER_BASIC_DATA_JSON);
+        return putInStorageJSON(userMail, jsonBasicUserData, storedJSONStringKEY, jsonResourceKey, KEY_JSON_USER_BASIC_DATA_TITLE, KEY_JSON_USER_EMAIL, KEY_JSON_USER_BASIC_DATA, true);
     }
 
     private static boolean putInStorageJSON(String userMail, String userValue, String storedJSONStringKEY, String jsonResourceKey, String jsonTitle_key, String jsonUserEmailKey, String jsonUserValueKey, boolean substituteStoredFieldByUserEmail) {
@@ -172,6 +182,12 @@ public class StoredDataQuequesManager {
         String storedJSON = MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_DELETE_USERS));
         String jsonResourceKey = context.getResources().getString(KEY_DELETE_USER_JSON);
         return removeFromStoredQuequeByTwoValues(userMail, emailForDelete, storedJSON, jsonResourceKey, KEY_JSON_DELETE_USERS_TITLE, KEY_JSON_USER_EMAIL, KEY_JSON_CONTACT_TO_DELETE);
+    }
+
+    public static boolean removeUserBasicDataInQueque(Context context, String userMail, String jsonForDelete){
+        String storedJSON = MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_BASIC_DATA));
+        String jsonResourceKey = context.getResources().getString(KEY_USER_BASIC_DATA_JSON);
+        return removeFromStoredQuequeByTwoValues(userMail, jsonForDelete, storedJSON, jsonResourceKey, KEY_JSON_USER_BASIC_DATA_TITLE, KEY_JSON_USER_EMAIL, KEY_JSON_USER_BASIC_DATA);
     }
 
     private static boolean removeFromStoredQuequeByTwoValues(String userMail, String userValue, String storedJSON, String jsonResourceKey, String storedJSONTitle, String userMailJSONKey, String valueJSONKey) {
@@ -251,9 +267,15 @@ public class StoredDataQuequesManager {
         return getStoredMap(KEY_JSON_USER_EMAIL, KEY_JSON_USER_POSITION, KEY_JSON_USER_POSITION_TITLE, userPositions);
     }
 
+    /*
     public static Map<String, String> getBasicUserMAP(Context context){
         String userPositions = MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_BASIC));
         return getStoredMap(KEY_JSON_USER_EMAIL, KEY_JSON_USER_POSITION, KEY_JSON_USER_POSITION_TITLE, userPositions);
+    }*/
+
+    public static Map<String, String> getUserBasicDataMap(Context context){
+        String userBasicData = MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_BASIC_DATA));
+        return getStoredMap(KEY_JSON_USER_EMAIL, KEY_JSON_USER_BASIC_DATA, KEY_JSON_USER_BASIC_DATA_TITLE, userBasicData);
     }
 
 

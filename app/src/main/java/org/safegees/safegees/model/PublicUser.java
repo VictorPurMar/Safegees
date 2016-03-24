@@ -104,12 +104,12 @@ public class PublicUser {
         PublicUser pu = null;
         try {
             JSONObject json = new JSONObject(privateUserJSON);
-            String bio = json.getString("topic")!=null?json.getString("topic"):"";
-            String publicEmail = json.getString("email")!=null?json.getString("public_email"):"";
-            String name = json.getString("name")!=null?json.getString("name"):"";
-            String surname = json.getString("surname")!=null?json.getString("surname"):"";
-            String phoneNumber = json.getString("telephone")!=null?json.getString("telephone"):"";
-            LatLng position = json.getString("position")!=null?new LatLng(json.getString("position")):null;
+            String bio = json.getString("topic")!=null && !json.getString("topic").equals("null")?json.getString("topic"):"";
+            String publicEmail = json.getString("email")!=null &&  !json.getString("email").equals("null")?json.getString("email"):"";
+            String name = json.getString("name")!=null && !json.getString("name").equals("null")?json.getString("name"):"";
+            String surname = json.getString("surname")!=null &&  !json.getString("surname").equals("null")?json.getString("surname"):"";
+            String phoneNumber = json.getString("telephone")!=null && !json.getString("telephone").equals("null")?json.getString("telephone"):"";
+            LatLng position = json.getString("position")!=null && !json.getString("position").equals("null")?new LatLng(json.getString("position")):null;
 
             //Null values because are not implemented on server yet
             pu = new PublicUser(bio,publicEmail,name,phoneNumber,position,surname);
@@ -125,11 +125,11 @@ public class PublicUser {
         try {
             JSONObject json = new JSONObject();
             json.put("topic", pu.getBio());
-            json.put("public_email", pu.getPublicEmail());
+            json.put("email", pu.getPublicEmail());
             json.put("name", pu.getName());
             json.put("surname", pu.getSurname());
             json.put("telephone", pu.getPhoneNumber());
-            json.put("position", pu.getPosition().toString());
+            json.put("position", pu.getPosition()!=null?pu.getPosition().toString():"");
             publicObjectStr = json.toString();
         }catch(Exception e){
             Log.e("Caused:", e.getCause().toString());

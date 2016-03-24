@@ -47,10 +47,12 @@ public class ShareDataController {
     private static DownloadAndSendTasks dAndSTask = null;
     private static SendAddContactTask addContactTask = null;
     private static SendUserPosition sendUPosTask = null;
+    private static SendUserBasicData sendUserBasicData = null;
     private Context context;
     private String userEmail;
     private String contactToAdd;
     private LatLng latLng;
+    private PublicUser publicUser;
 
 
     public void run(Context context) {
@@ -75,6 +77,14 @@ public class ShareDataController {
         sendUPosTask.execute((Void) null);
     }
 
+    public void sendUserBasicData(Context context, String userMail, PublicUser publicUser) {
+        this.context = context;
+        this.userEmail = userMail;
+        this.publicUser = publicUser;
+        sendUserBasicData = new SendUserBasicData(this.context, this.userEmail, this.publicUser);
+        sendUserBasicData.execute((Void) null);
+    }
+
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
@@ -95,12 +105,12 @@ public class ShareDataController {
 
             if (Connectivity.isNetworkAvaiable(this.context)) {
 
-                //Get and store the contacts data from all the app users queque
-                getAppUsersData(scc);
-
                 //To do
                 //User public data if new
                 sendUserDataQueque(scc);
+
+                //Get and store the contacts data from all the app users queque
+                getAppUsersData(scc);
 
                 //Get general data (POI)
                 scc.getPointsOfInterest(this.context);
@@ -156,23 +166,27 @@ public class ShareDataController {
         */
 
         private void sendUserDataQueque(SafegeesConnectionManager scc) {
-            Map<String, String> appUsersMap = StoredDataQuequesManager.getAppUsersMap(this.context);
+            Map<String, String> appUsersMap = StoredDataQuequesManager.getUserBasicDataMap(this.context);
             Iterator it = appUsersMap.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry pair = (Map.Entry) it.next();
                 String userMail = (String) pair.getKey();
-                String userPassword = (String) pair.getValue();
+                String userPassword = StoredDataQuequesManager.getUserPassword(context, userMail);
+                String userDataStoredInQueque = (String) pair.getValue();
                 try {
-                    String publicUserStr = this.context.getResources().getString(R.string.KEY_USER_BASIC)+ "_" + userMail;
-                    if (publicUserStr!= null){
+                    //String publicUserStr = this.context.getResources().getString(R.string.KEY_USER_BASIC)+ "_" + userMail;
+                    String userJson = userDataStoredInQueque;
+                    if (userJson!= null){
                         //NEW
-                        String userJson = MainActivity.DATA_STORAGE.getString(publicUserStr);
+                        //String userJson = MainActivity.DATA_STORAGE.getString(publicUserStr);
                         Log.e("USER_JSON", userJson);
                         //PublicUser pu = PublicUser.getPublicUserFromJSON(publicUserStr);
                         PublicUser pu = PublicUser.getPublicUserFromJSON(userJson);
+
                         if (pu != null){
                             PrivateUser pr = new PrivateUser(userMail, userPassword,pu);
-                            if (pr != null)scc.updateUserBasic(pr);
+                            if (pr != null)
+                                if(scc.updateUserBasic(pr))StoredDataQuequesManager.removeUserBasicDataInQueque(context,userMail,userJson);
                         }
                     }
                     scc.getUserBasic(this.context, userMail, userPassword);
@@ -402,7 +416,61 @@ public class ShareDataController {
             if (success) {
                Log.i("UPDATE_POSITION", "The position was updated correctly");
             } else {
+                String latLongString = this.latLng.toString();
+                StoredDataQuequesManager.putUserPositionInPositionsQueque(this.context, userEmail, latLongString);
                 Log.i("UPDATE_POSITION", "The position wasn't updated correctly");
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            sendUPosTask = null;;
+        }
+    }
+
+    /**
+     * Represents an asynchronous login/registration task used to authenticate
+     * the user.
+     */
+    public class SendUserBasicData extends AsyncTask<Void, Void, Boolean> {
+        private Context context;
+        private String userEmail;
+        private PublicUser publicUser;
+
+
+        public SendUserBasicData(Context context, String userEmail, PublicUser publicUser) {
+            this.context = context;
+            this.userEmail = userEmail;
+            this.publicUser = publicUser;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            // TODO: attempt authentication against a network service.
+
+            SafegeesConnectionManager scc = new SafegeesConnectionManager();
+
+            if (Connectivity.isNetworkAvaiable(this.context)) {
+                String userPassword = StoredDataQuequesManager.getUserPassword(this.context, this.userEmail);
+                PrivateUser pu = new PrivateUser(userEmail,userPassword,publicUser);
+                return (scc.updateUserBasic(pu));
+            }
+            return false;
+        }
+
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+
+
+            sendUPosTask = null;
+            if (success) {
+                Log.i("SEND_BASIC_USER_DATA", "The basic user data was updated correctly");
+            } else {
+                String userPassword = StoredDataQuequesManager.getUserPassword(this.context, this.userEmail);
+                PrivateUser pu = new PrivateUser(userEmail,userPassword,publicUser);
+                StoredDataQuequesManager.putUserInBasicDataQueque(this.context, userEmail, PublicUser.getJSONStringFromPublicUser(pu));
+                Log.i("SEND_BASIC_USER_DATA", "The basic user data wasn't updated correctly");
             }
         }
 

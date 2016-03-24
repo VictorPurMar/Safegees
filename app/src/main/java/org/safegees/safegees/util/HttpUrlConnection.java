@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
@@ -40,7 +41,12 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
@@ -138,19 +144,25 @@ public class HttpUrlConnection {
         return result.toString();
     }
 
+    /* Something wrong with put method
     public String performPutCall(String requestURL,
-                                 HashMap<String, String> postDataParams, String userCredentials) {
+                                 HashMap<String, String> postDataParams, String userCredentials){
+
+
         DefaultHttpClient httpclient = new DefaultHttpClient();
         final HttpParams httpConnParams = httpclient.getParams();
         HttpConnectionParams.setConnectionTimeout(httpConnParams, CONNECTION_TIMEOUT);
         HttpConnectionParams.setSoTimeout(httpConnParams, READ_TIMEOUT);
+        //PutMethod httpPut = new PutMethod(requestURL)
         HttpPut httpPut = new HttpPut(requestURL);
 
         try {
             String postDataParamsString = getDataString(postDataParams);
+            //httpPut.setEntity(new UrlEncodedFormEntity(postDataParams));
             httpPut.setEntity(new StringEntity(postDataParamsString));
-            httpPut.setHeader("Accept", "application/json");
-            httpPut.setHeader("Content-type", "application/x-www-form-urlencoded; charset=UTF-8");
+            httpPut.setHeader("version", "1.0.0");
+            //httpPut.setHeader("Content-type", "multipart/form-data");
+            //httpPut.setHeader("cache-control","no-cache");
             //Add the auth header
             if (userCredentials != null) httpPut.addHeader(KEY_HEADER_AUTHORIZED, userCredentials);
         } catch (UnsupportedEncodingException e) {
@@ -173,4 +185,5 @@ public class HttpUrlConnection {
         }
         return responseStr;
     }
+    */
 }

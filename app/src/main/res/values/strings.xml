@@ -45,6 +45,7 @@
     <string name="KEY_ADD_USERS">add_users</string>
     <string name="KEY_DELETE_USERS">delete_users</string>
     <string name="KEY_USER_POSITIONS">user_position</string>
+    <string name="KEY_USER_BASIC_DATA">user_basic_data</string>
 
     //Last camera position
 
@@ -113,6 +114,8 @@
     <string name="pref_mobile_connection">Mobile connection (4g, 3g, ... )</string>
     <string name="pref_mobile_comment">Important: Using mobile connection online get the maps can consume too much of your internet fee.</string>
     <string name="title_activity_preferences">PreferencesActivity</string>
+    <string name="pref_position_share">Send your position</string>
+    <string name="pref_position_comment">This will share your position with your safegees friends</string>
 
 
 </resources>

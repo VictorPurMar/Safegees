@@ -27,10 +27,15 @@
             android:summary="@string/pref_wifi_comment"
             android:title="@string/pref_wifi_connection" />-->
         <SwitchPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="pref_switch_mobile"
             android:summary="@string/pref_mobile_comment"
             android:title="@string/pref_mobile_connection" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="pref_position_share"
+            android:summary="@string/pref_position_comment"
+            android:title="@string/pref_position_share" />
     </PreferenceCategory>
 
 
