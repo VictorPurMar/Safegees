@@ -27,8 +27,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -60,6 +62,14 @@ import java.io.FilenameFilter;
             super.onCreate(savedInstanceState);
             setContentView(R.layout.splash_screen_layout);
             this.adviceUser = (TextView) findViewById(R.id.advice_user);
+
+            /*
+            //Habilite your gps
+            final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
+            if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+                startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+            }
+            */
 
             //Manain the splash screen on
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -168,10 +178,13 @@ import java.io.FilenameFilter;
     }
 
     public void launchMainActivity(){
+
             // Start the app
             Intent intent = new Intent(this, PrincipalMapActivity.class);
             startActivity(intent);
             finish();
+
+
 
         }
 

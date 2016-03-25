@@ -124,8 +124,10 @@ public class ContactsFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        mAdapter = new MyAdapter(friends);
-        mRecyclerView.setAdapter(mAdapter);
+        if (friends != null && friends.size() != 0) {
+            mAdapter = new MyAdapter(friends);
+            mRecyclerView.setAdapter(mAdapter);
+        }
 
         return view;
     }

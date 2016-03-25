@@ -145,17 +145,10 @@ public class ShareDataController {
                 while (it.hasNext()) {
                     Map.Entry pair = (Map.Entry) it.next();
                     String userMail = (String) pair.getKey();
-                    String userPassword = (String) pair.getValue();
+                    String userPosition = (String) pair.getValue();
+                    String userPassword = StoredDataQuequesManager.getUserPassword(this.context, userEmail);
                     try {
-                        String publicUserStr = this.context.getResources().getString(R.string.KEY_USER_BASIC) + "_" + userEmail;
-                        if (publicUserStr!= null){
-                            PublicUser pu = PublicUser.getPublicUserFromJSON(publicUserStr);
-                            if (pu != null){
-                                PrivateUser pr = new PrivateUser(userMail, userPassword,pu);
-                                if (pr != null)scc.updateUserBasic(pr);
-                            }
-                        }
-                        scc.getUserBasic(this.context, userMail, userPassword);
+                        if(scc.updateUserPosition(context, userMail, userPassword,userPosition))StoredDataQuequesManager.removeUserPositionInQueque(context,userMail,userPosition);
                     } catch (Exception e) {
                         Log.e("sendUserPositionsQueque", e.getMessage());
                     }
@@ -186,7 +179,7 @@ public class ShareDataController {
                         if (pu != null){
                             PrivateUser pr = new PrivateUser(userMail, userPassword,pu);
                             if (pr != null)
-                                if(scc.updateUserBasic(pr))StoredDataQuequesManager.removeUserBasicDataInQueque(context,userMail,userJson);
+                                if(scc.updateUserBasic(pr))StoredDataQuequesManager.removeUserBasicDataInQueque(context, userMail, userJson);
                         }
                     }
                     scc.getUserBasic(this.context, userMail, userPassword);

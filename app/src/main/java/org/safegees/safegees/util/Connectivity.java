@@ -55,7 +55,7 @@ public class Connectivity {
 
         //Get shared preferences wifi connection allowed
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean mobileAllowed = prefs.getBoolean("pref_switch_mobile", false);
+        boolean mobileAllowed = prefs.getBoolean("pref_switch_mobile", true);
 
 
         ConnectivityManager cm;

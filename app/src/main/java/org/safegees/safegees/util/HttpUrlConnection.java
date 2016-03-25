@@ -76,7 +76,7 @@ public class HttpUrlConnection {
         try {
             response = httpclient.execute(httpGet);
             StatusLine statusLine = response.getStatusLine();
-            if (statusLine.getStatusCode() == 200) {
+            if (statusLine.getStatusCode() == 200 || (statusLine.getStatusCode()>200 && statusLine.getStatusCode() < 300)) {
                 responseStr = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
             }else{
                 Log.e("GET ERROR" , response.getStatusLine().toString());

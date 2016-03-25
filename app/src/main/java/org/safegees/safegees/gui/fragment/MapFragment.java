@@ -1,6 +1,7 @@
 package org.safegees.safegees.gui.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -10,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
@@ -138,7 +140,6 @@ public class MapFragment extends Fragment {
                              Bundle savedInstanceState) {
 
 
-
         this.view = inflater.inflate(R.layout.fragment_map, container, false);
         sDAO = SafegeesDAO.getInstance(getContext());
 
@@ -162,13 +163,12 @@ public class MapFragment extends Fragment {
         myLocationOverlay.runOnFirstFix(new Runnable() {
             public void run() {
                 mapViewController.animateTo(myLocationOverlay.getMyLocation());
-                myLocationOverlay.disableFollowLocation();
+                //myLocationOverlay.enableFollowLocation();
                 myLocationOverlay.setPersonIcon(getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_user_position)));
-
                 mapView.getOverlays().add(myLocationOverlay);
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-                //boolean mobileAllowed = prefs.getBoolean("pref_position_share", false);
-                if(Connectivity.isNetworkAvaiable(getContext())) {
+                boolean mobileAllowed = prefs.getBoolean("pref_position_share", true);
+                if(Connectivity.isNetworkAvaiable(getContext()) && mobileAllowed) {
                     LatLng latLng = new LatLng(myLocationOverlay.getMyLocation().getLatitude(), myLocationOverlay.getMyLocation().getLatitude());
                     Log.i("POSITION", latLng.toString());
                     //Add the contact
