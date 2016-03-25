@@ -267,8 +267,8 @@ public class SafegeesConnectionManager {
         HashMap<String, String> mp = new HashMap<String, String>();
         mp.put(KEY_MAIL,user);
         mp.put(KEY_PASSWORD, password);
-        String auth = user+":"+password;
-        String response  = new HttpUrlConnection().performPostCall(url, mp, auth);
+        //String auth = user+":"+password;
+        String response  = new HttpUrlConnection().performPostCall(url, mp, null);
 
         if (response != null){
             Log.i("RESPONSE",response);

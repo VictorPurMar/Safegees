@@ -88,6 +88,8 @@ public class HttpUrlConnection {
 
     }
 
+
+
     public String performPostCall(String requestURL,
                                  HashMap<String, String> postDataParams, String userCredentials) {
 
@@ -113,7 +115,7 @@ public class HttpUrlConnection {
         try {
             response = httpclient.execute(httpPost);
             StatusLine statusLine = response.getStatusLine();
-            if (statusLine.getStatusCode() == 200  || statusLine.getStatusCode() == 201) {
+            if (statusLine.getStatusCode() == 200  || statusLine.getStatusCode() == 201 || statusLine.getStatusCode() == 204) {
                 //responseStr = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
                 responseStr = statusLine.getReasonPhrase();
             }else{

@@ -59,6 +59,7 @@ public class ProfileUserFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private PublicUser publicUser;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -122,21 +123,24 @@ public class ProfileUserFragment extends Fragment {
         editTopic = (EditText) view.findViewById(R.id.editTopic);
 
         SafegeesDAO sDAO = SafegeesDAO.getInstance(this.getContext());
-        PublicUser pu = sDAO.getPublicUser();
+        this.publicUser = sDAO.getPublicUser();
 
         Map<String,String> publicUsers = StoredDataQuequesManager.getUserBasicDataMap(this.getContext());
-        if (publicUsers != null){
-            PublicUser puDynamic = PublicUser.getPublicUserFromJSON(publicUsers.get(pu.getPublicEmail()));
-            if(puDynamic != null) pu = puDynamic;
+        if (publicUsers != null && publicUsers.size() != 0){
+            String puJSON = publicUsers.get(this.publicUser.getPublicEmail());
+            Log.e("PU_JSON", ""+puJSON);
+            PublicUser puDynamic = null;
+            if (puJSON != null) puDynamic = PublicUser.getPublicUserFromJSON(puJSON);
+            if(puDynamic != null) this.publicUser = puDynamic;
         }
 
 
-        if (pu != null) {
-            this.editName.setText(pu.getName() != null ? pu.getName() : "");
-            this.editSurname.setText(pu.getSurname() != null ? pu.getSurname() : "");
-            this.editEmail.setText(pu.getPublicEmail() != null ? pu.getPublicEmail() : "");
-            this.editPhone.setText(pu.getPhoneNumber() != null ? pu.getPhoneNumber() : "");
-            this.editTopic.setText(pu.getBio() != null ? pu.getBio() : "");
+        if (this.publicUser != null) {
+            this.editName.setText(this.publicUser.getName() != null ? this.publicUser.getName() : "");
+            this.editSurname.setText(this.publicUser.getSurname() != null ? this.publicUser.getSurname() : "");
+            this.editEmail.setText(this.publicUser.getPublicEmail() != null ? this.publicUser.getPublicEmail() : "");
+            this.editPhone.setText(this.publicUser.getPhoneNumber() != null ? this.publicUser.getPhoneNumber() : "");
+            this.editTopic.setText(this.publicUser.getBio() != null ? this.publicUser.getBio() : "");
         }
 
 

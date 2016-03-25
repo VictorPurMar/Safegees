@@ -127,7 +127,7 @@ public class ShareDataController {
 
                 //Send all the PrivateUser Positions Queque
                 //In send the basic user data the position will be sended
-                //sendUserPositionsQueque(scc);
+                sendUserPositionsQueque(scc);
 
                 return true;
             }
@@ -137,7 +137,7 @@ public class ShareDataController {
 
 
 
-        /*
+
         private void sendUserPositionsQueque(SafegeesConnectionManager scc) {
             Map<String, String> userPositionsMap = StoredDataQuequesManager.getUserPositionsMap(this.context);
             if (userPositionsMap != null) {
@@ -163,7 +163,7 @@ public class ShareDataController {
                 }
             }
         }
-        */
+
 
         private void sendUserDataQueque(SafegeesConnectionManager scc) {
             Map<String, String> appUsersMap = StoredDataQuequesManager.getUserBasicDataMap(this.context);
@@ -450,11 +450,14 @@ public class ShareDataController {
 
             SafegeesConnectionManager scc = new SafegeesConnectionManager();
 
+            //While this alpha doesnt send the position on live, only on start
+            /* To do
             if (Connectivity.isNetworkAvaiable(this.context)) {
                 String userPassword = StoredDataQuequesManager.getUserPassword(this.context, this.userEmail);
                 PrivateUser pu = new PrivateUser(userEmail,userPassword,publicUser);
                 return (scc.updateUserBasic(pu));
             }
+            */
             return false;
         }
 

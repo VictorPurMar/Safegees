@@ -93,7 +93,12 @@ public class SafegeesDAO {
         JSONObject pubUserJSON = null;
         PublicUser pu = null;
         try{
-            pubUserJSON = new JSONObject(contactsData);
+            pubUserJSON = new JSONObject();
+            try {
+                pubUserJSON = new JSONObject(contactsData);
+            }catch (Exception e){
+                Log.e("NONE FRIENDS", e.getMessage());
+            }
             pu = PublicUser.getPublicUserFromJSON(pubUserJSON.toString());
         }catch (Exception e){
 

@@ -105,11 +105,11 @@ public class PublicUser {
         try {
             JSONObject json = new JSONObject(privateUserJSON);
             String bio = json.getString("topic")!=null && !json.getString("topic").equals("null")?json.getString("topic"):"";
-            String publicEmail = json.getString("email")!=null &&  !json.getString("email").equals("null")?json.getString("email"):"";
+            String publicEmail = json.getString("email")!=null && !json.getString("email").equals("null")?json.getString("email"):"";
             String name = json.getString("name")!=null && !json.getString("name").equals("null")?json.getString("name"):"";
-            String surname = json.getString("surname")!=null &&  !json.getString("surname").equals("null")?json.getString("surname"):"";
+            String surname = json.getString("surname")!=null && !json.getString("surname").equals("null")?json.getString("surname"):"";
             String phoneNumber = json.getString("telephone")!=null && !json.getString("telephone").equals("null")?json.getString("telephone"):"";
-            LatLng position = json.getString("position")!=null && !json.getString("position").equals("null")?new LatLng(json.getString("position")):null;
+            LatLng position = json.getString("position")!=null && !json.getString("position").equals("null") || !json.getString("position").equals("")?new LatLng(json.getString("position")):null;
 
             //Null values because are not implemented on server yet
             pu = new PublicUser(bio,publicEmail,name,phoneNumber,position,surname);

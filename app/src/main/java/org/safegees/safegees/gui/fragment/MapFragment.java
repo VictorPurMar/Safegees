@@ -13,6 +13,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -166,12 +167,13 @@ public class MapFragment extends Fragment {
 
                 mapView.getOverlays().add(myLocationOverlay);
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-                boolean mobileAllowed = prefs.getBoolean("pref_position_share", false);
-                if(mobileAllowed) {
+                //boolean mobileAllowed = prefs.getBoolean("pref_position_share", false);
+                if(Connectivity.isNetworkAvaiable(getContext())) {
                     LatLng latLng = new LatLng(myLocationOverlay.getMyLocation().getLatitude(), myLocationOverlay.getMyLocation().getLatitude());
+                    Log.i("POSITION", latLng.toString());
                     //Add the contact
-                    //ShareDataController sssdc = new ShareDataController();
-                    //sssdc.sendUserPosition(getContext(), SafegeesDAO.getInstance(getContext()).getPublicUser().getPublicEmail(), latLng);
+                    ShareDataController sssdc = new ShareDataController();
+                    sssdc.sendUserPosition(getContext(), SafegeesDAO.getInstance(getContext()).getPublicUser().getPublicEmail(), latLng);
                 }
 
             }
@@ -228,6 +230,28 @@ public class MapFragment extends Fragment {
 
         //Add markers
         this.refreshPointsInMap();
+
+        //NEW TRY TO SEND THE POS
+        try {
+            /*
+            mapViewController.animateTo(myLocationOverlay.getMyLocation());
+            myLocationOverlay.disableFollowLocation();
+            myLocationOverlay.setPersonIcon(getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_user_position)));
+
+            mapView.getOverlays().add(myLocationOverlay);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+            //boolean mobileAllowed = prefs.getBoolean("pref_position_share", false);
+            if (Connectivity.isNetworkAvaiable(getContext())) {
+                LatLng latLng = new LatLng(myLocationOverlay.getMyLocation().getLatitude(), myLocationOverlay.getMyLocation().getLatitude());
+                Log.i("POSITION", latLng.toString());
+                //Add the contact
+                ShareDataController sssdc = new ShareDataController();
+                sssdc.sendUserPosition(getContext(), SafegeesDAO.getInstance(getContext()).getPublicUser().getPublicEmail(), latLng);
+            }
+            */
+        }catch (Exception e){
+            Log.e("POS ERROR", e.getMessage());
+        }
     }
 
     /**
