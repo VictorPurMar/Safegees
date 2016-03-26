@@ -37,6 +37,9 @@ import android.widget.Toast;
 import org.safegees.safegees.R;
 import org.safegees.safegees.util.SafegeesConnectionManager;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener{
 
     EditText name;
@@ -47,7 +50,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     EditText password2;
     EditText phone;
     EditText bio;
-
     Button register;
 
     @Override
@@ -82,15 +84,26 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         //Develope restrictions
         if (!emailStr.equals(email2Str)) {
             Toast.makeText(this, "The email field doesn't match", Toast.LENGTH_SHORT).show();
+        }else if(!isEmailValid(emailStr)){
+            Toast.makeText(this, "Email not valid", Toast.LENGTH_SHORT).show();
         }else if (!passwordStr.equals(password2Str)) {
             Toast.makeText(this, "The password field doesn't match", Toast.LENGTH_SHORT).show();
-        }else if(emailStr.length() <= 3 && passwordStr.length() <= 3){
-            Toast.makeText(this, "Email or password no valid", Toast.LENGTH_SHORT).show();
+        }else if(passwordStr.length() <= 4 ){
+            Toast.makeText(this, "Password too short", Toast.LENGTH_SHORT).show();
         }else{
             UserRegisterTask urt = new UserRegisterTask(this,email2Str,password2Str,nameStr,surnameStr,phoneStr,bioStr);
             urt.execute();
         }
 
+    }
+
+    private boolean isEmailValid(String email) {
+        //TODO: Replace this with your own logic
+        String regex = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(email);
+        boolean m = matcher.matches();
+        return ((!email.isEmpty()) && (email!=null) && (matcher.matches()));
     }
 
     /**

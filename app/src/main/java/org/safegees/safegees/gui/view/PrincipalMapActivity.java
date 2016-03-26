@@ -72,6 +72,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -148,6 +149,7 @@ public class PrincipalMapActivity extends AppCompatActivity
         //Start the Map fragment
         mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
+        loadStoredStoredImage();
         instance = this;
     }
 
@@ -158,7 +160,6 @@ public class PrincipalMapActivity extends AppCompatActivity
 
             //View headerView = navigationView.findViewById(R.id.navigation_header_layout);
             ImageView userImageView = (ImageView) headerView.findViewById(R.id.nav_user_image);
-
             Log.e("IMAGE", userImageView.toString());
 
             BitmapFactory.Options options = new BitmapFactory.Options();
@@ -171,6 +172,18 @@ public class PrincipalMapActivity extends AppCompatActivity
         }catch (Exception e){
             e.printStackTrace();
             Log.e("IMAGE ERROR", e.getMessage());
+        }
+
+        try{
+            TextView textName = (TextView) headerView.findViewById(R.id.nav_user_name);
+            TextView textMail = (TextView) headerView.findViewById(R.id.nav_user_email);
+
+            textName.setText(SafegeesDAO.getInstance(getBaseContext()).getPublicUser().getName()+" "+ SafegeesDAO.getInstance(getBaseContext()).getPublicUser().getSurname());
+            textMail.setText(SafegeesDAO.getInstance(getBaseContext()).getPublicUser().getPublicEmail());
+
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.e("NAME AND MAIL ERROR", e.getMessage());
         }
     }
 

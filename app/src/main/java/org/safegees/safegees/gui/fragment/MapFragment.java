@@ -169,7 +169,7 @@ public class MapFragment extends Fragment {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
                 boolean mobileAllowed = prefs.getBoolean("pref_position_share", true);
                 if(Connectivity.isNetworkAvaiable(getContext()) && mobileAllowed) {
-                    LatLng latLng = new LatLng(myLocationOverlay.getMyLocation().getLatitude(), myLocationOverlay.getMyLocation().getLatitude());
+                    LatLng latLng = new LatLng(myLocationOverlay.getMyLocation().getLatitude(), myLocationOverlay.getMyLocation().getLongitude());
                     Log.i("POSITION", latLng.toString());
                     //Add the contact
                     ShareDataController sssdc = new ShareDataController();

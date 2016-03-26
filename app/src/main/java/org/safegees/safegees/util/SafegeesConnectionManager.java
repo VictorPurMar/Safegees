@@ -178,7 +178,7 @@ public class SafegeesConnectionManager {
 
     public boolean updateUserPosition(Context context, String userEmail, String userPassword, String position){
         //Get user password and data from storage
-        String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_POSITION;
+        String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_POSITION + SEPARATOR;
         HashMap<String, String> mp = new HashMap<String, String>();
         mp.put(KEY_POSITION,position);
         String auth = userEmail+":"+userPassword;

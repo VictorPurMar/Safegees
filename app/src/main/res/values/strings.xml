@@ -14,6 +14,8 @@
     <string name="menu_news">News</string>
     <string name="menu_add_people">Add people</string>
     <string name="title_activity_login">Sign in</string>
+    <string name="title_register">Register</string>
+    <string name="title_settings">Register</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>

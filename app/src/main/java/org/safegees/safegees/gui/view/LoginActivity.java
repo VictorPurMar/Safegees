@@ -51,6 +51,9 @@ import org.safegees.safegees.util.StoredDataQuequesManager;
 import org.safegees.safegees.util.Connectivity;
 import org.safegees.safegees.util.SafegeesConnectionManager;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * A login screen that offers login via email/password.
  */
@@ -151,7 +154,7 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener{
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+        if (TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
@@ -202,7 +205,11 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener{
 
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
-        return email.contains("@");
+        String regex = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(email);
+        boolean m = matcher.matches();
+        return ((!email.isEmpty()) && (email!=null) && (matcher.matches()));
     }
 
     private boolean isPasswordValid(String password) {

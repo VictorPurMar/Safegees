@@ -293,7 +293,7 @@ public class ProfileUserFragment extends Fragment {
         }else if(v.getTag().equals("phone")) {
             edt.setText(editPhone.getText());
             edt.setHint(editPhone.getHint());
-            builder.setTitle("Surname");
+            builder.setTitle("Phone");
             builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     editPhone.setText(edt.getText());
