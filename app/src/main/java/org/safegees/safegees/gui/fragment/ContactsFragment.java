@@ -24,20 +24,28 @@
 package org.safegees.safegees.gui.fragment;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import org.safegees.safegees.R;
 import org.safegees.safegees.gui.adapters.MyAdapter;
 import org.safegees.safegees.gui.decoration.DividerItemDecoration;
+import org.safegees.safegees.gui.view.MainActivity;
+import org.safegees.safegees.gui.view.PrincipalMapActivity;
 import org.safegees.safegees.model.Friend;
+import org.safegees.safegees.model.PublicUser;
 import org.safegees.safegees.util.SafegeesDAO;
+import org.safegees.safegees.util.ShareDataController;
 
 import java.util.ArrayList;
 
@@ -175,4 +183,7 @@ public class ContactsFragment extends Fragment {
         ContactsFragment mFrgment = new ContactsFragment();
         return mFrgment;
     }
+
+
+
 }

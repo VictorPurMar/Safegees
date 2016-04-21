@@ -43,4 +43,12 @@ public class NetworkStateReceiver extends BroadcastReceiver {
             if (PrincipalMapActivity.getInstance() != null) PrincipalMapActivity.getInstance().connectivityOff();
         }
     }
+
+    public static void setFloatingUpdateButton(Context context){
+        if(Connectivity.isNetworkAvaiable(context)) {
+            if (PrincipalMapActivity.getInstance() != null) PrincipalMapActivity.getInstance().connectivityOn();
+        }else {
+            if (PrincipalMapActivity.getInstance() != null) PrincipalMapActivity.getInstance().connectivityOff();
+        }
+    }
 }

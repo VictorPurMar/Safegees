@@ -64,7 +64,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         // - replace the contents of the view with that element
         final Friend friend = mDataset.get(position);
         //To change
-        holder.txtHeader.setText("NAME SURNAME SURNAME" + mDataset.get(position).getName());
+        holder.txtHeader.setText(mDataset.get(position).getName()+" "+mDataset.get(position).getSurname());
         holder.txtHeader.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,7 +73,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             }
         });
 
-        holder.txtFooter.setText("Email: " + mDataset.get(position).getPublicEmail());
+        holder.txtFooter.setText(mDataset.get(position).getPublicEmail());
 
     }
 

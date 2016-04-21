@@ -3,26 +3,29 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/nav_header_height"
     android:background="@drawable/side_nav_bar"
-    android:gravity="bottom"
     android:orientation="vertical"
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
-    android:weightSum="1"
+    android:weightSum="0.8"
     android:id="@+id/navigation_header_layout">
 
     <ImageView
+        android:clickable="true"
+        android:onClick="showProfile"
         android:id="@+id/nav_user_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:scaleType="fitStart"
-        android:layout_marginTop="40dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginTop="35dp"
+        android:layout_marginBottom="5dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="@dimen/fab_margin"
         android:layout_gravity="left"
         android:src="@drawable/default_user_rounded"
-        android:layout_weight="0.9"/>
+        android:layout_weight="0.85"/>
 
     <TextView
+        android:clickable="true"
+        android:onClick="showProfile"
         android:id="@+id/nav_user_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -32,9 +35,11 @@
         android:layout_gravity="left"
         android:gravity="left"
         android:text="Name"
-        android:layout_weight="0.05"
+
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
     <TextView
+        android:clickable="true"
+        android:onClick="showProfile"
         android:id="@+id/nav_user_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -45,7 +50,6 @@
         android:layout_gravity="left"
         android:gravity="left"
         android:text="Email"
-        android:layout_weight="0.05"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 
 

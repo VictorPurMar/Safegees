@@ -26,6 +26,7 @@
 package org.safegees.safegees.gui.view;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -50,6 +51,7 @@ import org.safegees.safegees.gui.fragment.ProfileContactFragment;
 import org.safegees.safegees.gui.fragment.ProfileUserFragment;
 import org.safegees.safegees.gui.preferences.SettingsActivity;
 import org.safegees.safegees.util.Connectivity;
+import org.safegees.safegees.util.NetworkStateReceiver;
 import org.safegees.safegees.util.SafegeesDAO;
 import org.safegees.safegees.util.ShareDataController;
 
@@ -61,7 +63,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -71,6 +75,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -87,12 +92,15 @@ public class PrincipalMapActivity extends AppCompatActivity
 
     private MapFragment mapFragment;
     private ProfileUserFragment profileFragment;
-    private FloatingActionButton floatingUpdateButton;
-    private static PrincipalMapActivity instance;       //Singleton
+    private ContactsFragment contactsFragment;
+    private FloatingActionButton floatingUpdateButton;      //update map button
+    private FloatingActionButton floatingAddContactButton;
+    private static PrincipalMapActivity instance;               //Singleton
     //For image getting
     private static final int REQUEST_CODE = 1;
     private Bitmap bitmap;
     private View headerView;
+    DrawerLayout drawer;                                        //Lateral menu
 
     //---------------------------------
     // Singleton
@@ -116,6 +124,19 @@ public class PrincipalMapActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        this.floatingAddContactButton = (FloatingActionButton) findViewById(R.id.fab_add_contact);
+        this.floatingAddContactButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Adding contact", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                //Stablish the action of contact add
+                addContactPopup();
+            }
+
+        });
+        this.floatingAddContactButton.hide();
 
         this.floatingUpdateButton = (FloatingActionButton) findViewById(R.id.fab);
         this.floatingUpdateButton.setOnClickListener(new View.OnClickListener() {
@@ -218,9 +239,14 @@ public class PrincipalMapActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+
         } else {
             super.onBackPressed();
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+
+            //Set propper floating buttons
+            this.floatingAddContactButton.hide();               //Add contact
+            NetworkStateReceiver.setFloatingUpdateButton(this); //Update map
 
             mapFragment.onResume();
 
@@ -277,6 +303,7 @@ public class PrincipalMapActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+        /*
         if (id == R.id.nav_profile) {
             Fragment fg = ProfileUserFragment.newInstance();
 
@@ -299,8 +326,8 @@ public class PrincipalMapActivity extends AppCompatActivity
 
             this.connectivityOff();
 
-        } else if (id == R.id.nav_contacts) {
-
+        } else */ if (id == R.id.nav_contacts) {
+            this.floatingAddContactButton.show();
             Fragment fg = ContactsFragment.newInstance();
             //Fragment acFrag = getActiveFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -318,7 +345,7 @@ public class PrincipalMapActivity extends AppCompatActivity
 
             this.connectivityOff();
         } else if (id == R.id.nav_map) {
-
+            this.floatingAddContactButton.hide();
             if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
@@ -331,7 +358,7 @@ public class PrincipalMapActivity extends AppCompatActivity
             mapFragment.onResume();
 
             this.connectivityOn();
-        } else if (id == R.id.nav_news) {
+        } /*else if (id == R.id.nav_news) {
             Fragment fg = NewsFragment.newInstance();
             //Fragment acFrag = getActiveFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -367,7 +394,7 @@ public class PrincipalMapActivity extends AppCompatActivity
 
             this.connectivityOff();
 
-        }
+        }*/
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -658,7 +685,65 @@ public class PrincipalMapActivity extends AppCompatActivity
         }
     }
 
+    public void showProfile(View v){
+        Fragment fg = ProfileUserFragment.newInstance();
+
+        //Fragment acFrag = getActiveFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        if (getSupportFragmentManager().getBackStackEntryCount() != 0){
+            getSupportFragmentManager().popBackStack();
+        }else{
+            transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
+
+        }
+        transaction.replace(R.id.map, fg,  "profile").addToBackStack("profile");
+        transaction.commit();
+        //Set the imageBitMap
+        this.profileFragment = (ProfileUserFragment) fg;
+        profileFragment.setImageBitmap(bitmap);
+
+        mapFragment.onPause();
+
+        this.connectivityOff();
+
+        //close lateral menu
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawers();
+    }
+
     public MapFragment getMapFragment(){
         return mapFragment;
+    }
+
+    public void addContactPopup(){
+
+        //Open add contact popup
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(PrincipalMapActivity.getInstance());
+        // Get the layout inflater
+        LayoutInflater inflater = PrincipalMapActivity.getInstance().getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.profile_alert, null);
+        builder.setView(dialogView);
+
+        final EditText edt = (EditText) dialogView.findViewById(R.id.edit1);
+
+        builder.setTitle("Add Contact");
+        //builder.setMessage("Enter text below");
+        builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+                String userEmail = MainActivity.DATA_STORAGE.getString(getApplicationContext().getString(R.string.KEY_USER_MAIL));
+                //Add the contact
+                ShareDataController sssdc = new ShareDataController();
+                sssdc.addContact(getApplicationContext(), userEmail, edt.getText().toString());
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+            }
+        });
+        AlertDialog b = builder.create();
+        b.show();
     }
 }
