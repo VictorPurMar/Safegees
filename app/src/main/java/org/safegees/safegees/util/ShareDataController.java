@@ -115,8 +115,9 @@ public class ShareDataController {
                 //Get general data (POI)
                 scc.getPointsOfInterest(this.context);
 
+                //Its done but unactive to first release
                 //Get third partners klm to store as GeoJSON
-                scc.getThirdKLM(this.context);
+                //scc.getThirdKLM(this.context);
 
                 //Send all the Add Contacts Queque fields
                 sendAddContactsQueque(scc);

@@ -102,6 +102,9 @@ public class MapFragment extends Fragment {
     //This fragment view
     private View view;
     private KmlDocument mKmlDocument;
+    private LatLng actualPosition;
+
+    final private static int TILE_PX_SIZE = 512;
 
     private int actionBarHeight = 90;
     public MapFragment() {
@@ -150,34 +153,63 @@ public class MapFragment extends Fragment {
         mapView.setMultiTouchControls(true);
         mapView.setMinZoomLevel(2);
 
-
         //Set Map Controller
         mapViewController = mapView.getController();
         mapViewController.setZoom(4);
         GeoPoint mediterrany = new GeoPoint(34.553127, 18.048012);
         mapViewController.setCenter(mediterrany);
 
+
+
+        setMapViewDependingConnection();
+
+        refreshMap();
+
+        return view;
+    }
+
+    private void setInitialMapConfiguration() {
+
+
         // My Location Overlay
         myLocationOverlay = new MyLocationNewOverlay(getContext(), mapView);
         myLocationOverlay.enableMyLocation(); // not on by default
-        myLocationOverlay.runOnFirstFix(new Runnable() {
-            public void run() {
-                mapViewController.animateTo(myLocationOverlay.getMyLocation());
-                //myLocationOverlay.enableFollowLocation();
-                myLocationOverlay.setPersonIcon(getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_user_position)));
-                mapView.getOverlays().add(myLocationOverlay);
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-                boolean mobileAllowed = prefs.getBoolean("pref_position_share", true);
-                if(Connectivity.isNetworkAvaiable(getContext()) && mobileAllowed) {
-                    LatLng latLng = new LatLng(myLocationOverlay.getMyLocation().getLatitude(), myLocationOverlay.getMyLocation().getLongitude());
-                    Log.i("POSITION", latLng.toString());
-                    //Add the contact
-                    ShareDataController sssdc = new ShareDataController();
-                    sssdc.sendUserPosition(getContext(), SafegeesDAO.getInstance(getContext()).getPublicUser().getPublicEmail(), latLng);
-                }
 
+        if (myLocationOverlay.getMyLocation() == null){
+            myLocationOverlay.runOnFirstFix(new Runnable() {
+                public void run() {
+                    mapViewController.animateTo(myLocationOverlay.getMyLocation());
+                    //myLocationOverlay.enableFollowLocation();
+                    myLocationOverlay.setPersonIcon(getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_user_position)));
+                    mapView.getOverlays().add(myLocationOverlay);
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+                    boolean mobileAllowed = prefs.getBoolean("pref_position_share", true);
+                    if(Connectivity.isNetworkAvaiable(getContext()) && mobileAllowed) {
+                        LatLng latLng = new LatLng(myLocationOverlay.getMyLocation().getLatitude(), myLocationOverlay.getMyLocation().getLongitude());
+                        Log.i("POSITION", latLng.toString());
+                        //Add the contact
+                        ShareDataController sssdc = new ShareDataController();
+                        sssdc.sendUserPosition(getContext(), SafegeesDAO.getInstance(getContext()).getPublicUser().getPublicEmail(), latLng);
+                    }
+
+                }
+            });
+        }else{
+            mapViewController.animateTo(myLocationOverlay.getMyLocation());
+            //myLocationOverlay.enableFollowLocation();
+            myLocationOverlay.setPersonIcon(getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_user_position)));
+            mapView.getOverlays().add(myLocationOverlay);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+            boolean mobileAllowed = prefs.getBoolean("pref_position_share", true);
+            if(Connectivity.isNetworkAvaiable(getContext()) && mobileAllowed) {
+                LatLng latLng = new LatLng(myLocationOverlay.getMyLocation().getLatitude(), myLocationOverlay.getMyLocation().getLongitude());
+                Log.i("POSITION", latLng.toString());
+                //Add the contact
+                ShareDataController sssdc = new ShareDataController();
+                sssdc.sendUserPosition(getContext(), SafegeesDAO.getInstance(getContext()).getPublicUser().getPublicEmail(), latLng);
             }
-        });
+
+        }
 
         //Rotation Gesture Overlay
         RotationGestureOverlay mRotationGestureOverlay = new RotationGestureOverlay(getContext(), mapView);
@@ -192,20 +224,13 @@ public class MapFragment extends Fragment {
             mCompassOverlay.enableCompass();
             mapView.getOverlays().add(mCompassOverlay);
         }
-
-        setMapViewDependingConnection();
-
-        refreshMap();
-
-
-        return view;
     }
 
     public void setMapViewDependingConnection() {
 
             if (Connectivity.isNetworkAvaiable(getContext())) {
                 mapView.setTileSource(new XYTileSource("Mapnik",
-                        2, 18, 256, ".png", new String[]{
+                        2, 18, TILE_PX_SIZE, ".png", new String[]{
                         "http://a.tile.openstreetmap.org/",
                         "http://b.tile.openstreetmap.org/",
                         "http://c.tile.openstreetmap.org/"}));
@@ -215,7 +240,7 @@ public class MapFragment extends Fragment {
                 //String externalStorageDirectory =  MapFileManager.getUserStorageriority();
                 //String destination = externalStorageDirectory + File.separator + "osmdroid" + File.separator + "tiles" + File.separator + "Mapnik"+File.separator;
                 //mapView.setTileSource(new XYTileSource("Mapnik", 2, 18, 384, ".png", new String[]{}));
-                mapView.setTileSource(new XYTileSource("Mapnik", 0, 18, 256, ".png", new String[]{}));
+                mapView.setTileSource(new XYTileSource("Mapnik", 0, 18, TILE_PX_SIZE, ".png", new String[]{}));
                 mapView.setUseDataConnection(false);
 
             }
@@ -261,20 +286,24 @@ public class MapFragment extends Fragment {
 
 
         setStyles();
+        mapView.getOverlays().clear(); //Clear old items
+        setInitialMapConfiguration();   //Set initial map overlays and
 
-        mKmlDocument.parseKMLFile(FileManager.getFileStorePath("volunteers.kml"));
-        Drawable defaultMarker = getResources().getDrawable(R.drawable.ic_add_location_black_24dp);
-        FolderOverlay campaments = getFolderOverlay(defaultMarker);
-        mapView.getOverlays().add(campaments);
+        File file = new File(FileManager.getFileStorePath("volunteers.kml").getAbsolutePath());
+        if (file.exists()) {
+            mKmlDocument.parseKMLFile(FileManager.getFileStorePath("volunteers.kml"));
+            Drawable defaultMarker = getResources().getDrawable(R.drawable.ic_add_location_black_24dp);
+            FolderOverlay campaments = getFolderOverlay(defaultMarker);
+            mapView.getOverlays().add(campaments);
+        }
 
-
-        //mKmlDocument = new KmlDocument();
-        mKmlDocument.parseKMLFile(FileManager.getFileStorePath("syrian.kml"));
-        defaultMarker = getResources().getDrawable(R.drawable.ic_place_gray);
-        FolderOverlay syrian = getFolderOverlay(defaultMarker);
-        mapView.getOverlays().add(syrian);
-
-
+        file = new File(FileManager.getFileStorePath("syrian.kml").getAbsolutePath());
+        if (file.exists()) {
+            mKmlDocument.parseKMLFile(FileManager.getFileStorePath("syrian.kml"));
+            Drawable defaultMarker = getResources().getDrawable(R.drawable.ic_place_gray);
+            FolderOverlay syrian = getFolderOverlay(defaultMarker);
+            mapView.getOverlays().add(syrian);
+        }
 
         if (this.sDAO != null) {
 
@@ -349,6 +378,7 @@ public class MapFragment extends Fragment {
             }, new DefaultResourceProxyImpl(getContext()));
 
 
+
             mapView.getOverlays().add(contactOverlay);
             mapView.getOverlays().add(poiOverlay);
 
@@ -356,7 +386,6 @@ public class MapFragment extends Fragment {
         //KMLTask kml = new KMLTask(this.getContext());
         //kml.execute();
         //mapView.invalidate();
-
 
 
 
