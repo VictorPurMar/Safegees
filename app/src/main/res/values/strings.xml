@@ -120,4 +120,6 @@
     <string name="pref_position_comment">This will share your position with your safegees friends</string>
 
 
+    <string name="section_format">Hello World from section: %1$d</string>
+
 </resources>

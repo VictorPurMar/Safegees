@@ -6,7 +6,10 @@
     <color name="colorPrimary">#737270</color>
     <color name="colorPrimaryDark">#403F3E</color>
     <color name="colorPrimaryExtraDark">#131210</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#649bff</color>
     <color name="colorFriends">#3463ab</color>
     <color name="colorPosition">#19ab46</color>
+    <color name="colorCadaques">#89a6da</color>
+    <color name="colorCadaquesAccent">#649bff</color>
+    <color name="colorCadaquesAccentDark">#598ae4</color>
 </resources>

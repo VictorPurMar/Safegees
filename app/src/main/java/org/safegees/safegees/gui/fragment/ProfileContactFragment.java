@@ -30,8 +30,15 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import org.safegees.safegees.R;
+import org.safegees.safegees.model.Friend;
+import org.safegees.safegees.util.SafegeesDAO;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -41,15 +48,22 @@ import org.safegees.safegees.R;
  * Use the {@link ProfileContactFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ProfileContactFragment extends Fragment {
+public class ProfileContactFragment extends Fragment{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String POSITION = "position";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    //Fields
+    private EditText editName;      //Tag name
+    private EditText editSurname;   //Tag surname
+    private EditText editEmail;     //Tag email
+    private EditText editPhone;     //Tag phone
+    private EditText editTopic;     //Tag topic
+
+    //Image selector
+    private ImageView imageView;
+
+    private int position;
 
     private OnFragmentInteractionListener mListener;
 
@@ -61,16 +75,14 @@ public class ProfileContactFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+
      * @return A new instance of fragment ProfileUserFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ProfileContactFragment newInstance(String param1, String param2) {
+    public static ProfileContactFragment newInstance(int position) {
         ProfileContactFragment fragment = new ProfileContactFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putInt(POSITION, position);
         fragment.setArguments(args);
         return fragment;
     }
@@ -79,16 +91,50 @@ public class ProfileContactFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            position = getArguments().getInt(POSITION);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        View view = inflater.inflate(R.layout.fragment_profile_contact, container, false);
+
+        ArrayList<Friend> friends = SafegeesDAO.getInstance(view.getContext()).getFriends();
+
+        Friend friend = friends.get(position);
+
+
+        imageView = (ImageView) view.findViewById(R.id.result);
+        editName = (EditText) view.findViewById(R.id.editName);
+        editSurname = (EditText) view.findViewById(R.id.editSurname);
+        editEmail = (EditText) view.findViewById(R.id.editEmail);
+        editPhone = (EditText) view.findViewById(R.id.editPhone);
+        editTopic = (EditText) view.findViewById(R.id.editTopic);
+
+        LinearLayout llName = (LinearLayout) view.findViewById(R.id.lay_name);
+        LinearLayout llSurname = (LinearLayout) view.findViewById(R.id.lay_surname);
+        LinearLayout llMail = (LinearLayout) view.findViewById(R.id.lay_mail);
+        LinearLayout llPhone = (LinearLayout) view.findViewById(R.id.lay_phone);
+        LinearLayout llBio = (LinearLayout) view.findViewById(R.id.lay_topic);
+
+        if (friend != null) {
+            this.editName.setText(friend.getName() != null ? friend.getName() : "");
+            this.editSurname.setText(friend.getSurname() != null ? friend.getSurname() : "");
+            this.editEmail.setText(friend.getPublicEmail() != null ? friend.getPublicEmail() : "");
+            this.editPhone.setText(friend.getPhoneNumber() != null ? friend.getPhoneNumber() : "");
+            this.editTopic.setText(friend.getBio() != null ? friend.getBio() : "");
+        }
+
+        if (friend.getName() == null ||friend.getName().equals("") ) llName.setVisibility(View.GONE);
+        if (friend.getSurname() == null ||friend.getSurname().equals("")) llSurname.setVisibility(View.GONE);
+        if (friend.getPublicEmail() == null ||friend.getPublicEmail().equals("")) llMail.setVisibility(View.GONE);
+        if (friend.getPhoneNumber() == null ||friend.getPhoneNumber().equals("")) llPhone.setVisibility(View.GONE);
+        if (friend.getBio() == null || friend.getBio().equals("")) llBio.setVisibility(View.GONE);
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile_user, container, false);
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

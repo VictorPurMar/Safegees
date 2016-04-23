@@ -17,7 +17,6 @@
         android:layout_alignParentLeft="true"/>
 
     <LinearLayout
-        android:layout_margin="6dip"
         android:id="@+id/principal_text"
         android:layout_alignParentTop="true"
         android:layout_width="wrap_content"
@@ -59,7 +58,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginRight="6dip"
         android:contentDescription="TODO"
-        android:src="@android:drawable/ic_media_play"
+        android:src="@android:drawable/ic_menu_add"
         android:scaleType="fitCenter"/>
 
 </RelativeLayout>
