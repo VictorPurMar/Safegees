@@ -240,31 +240,25 @@ public class PrincipalMapActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-
         } else {
-            super.onBackPressed();
+
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 
             //Set propper floating buttons
             this.floatingAddContactButton.hide();               //Add contact
             NetworkStateReceiver.setFloatingUpdateButton(this); //Update map
-
             mapFragment.onResume();
-
+            super.onBackPressed();
         }
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+        //Close app
         instance = null;
-        /*
-        long longitude = (long) mMap.getCameraPosition().target.longitude;
-        long latitude = (long) mMap.getCameraPosition().target.latitude;
-        MainActivity.DATA_STORAGE.putLong(this.getResources().getString(R.string));
-        */
         SafegeesDAO.close();
         if(closeSession)closeSession();
+        super.onDestroy();
     }
 
     // Top App Menu
@@ -450,7 +444,7 @@ public class PrincipalMapActivity extends AppCompatActivity
      */
     public void connectivityOn(){
         this.floatingUpdateButton.show();
-        if (mapFragment != null) mapFragment.setMapViewDependingConnection();
+        //if (mapFragment != null) mapFragment.setMapViewDependingConnection();
     }
 
     /**
@@ -460,7 +454,7 @@ public class PrincipalMapActivity extends AppCompatActivity
     public void connectivityOff(){
         //The floating button will be used to update content if exists internet connection
         floatingUpdateButton.hide();
-        if (mapFragment != null) mapFragment.setMapViewDependingConnection();
+        //if (mapFragment != null) mapFragment.setMapViewDependingConnection();
     }
 
 
@@ -492,6 +486,7 @@ public class PrincipalMapActivity extends AppCompatActivity
         //Delete user password and mail
         MainActivity.DATA_STORAGE.putString(getResources().getString(R.string.KEY_USER_PASSWORD), "");
         MainActivity.DATA_STORAGE.putString(getResources().getString(R.string.KEY_USER_MAIL), "");
+        //Delete last position on map
         MainActivity.DATA_STORAGE.remove(getResources().getString(R.string.MAP_LAST_ZOOM));
         MainActivity.DATA_STORAGE.remove(getResources().getString(R.string.MAP_LAST_LON));
         MainActivity.DATA_STORAGE.remove(getResources().getString(R.string.MAP_LAST_LAT));

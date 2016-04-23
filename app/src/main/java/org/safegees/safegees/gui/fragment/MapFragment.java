@@ -166,25 +166,17 @@ public class MapFragment extends Fragment {
             GeoPoint mediterrany = new GeoPoint(34.553127, 18.048012);
             mapViewController.setCenter(mediterrany);
         }
-
-
-
-
-
-
         setMapViewDependingConnection();
-
         refreshMap();
-
         return view;
     }
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         MainActivity.DATA_STORAGE.putDouble(getResources().getString(R.string.MAP_LAST_LON), mapView.getMapCenter().getLongitude());
         MainActivity.DATA_STORAGE.putDouble(getResources().getString(R.string.MAP_LAST_LAT), mapView.getMapCenter().getLatitude());
         MainActivity.DATA_STORAGE.putInt(getResources().getString(R.string.MAP_LAST_ZOOM), mapView.getZoomLevel());
+        super.onDestroy();
     }
 
     private void setInitialMapConfiguration() {
