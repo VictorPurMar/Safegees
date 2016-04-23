@@ -59,6 +59,7 @@ import org.safegees.safegees.util.Connectivity;
 import org.safegees.safegees.util.FileManager;
 import org.safegees.safegees.util.SafegeesDAO;
 import org.safegees.safegees.util.ShareDataController;
+import org.safegees.safegees.util.StorageDataManager;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -155,9 +156,19 @@ public class MapFragment extends Fragment {
 
         //Set Map Controller
         mapViewController = mapView.getController();
-        mapViewController.setZoom(4);
-        GeoPoint mediterrany = new GeoPoint(34.553127, 18.048012);
-        mapViewController.setCenter(mediterrany);
+
+        GeoPoint lastMapPosition = new GeoPoint(MainActivity.DATA_STORAGE.getDouble(getResources().getString(R.string.MAP_LAST_LAT)), MainActivity.DATA_STORAGE.getDouble(getResources().getString(R.string.MAP_LAST_LON)));
+        if (lastMapPosition != null && (lastMapPosition.getLongitude() != 0 && lastMapPosition.getLatitude() != 0)){
+            mapViewController.setCenter(lastMapPosition);
+            mapViewController.setZoom(MainActivity.DATA_STORAGE.getInt(getResources().getString(R.string.MAP_LAST_ZOOM)));
+        }else{
+            mapViewController.setZoom(4);
+            GeoPoint mediterrany = new GeoPoint(34.553127, 18.048012);
+            mapViewController.setCenter(mediterrany);
+        }
+
+
+
 
 
 
@@ -166,6 +177,14 @@ public class MapFragment extends Fragment {
         refreshMap();
 
         return view;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        MainActivity.DATA_STORAGE.putDouble(getResources().getString(R.string.MAP_LAST_LON), mapView.getMapCenter().getLongitude());
+        MainActivity.DATA_STORAGE.putDouble(getResources().getString(R.string.MAP_LAST_LAT), mapView.getMapCenter().getLatitude());
+        MainActivity.DATA_STORAGE.putInt(getResources().getString(R.string.MAP_LAST_ZOOM), mapView.getZoomLevel());
     }
 
     private void setInitialMapConfiguration() {
@@ -191,7 +210,6 @@ public class MapFragment extends Fragment {
                         ShareDataController sssdc = new ShareDataController();
                         sssdc.sendUserPosition(getContext(), SafegeesDAO.getInstance(getContext()).getPublicUser().getPublicEmail(), latLng);
                     }
-
                 }
             });
         }else{
@@ -208,7 +226,6 @@ public class MapFragment extends Fragment {
                 ShareDataController sssdc = new ShareDataController();
                 sssdc.sendUserPosition(getContext(), SafegeesDAO.getInstance(getContext()).getPublicUser().getPublicEmail(), latLng);
             }
-
         }
 
         //Rotation Gesture Overlay

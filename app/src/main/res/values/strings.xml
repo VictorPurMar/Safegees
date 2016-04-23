@@ -120,6 +120,8 @@
     <string name="pref_position_comment">This will share your position with your safegees friends</string>
 
 
-    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="MAP_LAST_LAT">LAST_LAT</string>
+    <string name="MAP_LAST_LON">LAST_LON</string>
+    <string name="MAP_LAST_ZOOM">LAST_ZOOM</string>
 
 </resources>

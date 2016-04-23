@@ -51,6 +51,12 @@ public class StorageDataManager {
         configEditor.commit();
     }
 
+    public void putDouble(String key, double value) {
+        float f = (float) value;
+        configEditor.putFloat(key, f);
+        configEditor.commit();
+    }
+
     public void putBoolean(String key, boolean value) {
         configEditor.putBoolean(key, value);
         configEditor.commit();
@@ -72,6 +78,7 @@ public class StorageDataManager {
         return config.getBoolean(key, false);
     }
 
+    public double getDouble(String key) { return (double) config.getFloat(key, 0); }
 
     public boolean contains(String key) {
         return config.contains(key);

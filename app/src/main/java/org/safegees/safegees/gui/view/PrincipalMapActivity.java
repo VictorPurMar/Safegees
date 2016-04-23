@@ -101,6 +101,7 @@ public class PrincipalMapActivity extends AppCompatActivity
     private Bitmap bitmap;
     private View headerView;
     DrawerLayout drawer;                                        //Lateral menu
+    boolean closeSession = false;
 
     //---------------------------------
     // Singleton
@@ -263,6 +264,7 @@ public class PrincipalMapActivity extends AppCompatActivity
         MainActivity.DATA_STORAGE.putLong(this.getResources().getString(R.string));
         */
         SafegeesDAO.close();
+        if(closeSession)closeSession();
     }
 
     // Top App Menu
@@ -285,7 +287,8 @@ public class PrincipalMapActivity extends AppCompatActivity
                 startActivity(intent);
                 return true;
             case R.id.action_close_session:
-                closeSession();
+                closeSession = true;
+                onDestroy();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -489,6 +492,9 @@ public class PrincipalMapActivity extends AppCompatActivity
         //Delete user password and mail
         MainActivity.DATA_STORAGE.putString(getResources().getString(R.string.KEY_USER_PASSWORD), "");
         MainActivity.DATA_STORAGE.putString(getResources().getString(R.string.KEY_USER_MAIL), "");
+        MainActivity.DATA_STORAGE.remove(getResources().getString(R.string.MAP_LAST_ZOOM));
+        MainActivity.DATA_STORAGE.remove(getResources().getString(R.string.MAP_LAST_LON));
+        MainActivity.DATA_STORAGE.remove(getResources().getString(R.string.MAP_LAST_LAT));
         //Restart application
         Intent i = getBaseContext().getPackageManager()
                 .getLaunchIntentForPackage(getBaseContext().getPackageName());
