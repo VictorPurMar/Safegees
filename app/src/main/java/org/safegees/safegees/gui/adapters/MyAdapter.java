@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import org.safegees.safegees.R;
 import org.safegees.safegees.gui.view.ContactProfileActivity;
+import org.safegees.safegees.gui.view.PrincipalMapActivity;
 import org.safegees.safegees.model.Friend;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
@@ -71,13 +72,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         holder.itemView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                //remove(friend);
-                Intent i = new Intent(view.getContext(), ContactProfileActivity.class);
-                i.putExtra("position", position);
-                view.getContext().startActivity(i);
-
-
-                Log.i("Friend touched", "" + mDataset.get(position));
+                PrincipalMapActivity.getInstance().startContactActivityForResult(position);
             }
         });
 

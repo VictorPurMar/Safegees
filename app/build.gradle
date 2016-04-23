@@ -8,8 +8,8 @@ android {
         applicationId "org.safegees.safegees"
         minSdkVersion 10
         targetSdkVersion 23
-        versionCode 19
-        versionName "0.53"
+        versionCode 20
+        versionName "0.55"
     }
     buildTypes {
         release {

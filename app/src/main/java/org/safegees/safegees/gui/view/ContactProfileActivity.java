@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewParent;
 
 import org.safegees.safegees.R;
 import org.safegees.safegees.gui.fragment.ProfileContactFragment;
@@ -58,6 +59,26 @@ public class ContactProfileActivity extends AppCompatActivity implements Profile
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setCurrentItem(position);
+        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+            @Override
+            public void onPageSelected(int index) {
+                position = index;
+
+            }
+
+            @Override
+            public void onPageScrolled(int arg0, float arg1, int arg2) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int arg0) {
+                // TODO Auto-generated method stub
+
+            }
+        });
 
 
 
@@ -65,11 +86,39 @@ public class ContactProfileActivity extends AppCompatActivity implements Profile
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Mail", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                sendEmail();
             }
         });
 
+        FloatingActionButton fab2 = (FloatingActionButton) findViewById(R.id.fab2);
+        fab2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Show", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                showOnMap();
+            }
+        });
+
+    }
+
+    private void sendEmail() {
+        ArrayList<Friend> friends = SafegeesDAO.getInstance(getBaseContext()).getFriends();
+        Friend friend = friends.get(position);
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:"+friend.getPublicEmail()));
+        startActivity(intent);
+    }
+
+    private void showOnMap(){
+        ArrayList<Friend> friends = SafegeesDAO.getInstance(getBaseContext()).getFriends();
+        Friend friend = friends.get(position);
+        PrincipalMapActivity.getInstance().getMapFragment().centerMapViewOnFriend(friend);
+        //PrincipalMapActivity.getInstance().showMapFragment();
+        setResult(RESULT_OK, null);
+        finish();
 
     }
 
@@ -91,9 +140,13 @@ public class ContactProfileActivity extends AppCompatActivity implements Profile
 
         @Override
         public Fragment getItem(int pos) {
+
+
+
             // getItem is called to instantiate the fragment for the given page.
             return ProfileContactFragment.newInstance(pos);
         }
+
 
         @Override
         public int getCount() {
@@ -102,8 +155,8 @@ public class ContactProfileActivity extends AppCompatActivity implements Profile
         }
 
         @Override
-        public CharSequence getPageTitle(int position) {
-            return "SECTION";
+        public CharSequence getPageTitle(int pos) {
+            return "FRIENDS";
         }
     }
 }

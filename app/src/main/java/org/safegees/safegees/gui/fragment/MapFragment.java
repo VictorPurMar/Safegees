@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 
 
 import org.osmdroid.DefaultResourceProxyImpl;
+import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.kml.KmlDocument;
 import org.osmdroid.bonuspack.kml.KmlFeature;
@@ -50,6 +52,7 @@ import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import org.safegees.safegees.R;
 import org.safegees.safegees.gui.gui_utils.MapInfoWindow;
+import org.safegees.safegees.gui.view.ContactProfileActivity;
 import org.safegees.safegees.gui.view.MainActivity;
 import org.safegees.safegees.gui.view.PrincipalMapActivity;
 import org.safegees.safegees.model.Friend;
@@ -325,19 +328,20 @@ public class MapFragment extends Fragment {
                 POI poi = pois.get(i);
                 LatLng latLng = poi.getPosition();
                 GeoPoint geopoint = new GeoPoint(latLng.getLatitude(), latLng.getLongitude());
-                OverlayItem item = new OverlayItem(poi.getName(), poi.getDescription(), geopoint);
+                OverlayItem item = new OverlayItem(poi.getName() , poi.getDescription(), geopoint);
                 item.setMarker(poiDrawable);
                 poiList.add(item);
             }
 
             Drawable contactDrawable = getResources().getDrawable(R.drawable.ic_friend);
+
             ArrayList<Friend> friends = this.sDAO.getFriends();
             if (friends != null) {
                 for (int i = 0; i < friends.size(); i++) {
                     Friend friend = friends.get(i);
                     LatLng latLng = friend.getPosition();
                     GeoPoint geopoint = new GeoPoint(latLng.getLatitude(), latLng.getLongitude());
-                    OverlayItem item = new OverlayItem(friend.getName(), friend.getPublicEmail(), geopoint);
+                    OverlayItem item = new OverlayItem(""+i,friend.getName() + " " + friend.getSurname(), friend.getName().substring(0,1)+"."+friend.getSurname().substring(0,1), geopoint);
                     item.setMarker(contactDrawable);
                     contactList.add(item);
                 }
@@ -352,12 +356,17 @@ public class MapFragment extends Fragment {
             ItemizedIconOverlay poiOverlay = new ItemizedIconOverlay(poiList, poiDrawable, new ItemizedIconOverlay.OnItemGestureListener() {
                 @Override
                 public boolean onItemSingleTapUp(int index, Object item) {
-                    OverlayItem overlay = (OverlayItem) item;
+                    final OverlayItem overlay = (OverlayItem) item;
                     overlay.getTitle();
                     overlay.getSnippet();
+
+
+
+
                     Toast toast = Toast.makeText(getContext(), overlay.getTitle() + " | " + overlay.getSnippet(), Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.TOP | Gravity.RIGHT, 5, actionBarHeight + 10);
                     toast.show();
+
                     return false;
                 }
 
@@ -371,13 +380,31 @@ public class MapFragment extends Fragment {
             ItemizedIconOverlay contactOverlay = new ItemizedIconOverlay(contactList, contactDrawable, new ItemizedIconOverlay.OnItemGestureListener() {
                 @Override
                 public boolean onItemSingleTapUp(int index, Object item) {
-                    OverlayItem overlay = (OverlayItem) item;
+                    final OverlayItem overlay = (OverlayItem) item;
                     overlay.getTitle();
                     overlay.getSnippet();
+                    /*
                     Toast toast = Toast.makeText(getContext(), overlay.getTitle() + " | " + overlay.getSnippet(), Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.TOP | Gravity.RIGHT, 5, actionBarHeight + 10);
                     toast.show();
-                    return false;
+                    */
+                    Snackbar snackbar = Snackbar
+                                .make(PrincipalMapActivity.getInstance().getFloatingButton(), overlay.getTitle(), Snackbar.LENGTH_LONG)
+                                .setAction("MORE", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                    /*
+                                    Snackbar snackbar1 = Snackbar.make(PrincipalMapActivity.getInstance().getFloatingButton(), "Message is restored!", Snackbar.LENGTH_SHORT);
+                                    snackbar1.show();
+                                    */
+                                        int friendPosition = Integer.parseInt(overlay.getUid());
+                                        Intent i = new Intent(view.getContext(), ContactProfileActivity.class);
+                                        i.putExtra("position", friendPosition);
+                                        view.getContext().startActivity(i);
+                                    }
+                                });
+                        snackbar.show();
+                        return false;
                 }
 
                 @Override
@@ -598,6 +625,12 @@ public class MapFragment extends Fragment {
     public static Fragment newInstance() {
         ContactsFragment mFrgment = new ContactsFragment();
         return mFrgment;
+    }
+
+
+    public void centerMapViewOnFriend(Friend friend){
+        this.mapViewController.setCenter(new GeoPoint(friend.getPosition().getLatitude(), friend.getPosition().getLongitude()));
+        PrincipalMapActivity.getInstance().refreshMap();
     }
 
 }

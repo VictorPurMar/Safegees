@@ -41,7 +41,6 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 
-import org.osmdroid.views.MapView;
 import org.safegees.safegees.R;
 import org.safegees.safegees.gui.fragment.AddContactFragment;
 import org.safegees.safegees.gui.fragment.ContactsFragment;
@@ -49,7 +48,6 @@ import org.safegees.safegees.gui.fragment.MapFragment;
 import org.safegees.safegees.gui.fragment.NewsFragment;
 import org.safegees.safegees.gui.fragment.ProfileContactFragment;
 import org.safegees.safegees.gui.fragment.ProfileUserFragment;
-import org.safegees.safegees.gui.preferences.SettingsActivity;
 import org.safegees.safegees.util.Connectivity;
 import org.safegees.safegees.util.NetworkStateReceiver;
 import org.safegees.safegees.util.SafegeesDAO;
@@ -57,7 +55,6 @@ import org.safegees.safegees.util.ShareDataController;
 
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.PreferenceActivity;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -97,7 +94,8 @@ public class PrincipalMapActivity extends AppCompatActivity
     private FloatingActionButton floatingAddContactButton;
     private static PrincipalMapActivity instance;               //Singleton
     //For image getting
-    private static final int REQUEST_CODE = 1;
+    private static final int REQUEST_IMAGE_CODE = 1;
+    private static final int REQUEST_CONTACTS_CODE = 2;
     private Bitmap bitmap;
     private View headerView;
     DrawerLayout drawer;                                        //Lateral menu
@@ -173,6 +171,10 @@ public class PrincipalMapActivity extends AppCompatActivity
 
         loadStoredStoredImage();
         instance = this;
+    }
+
+    public View getFloatingButton(){
+        return this.floatingUpdateButton;
     }
 
     private void loadStoredStoredImage() {
@@ -436,6 +438,23 @@ public class PrincipalMapActivity extends AppCompatActivity
         */
     }
 
+    public void showMapFragment(){
+        this.floatingAddContactButton.hide();
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
+            transaction.remove(getActiveFragment());
+            getSupportFragmentManager().popBackStack();
+            transaction.commit();
+            //super.onBackPressed();
+        }
+
+        mapFragment.onResume();
+
+        this.connectivityOn();
+
+    }
+
     /**
      * Floating button show
      * Called by NetworkStateReceiver
@@ -525,20 +544,39 @@ public class PrincipalMapActivity extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK)
+        super.onActivityResult(requestCode,resultCode,data);
+        if (requestCode == REQUEST_IMAGE_CODE && resultCode == Activity.RESULT_OK){
             bitmap = buildBitmapFromData(data.getData());
-        Log.e("DATA", data.getDataString());
-        ProfileUserFragment myFragment = (ProfileUserFragment) getSupportFragmentManager().findFragmentByTag("profile");
-        if (myFragment != null && myFragment.isVisible()) {
-            Log.i("ProfileFragment", "Add poto");
-            myFragment.setImageBitmap(bitmap);
-            //Store in /images
-            storeUserImage();
-            //Reload the header image
-            loadStoredStoredImage();
+        }else if(requestCode == REQUEST_CONTACTS_CODE && resultCode == Activity.RESULT_OK){
+            this.floatingAddContactButton.hide();
+            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
 
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
+                transaction.remove(getActiveFragment());
+                getSupportFragmentManager().popBackStack();
+                transaction.commitAllowingStateLoss();
+                //super.onBackPressed();
+            }
+
+            mapFragment.onResume();
+            this.connectivityOn();
         }
-        super.onActivityResult(requestCode, resultCode, data);
+
+        if (data != null){
+            Log.e("DATA", data.getDataString());
+            ProfileUserFragment myFragment = (ProfileUserFragment) getSupportFragmentManager().findFragmentByTag("profile");
+            if (myFragment != null && myFragment.isVisible()) {
+                Log.i("ProfileFragment", "Add poto");
+                myFragment.setImageBitmap(bitmap);
+                //Store in /images
+                storeUserImage();
+                //Reload the header image
+                loadStoredStoredImage();
+            }
+        }
+
+        //super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void storeUserImage() {
@@ -673,7 +711,7 @@ public class PrincipalMapActivity extends AppCompatActivity
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        startActivityForResult(intent, REQUEST_CODE);
+        startActivityForResult(intent, REQUEST_IMAGE_CODE);
     }
 
     @Override
@@ -749,5 +787,11 @@ public class PrincipalMapActivity extends AppCompatActivity
         });
         AlertDialog b = builder.create();
         b.show();
+    }
+
+    public void startContactActivityForResult(int position){
+        Intent i = new Intent(this, ContactProfileActivity.class);
+        i.putExtra("position", position);
+        this.startActivityForResult(i,REQUEST_CONTACTS_CODE);
     }
 }
