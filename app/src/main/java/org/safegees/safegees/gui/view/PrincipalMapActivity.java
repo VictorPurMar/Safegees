@@ -211,10 +211,8 @@ public class PrincipalMapActivity extends AppCompatActivity
 
     @NonNull
     private String getUserImageFileName() {
-        File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
-                + "/Android/data/"
-                + getApplicationContext().getPackageName()
-                + "/images/");
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), getApplicationContext().getPackageName()
+                + "/images");
         String filename = "USER_IMAGE_" + MainActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)).replace("@","").replace(".","") + ".png";
         filename = mediaStorageDir.getAbsolutePath()+File.separator+filename;
         return filename;
@@ -544,16 +542,21 @@ public class PrincipalMapActivity extends AppCompatActivity
     }
 
     private void storeUserImage() {
-        File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
-                + "/Android/data/"
-                + getApplicationContext().getPackageName()
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), getApplicationContext().getPackageName()
                 + "/images");
+
+
+        /*
+                new File(Environment.getRootDirectory()
+                + File.separator + getApplicationContext().getPackageName()
+                + "/images");*/
         String filename = "USER_IMAGE_" + MainActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)).replace("@","").replace(".","") + ".png";
         filename = mediaStorageDir.getAbsolutePath()+File.separator+filename;
 
         boolean success = true;
         if (!mediaStorageDir.exists()) {
-            success = mediaStorageDir.mkdir();
+            success = mediaStorageDir.mkdirs();
+            //success = mediaStorageDir.mkdir();
         }
         if (success) {
             FileOutputStream out = null;

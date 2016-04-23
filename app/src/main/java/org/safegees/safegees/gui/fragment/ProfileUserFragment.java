@@ -134,7 +134,6 @@ public class ProfileUserFragment extends Fragment {
             if(puDynamic != null) this.publicUser = puDynamic;
         }
 
-
         if (this.publicUser != null) {
             this.editName.setText(this.publicUser.getName() != null ? this.publicUser.getName() : "");
             this.editSurname.setText(this.publicUser.getSurname() != null ? this.publicUser.getSurname() : "");
@@ -142,8 +141,6 @@ public class ProfileUserFragment extends Fragment {
             this.editPhone.setText(this.publicUser.getPhoneNumber() != null ? this.publicUser.getPhoneNumber() : "");
             this.editTopic.setText(this.publicUser.getBio() != null ? this.publicUser.getBio() : "");
         }
-
-
 
         if (this.bitmap != null){
             this.imageView.setImageBitmap(this.bitmap);
