@@ -119,6 +119,12 @@ public class ProfileContactFragment extends Fragment{
         LinearLayout llPhone = (LinearLayout) view.findViewById(R.id.lay_phone);
         LinearLayout llBio = (LinearLayout) view.findViewById(R.id.lay_topic);
 
+        //Show arrows to reveal user if there are more contacts
+        LinearLayout arrowLeft = (LinearLayout) view.findViewById(R.id.contact_left);
+        if(position == 0) arrowLeft.setVisibility(View.INVISIBLE);
+        LinearLayout arrowRight = (LinearLayout) view.findViewById(R.id.contact_right);
+        if(position == friends.size()-1) arrowRight.setVisibility(View.INVISIBLE);
+
         if (friend != null) {
             this.editName.setText(friend.getName() != null ? friend.getName() : "");
             this.editSurname.setText(friend.getSurname() != null ? friend.getSurname() : "");

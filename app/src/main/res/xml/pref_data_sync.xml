@@ -20,7 +20,7 @@
         <intent android:action="android.settings.SYNC_SETTINGS" />
     </Preference>-->
     <PreferenceCategory android:title="Data tansmission">
-<!--
+    <!--
         <SwitchPreference
             android:defaultValue="true"
             android:key="pref_switch_wifi"
@@ -36,6 +36,14 @@
             android:key="pref_position_share"
             android:summary="@string/pref_position_comment"
             android:title="@string/pref_position_share" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Map">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="pref_switch_map"
+            android:summary="@string/pref_external_pois_comment"
+            android:title="@string/pref_external_pois" />
     </PreferenceCategory>
 
 

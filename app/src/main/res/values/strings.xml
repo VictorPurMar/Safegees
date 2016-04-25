@@ -118,7 +118,8 @@
     <string name="title_activity_preferences">PreferencesActivity</string>
     <string name="pref_position_share">Send your position</string>
     <string name="pref_position_comment">This will share your position with your safegees friends</string>
-
+    <string name="pref_external_pois">Add external map points</string>
+    <string name="pref_external_pois_comment">Download and add external Points of Interest to be displayed in the map</string>
 
     <string name="MAP_LAST_LAT">LAST_LAT</string>
     <string name="MAP_LAST_LON">LAST_LON</string>
