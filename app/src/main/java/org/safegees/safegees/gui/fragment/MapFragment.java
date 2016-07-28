@@ -1,5 +1,6 @@
 package org.safegees.safegees.gui.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,6 +23,10 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 
@@ -639,5 +644,6 @@ public class MapFragment extends Fragment {
         this.mapViewController.setCenter(new GeoPoint(friend.getPosition().getLatitude(), friend.getPosition().getLongitude()));
         PrincipalMapActivity.getInstance().refreshMap();
     }
+
 
 }

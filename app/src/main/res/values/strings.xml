@@ -12,6 +12,7 @@
     <string name="menu_contacts">Contacts</string>
     <string name="menu_map">Map</string>
     <string name="menu_news">News</string>
+    <string name="menu_info">Info</string>
     <string name="menu_add_people">Add people</string>
     <string name="title_activity_login">Sign in</string>
     <string name="title_register">Register</string>

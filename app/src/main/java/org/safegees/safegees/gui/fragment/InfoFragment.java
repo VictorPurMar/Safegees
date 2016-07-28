@@ -1,5 +1,5 @@
 /**
- *   NewsFragment.java
+ *   InfoFragment.java
  *
  *   Future class description
  *
@@ -24,28 +24,40 @@
 package org.safegees.safegees.gui.fragment;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
 import org.safegees.safegees.R;
+import org.safegees.safegees.util.Connectivity;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link NewsFragment.OnFragmentInteractionListener} interface
+ * {@link InfoFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link NewsFragment#newInstance} factory method to
+ * Use the {@link InfoFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NewsFragment extends Fragment {
+public class InfoFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    public static WebView webView;
+
+
+    public static final String CRISIS_HUB_DEFAULT_URL = "https://www.refugeeinfo.eu/";
+    public static final String CRISIS_HUB_SECOND_URL = "https://refugeeinfo.eu/slavonski-brod/es/";
+    public static final String CRISIS_HUB_THIRD_URL = "https://refugeeinfo.eu/germany/es/";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -53,42 +65,66 @@ public class NewsFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public NewsFragment() {
+    public InfoFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProfileUserFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static NewsFragment newInstance(String param1, String param2) {
-        NewsFragment fragment = new NewsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View view =  inflater.inflate(R.layout.fragment_info, container, false);
+        final ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+
+
+
+        webView = (WebView) view.findViewById(R.id.webview_info);
+        webView.getSettings().setAppCachePath( this.getActivity().getApplicationContext().getCacheDir().getAbsolutePath() );
+        webView.getSettings().setAppCacheEnabled( true );
+        webView.getSettings().setJavaScriptEnabled( true );
+        webView.getSettings().setCacheMode( WebSettings.LOAD_DEFAULT ); // load online by default
+
+        if ( !Connectivity.isNetworkAvaiable(getContext()) ) { // loading offline
+            webView.getSettings().setCacheMode( WebSettings.LOAD_CACHE_ELSE_NETWORK );
+        }
+
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                if (url.contains(CRISIS_HUB_DEFAULT_URL)){
+                    view.loadUrl(url);
+                    return false;
+                }
+                return false;
+            }
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                progressBar.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+
+
+        webView.loadUrl(CRISIS_HUB_DEFAULT_URL);
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_news, container, false);
+
+
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -130,8 +166,8 @@ public class NewsFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    public static Fragment newInstance() {
-        NewsFragment mFrgment = new NewsFragment();
+    public static InfoFragment newInstance() {
+        InfoFragment mFrgment = new InfoFragment();
         return mFrgment;
     }
 }

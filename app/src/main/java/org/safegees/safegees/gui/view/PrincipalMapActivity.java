@@ -45,7 +45,7 @@ import org.safegees.safegees.R;
 import org.safegees.safegees.gui.fragment.AddContactFragment;
 import org.safegees.safegees.gui.fragment.ContactsFragment;
 import org.safegees.safegees.gui.fragment.MapFragment;
-import org.safegees.safegees.gui.fragment.NewsFragment;
+import org.safegees.safegees.gui.fragment.InfoFragment;
 import org.safegees.safegees.gui.fragment.ProfileContactFragment;
 import org.safegees.safegees.gui.fragment.ProfileUserFragment;
 import org.safegees.safegees.util.Connectivity;
@@ -72,6 +72,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -84,7 +86,7 @@ import java.io.InputStream;
 
 
 public class PrincipalMapActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,ProfileUserFragment.OnFragmentInteractionListener, NewsFragment.OnFragmentInteractionListener, ContactsFragment.OnFragmentInteractionListener, AddContactFragment.OnFragmentInteractionListener, ProfileContactFragment.OnFragmentInteractionListener , View.OnClickListener, MapFragment.OnFragmentInteractionListener{
+        implements NavigationView.OnNavigationItemSelectedListener,ProfileUserFragment.OnFragmentInteractionListener, InfoFragment.OnFragmentInteractionListener, ContactsFragment.OnFragmentInteractionListener, AddContactFragment.OnFragmentInteractionListener, ProfileContactFragment.OnFragmentInteractionListener , View.OnClickListener, MapFragment.OnFragmentInteractionListener{
 
 
     private MapFragment mapFragment;
@@ -101,6 +103,7 @@ public class PrincipalMapActivity extends AppCompatActivity
     DrawerLayout drawer;                                        //Lateral menu
     boolean closeSession = false;
 
+    private WebView webView;
     //---------------------------------
     // Singleton
     //---------------------------------
@@ -168,6 +171,7 @@ public class PrincipalMapActivity extends AppCompatActivity
 
         //Start the Map fragment
         mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+
 
         loadStoredStoredImage();
         instance = this;
@@ -355,8 +359,8 @@ public class PrincipalMapActivity extends AppCompatActivity
             mapFragment.onResume();
 
             this.connectivityOn();
-        } /*else if (id == R.id.nav_news) {
-            Fragment fg = NewsFragment.newInstance();
+        } else if (id == R.id.nav_info) {
+            Fragment fg = InfoFragment.newInstance();
             //Fragment acFrag = getActiveFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
@@ -373,7 +377,7 @@ public class PrincipalMapActivity extends AppCompatActivity
 
             this.connectivityOff();
 
-        } else if (id == R.id.nav_add_people) {
+        }/* else if (id == R.id.nav_add_people) {
             Fragment fg = AddContactFragment.newInstance();
             //Fragment acFrag = getActiveFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -794,4 +798,6 @@ public class PrincipalMapActivity extends AppCompatActivity
         i.putExtra("position", position);
         this.startActivityForResult(i,REQUEST_CONTACTS_CODE);
     }
+
+
 }
