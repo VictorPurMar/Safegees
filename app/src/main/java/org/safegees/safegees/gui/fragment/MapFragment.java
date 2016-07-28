@@ -192,18 +192,22 @@ public class MapFragment extends Fragment {
         if (myLocationOverlay.getMyLocation() == null){
             myLocationOverlay.runOnFirstFix(new Runnable() {
                 public void run() {
-                    mapViewController.animateTo(myLocationOverlay.getMyLocation());
-                    //myLocationOverlay.enableFollowLocation();
-                    myLocationOverlay.setPersonIcon(getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_user_position)));
-                    mapView.getOverlays().add(myLocationOverlay);
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-                    boolean mobileAllowed = prefs.getBoolean("pref_position_share", true);
-                    if(Connectivity.isNetworkAvaiable(getContext()) && mobileAllowed) {
-                        LatLng latLng = new LatLng(myLocationOverlay.getMyLocation().getLatitude(), myLocationOverlay.getMyLocation().getLongitude());
-                        Log.i("POSITION", latLng.toString());
-                        //Add the contact
-                        ShareDataController sssdc = new ShareDataController();
-                        sssdc.sendUserPosition(getContext(), SafegeesDAO.getInstance(getContext()).getPublicUser().getPublicEmail(), latLng);
+                    try {
+                        mapViewController.animateTo(myLocationOverlay.getMyLocation());
+                        //myLocationOverlay.enableFollowLocation();
+                        myLocationOverlay.setPersonIcon(getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_user_position)));
+                        mapView.getOverlays().add(myLocationOverlay);
+                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+                        boolean mobileAllowed = prefs.getBoolean("pref_position_share", true);
+                        if (Connectivity.isNetworkAvaiable(getContext()) && mobileAllowed) {
+                            LatLng latLng = new LatLng(myLocationOverlay.getMyLocation().getLatitude(), myLocationOverlay.getMyLocation().getLongitude());
+                            Log.i("POSITION", latLng.toString());
+                            //Add the contact
+                            ShareDataController sssdc = new ShareDataController();
+                            sssdc.sendUserPosition(getContext(), SafegeesDAO.getInstance(getContext()).getPublicUser().getPublicEmail(), latLng);
+                        }
+                    }catch (Exception e){
+                        //To do
                     }
                 }
             });
@@ -301,17 +305,20 @@ public class MapFragment extends Fragment {
         mapView.getOverlays().clear(); //Clear old items
         setInitialMapConfiguration();   //Set initial map overlays and
 
-        File file = new File(FileManager.getFileStorePath("volunteers.kml").getAbsolutePath());
-        if (file.exists()) {
-            mKmlDocument.parseKMLFile(FileManager.getFileStorePath("volunteers.kml"));
+
+        File file = new File(FileManager.getFileStorePath("volunteers.kml", this.getContext()).getAbsolutePath());
+
+        if (file.exists() && PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("pref_external_pois_map", false)) {
+            mKmlDocument.parseKMLFile(FileManager.getFileStorePath("volunteers.kml", this.getContext()));
             Drawable defaultMarker = getResources().getDrawable(R.drawable.ic_add_location_black_24dp);
             FolderOverlay campaments = getFolderOverlay(defaultMarker);
             mapView.getOverlays().add(campaments);
         }
 
-        file = new File(FileManager.getFileStorePath("syrian.kml").getAbsolutePath());
-        if (file.exists()) {
-            mKmlDocument.parseKMLFile(FileManager.getFileStorePath("syrian.kml"));
+
+        file = new File(FileManager.getFileStorePath("syrian.kml", this.getContext()).getAbsolutePath());
+        if (file.exists() && PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("pref_external_pois_map", false)) {
+            mKmlDocument.parseKMLFile(FileManager.getFileStorePath("syrian.kml", this.getContext()));
             Drawable defaultMarker = getResources().getDrawable(R.drawable.ic_place_gray);
             FolderOverlay syrian = getFolderOverlay(defaultMarker);
             mapView.getOverlays().add(syrian);

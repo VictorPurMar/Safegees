@@ -379,12 +379,12 @@ public class SafegeesConnectionManager {
         String syrian = "http://geonode.state.gov/geoserver/wms/kml?layers=geonode%3ASyria_RefugeeSites_2016Jan21_HIU_DoS0&mode=download";
         String volunteers = "https://mapsengine.google.com/map/kml?mid=zddfRUtGScOc.kQBgTQcoV5FM&forcekml=1";
 
-        storeKlm("volunteers", volunteers);
-        storeKlm("syrian", syrian);
+        storeKlm("volunteers", volunteers, context);
+        storeKlm("syrian", syrian, context);
 
     }
 
-    private boolean storeKlm(String fileName, String url){
+    private boolean storeKlm(String fileName, String url, Context context){
 
         //Prevent an unnecesary download
         /*
@@ -392,21 +392,24 @@ public class SafegeesConnectionManager {
         if (!FileManager.getKMLFileStore(fileName + ".kml").exists() || MainActivity.DATA_STORAGE.getInt(fileName) != 0){
         */
         KmlDocument mKmlDocument = new KmlDocument();
-        Boolean parsed = mKmlDocument.parseKMLUrl(url);
-        if(parsed){
-            if (mKmlDocument.mKmlRoot != null) {
-                KmlFolder root = (KmlFolder) mKmlDocument.mKmlRoot;
-                mKmlDocument.saveAsKML(FileManager.getKMLFileStore(fileName + ".kml"));
-                //MainActivity.DATA_STORAGE.putInt(fileName, fileLenght);
-                //Log.e("STORED", "FILE " + fileName + " DATA SIZE " + fileLenght);
-                return true;
-            }
-        }
-        return false;
-        /*
-        }
+        //To do
+        //Now only download kml file if it not exists previuously
+        if (!FileManager.getFileExists(fileName + ".kml", context)) {
+            Boolean parsed = mKmlDocument.parseKMLUrl(url);
+            if (parsed) {
+                if (mKmlDocument.mKmlRoot != null) {
+                    KmlFolder root = (KmlFolder) mKmlDocument.mKmlRoot;
 
-        return true;*/
+                    //ONLY DOWNLOAD IF FILE NOT EXISTS
+                        File file = FileManager.getKMLFileStore(fileName + ".kml", context);
+                        mKmlDocument.saveAsKML(file);
+                        //MainActivity.DATA_STORAGE.putInt(fileName, fileLenght);
+                        //Log.e("STORED", "FILE " + fileName + " DATA SIZE " + fileLenght);
+                        return true;
+                    }
+                }
+            }
+        return false;
     }
 
     private int getFileLength(String fileUrl) {

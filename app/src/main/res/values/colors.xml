@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <color name="colorPrimaryBright">#f2efec</color>
     <color name="colorPrimaryExtraLight">#D1CFCC</color>
     <color name="colorPrimaryLight">#A09F9C</color>
     <color name="colorPrimary">#737270</color>
     <color name="colorPrimaryDark">#403F3E</color>
     <color name="colorPrimaryExtraDark">#131210</color>
+
+
     <color name="colorAccent">#649bff</color>
     <color name="colorFriends">#3463ab</color>
     <color name="colorPosition">#19ab46</color>
+    <color name="colorCadaquesLight">#bacbe9</color>
     <color name="colorCadaques">#89a6da</color>
     <color name="colorCadaquesAccent">#649bff</color>
     <color name="colorCadaquesAccentDark">#598ae4</color>
+    <color name="colorCadaquesAccentExtraDark">#36548b</color>
+    <color name="colorCadaquesAccentExtraExtraDark">#4c5567</color>
 </resources>

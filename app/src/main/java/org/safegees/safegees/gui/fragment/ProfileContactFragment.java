@@ -31,6 +31,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -48,7 +49,7 @@ import java.util.ArrayList;
  * Use the {@link ProfileContactFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ProfileContactFragment extends Fragment{
+public class ProfileContactFragment extends Fragment implements View.OnClickListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String POSITION = "position";
@@ -105,6 +106,8 @@ public class ProfileContactFragment extends Fragment{
 
         Friend friend = friends.get(position);
 
+        ImageButton closeContact = (ImageButton) view.findViewById(R.id.close_contact);
+        closeContact.setOnClickListener(this);
 
         imageView = (ImageView) view.findViewById(R.id.result);
         editName = (EditText) view.findViewById(R.id.editName);
@@ -165,6 +168,11 @@ public class ProfileContactFragment extends Fragment{
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onClick(View v) {
+        this.getActivity().onBackPressed();
     }
 
     /**

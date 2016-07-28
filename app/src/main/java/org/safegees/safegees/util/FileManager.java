@@ -1,5 +1,6 @@
 package org.safegees.safegees.util;
 
+import android.content.Context;
 import android.os.Environment;
 
 import java.io.File;
@@ -16,9 +17,9 @@ public class FileManager {
      * @param fileName
      * @return full path, as a File, or null if error.
      */
-    public static File getKMLFileStore(String fileName){
+    public static File getKMLFileStore(String fileName, Context context){
         try {
-            File path = new File(Environment.getExternalStorageDirectory(), "kml");
+            File path = new File(Environment.getExternalStorageDirectory(), context.getApplicationContext().getPackageName() +File.separator +"kml");
             path.mkdir();
             File file = new File(path.getAbsolutePath(), fileName);
             return file;
@@ -28,8 +29,23 @@ public class FileManager {
         }
     }
 
-    public static File getFileStorePath(String fileName){
-        return new File(Environment.getExternalStorageDirectory(), "kml"+File.separator+fileName);
+    public static boolean getFileExists(String fileName, Context context){
+        boolean ret = false;
+        try {
+            File path = new File(Environment.getExternalStorageDirectory(),context.getApplicationContext().getPackageName() +File.separator + "kml"+File.separator+fileName);
+            if (path.exists()) ret = true;
+            else {
+                File path2 = new File(Environment.getExternalStorageDirectory(), context.getApplicationContext().getPackageName() + File.separator + "kml" + File.separator);
+                path2.mkdirs();
+            }
+        } catch (NullPointerException e){
+
+        }
+        return ret;
+    }
+
+    public static File getFileStorePath(String fileName, Context context){
+        return new File(Environment.getExternalStorageDirectory(),context.getApplicationContext().getPackageName() +File.separator + "kml"+File.separator+fileName);
     }
 
 }
