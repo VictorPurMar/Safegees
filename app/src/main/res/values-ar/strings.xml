@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Safegees</string>
+    <string name="action_settings">إعدادات</string>
+    <!-- LATERAL MENU -->
+    <string name="menu_profile">الملف الشخصي</string>
+    <string name="menu_contacts">جهات الاتصال</string>
+    <string name="menu_map">رسم خريطة</string>
+    <string name="menu_news">أخبار</string>
+    <string name="menu_info">معلومات</string>
+    <string name="menu_add_people">أضف أشخاصا</string>
+    <string name="title_activity_login">تسجيل الدخول</string>
+    <string name="title_register">تسجيل</string>
+    <string name="title_settings">إعدادات</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">البريد الإلكتروني</string>
+    <string name="prompt_password">كلمه السر </string>
+    <string name="action_sign_in">تسجيل الدخول</string>
+    <string name="action_register">تسجيل</string>
+    <string name="action_sign_in_short">تسجيل الدخول</string>
+    <string name="error_invalid_email">عنوان البريد الإلكتروني هذا غير صالح</string>
+    <string name="error_invalid_password">هذه كلمة المرور قصيرة جدا</string>
+    <string name="error_incorrect_password">هذه كلمة المرور غير صحيحة</string>
+    <string name="error_field_required">هذه الخانة مطلوبه</string>
+    <string name="permission_rationale">ناك حاجة إلى صلات الأذونات لتوفير الاكمال البريد الإلكتروني</string>
+
+    <!-- PREFERENCES -->
+    <string name="pref_wifi_connection">اتصال واي فاي</string>
+    <string name="pref_wifi_comment">يسمح للاتصال واي فاي لتنزيل المحتوى (كما الخرائط). الخيار الموصى به.</string>
+    <string name="pref_mobile_connection">الاتصال المحمول (4G، والجيل الثالث 3G، ...)</string>
+    <string name="pref_mobile_comment">هام: استخدام الهاتف النقال على الانترنت أحصل يستطيع الخرائط تستهلك الكثير من الرسوم الخاصة بك على الإنترنت.</string>
+    <string name="title_activity_preferences">التفضيلات</string>
+    <string name="pref_position_share">إرسال موقفكم</string>
+    <string name="pref_position_comment">هذا وسوف تشارك موقفكم مع safegees أصدقائك</string>
+    <string name="pref_external_pois">إضافة نقاط خريطة الخارجية</string>
+    <string name="pref_external_pois_comment">تحميل وإضافة النقاط الخارجية الاهتمام ليتم عرضها في الخريطة</string>
+
+    <!-- INITIAL STATE -->
+    <string name="splash_advice_unocmpresing">خرائط الفتح</string>
+    <string name="splash_advice_download_info_hub">تحميل البيانات من معلومات أزمة المحور</string>
+    <string name="splash_advice_first_use_advice">يجب أن تكون متصلا بالإنترنت قبل أول استخدام</string>
+    <string name="splash_advice_initializing">تهيئة</string>
+    <string name="splash_advice_sharing_info">تقاسم المعلومات مع Safegees</string>
+
+    //CONNECTION STRINGS/////////////////////////////////////////////////
+    //POST keys
+    <!-- Connection controller messages (get - post) -->
+    <string name="KEY_CONTACTS_DATA">friends</string>
+    <string name="KEY_AUTHORIZED">authorized</string>
+    <string name="KEY_USER_BASIC">user</string>
+    <string name="KEY_POINTS_OF_INTEREST">organitations</string>
+    <string name="KEY_IS_LOGED">isLoged</string>
+    <string name="KEY_USER_MAIL">user_mail</string>
+    <string name="KEY_USER_PASSWORD">user_password</string>
+    <string name="KEY_APP_USERS">app_users</string>
+    <string name="KEY_ADD_USERS">add_users</string>
+    <string name="KEY_DELETE_USERS">delete_users</string>
+    <string name="KEY_USER_POSITIONS">user_position</string>
+    <string name="KEY_USER_BASIC_DATA">user_basic_data</string>
+    <!-- MAP -->
+    <string name="MAP_LAST_LAT">LAST_LAT</string>
+    <string name="MAP_LAST_LON">LAST_LON</string>
+    <string name="MAP_LAST_ZOOM">LAST_ZOOM</string>
+    ////////////////////////////////////////////////////////////////
+
+
+</resources>

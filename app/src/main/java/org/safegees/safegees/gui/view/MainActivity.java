@@ -96,7 +96,7 @@ import java.util.ArrayList;
 
             if (moovedAssetsZip) {
                 if (MapFileManager.isNewMapZip()) {
-                    adviceUser.setText("Uncompressing maps");
+                    adviceUser.setText(getResources().getString(R.string.splash_advice_unocmpresing));
                     this.DATA_STORAGE.putBoolean("isNewMap", true);
                     FileManagerTask fmt = new FileManagerTask(this);
                     fmt.execute();
@@ -168,7 +168,7 @@ import java.util.ArrayList;
                 final MainActivity mainActivity = this;
 
                 //Download data
-                this.adviceUser.setText("Download data from Crisis Info Hub");
+                this.adviceUser.setText(getResources().getString(R.string.splash_advice_unocmpresing));
 
                 //Test
                 //Not here at final
@@ -178,7 +178,7 @@ import java.util.ArrayList;
 
                     @Override
                     public void onPageFinished(WebView view, String url) {
-                        if (Connectivity.isNetworkAvaiable(this) || StoredDataQuequesManager.getAppUsersMap(this).size() != 0) {
+                        if (Connectivity.isNetworkAvaiable(mainActivity) || StoredDataQuequesManager.getAppUsersMap(mainActivity).size() != 0) {
                             if (infoWebUrls.size()>0){
                                 String nextUrl = infoWebUrls.get(0);
                                 infoWebUrls.remove(nextUrl);
@@ -210,7 +210,7 @@ import java.util.ArrayList;
 
     public void setNoInternetAdvice(Context context){
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage("You must  be connected to internet before the first use")
+        builder.setMessage(getResources().getString(R.string.splash_advice_first_use_advice))
                 .setCancelable(false)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -259,7 +259,7 @@ import java.util.ArrayList;
     }
 
     public void launchTheApp(){
-        adviceUser.setText("Initializing");
+        adviceUser.setText(getResources().getString(R.string.splash_advice_initializing));
         buildObjects();
         launchMainActivity();
     }
@@ -270,7 +270,7 @@ import java.util.ArrayList;
 
     private void shareDataWithServer() {
         //Download data
-        this.adviceUser.setText("Sharing info with Safegees");
+        this.adviceUser.setText(getResources().getString(R.string.splash_advice_sharing_info));
         ShareDataController sddm = new ShareDataController();
         sddm.run(this);
     }
@@ -300,9 +300,9 @@ import java.util.ArrayList;
 
             fileManagerTask = null;
             if (success) {
-                Toast toast = Toast.makeText(context, "Zip was added correctly", Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.show();
+                //Toast toast = Toast.makeText(context, "Zip was added correctly", Toast.LENGTH_LONG);
+                //toast.setGravity(Gravity.CENTER, 0, 0);
+                //toast.show();
                 start();
             } else {
                 Toast toast = Toast.makeText(context, "Error", Toast.LENGTH_LONG);

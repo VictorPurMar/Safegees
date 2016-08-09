@@ -126,4 +126,12 @@
     <string name="MAP_LAST_LON">LAST_LON</string>
     <string name="MAP_LAST_ZOOM">LAST_ZOOM</string>
 
+    <!-- INITIAL STATE -->
+    <string name="splash_advice_unocmpresing">Uncompresing maps</string>
+    <string name="splash_advice_download_info_hub">Download data from Crisis Info Hub</string>
+    <string name="splash_advice_first_use_advice">"You must  be connected to internet before the first use"</string>
+    <string name="splash_advice_initializing">Initializing</string>
+    <string name="splash_advice_sharing_info">Sharing info with Safegees</string>
+
+
 </resources>

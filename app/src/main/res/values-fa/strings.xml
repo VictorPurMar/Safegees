@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Safegees</string>
+    <string name="navigation_drawer_open">باز کردن کشوی پیمایشr</string>
+    <string name="navigation_drawer_close">بستن کشوی پیمایش</string>
+    <string name="action_settings">تنظیمات</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+
+    <!-- LATERAL MENU -->
+    <string name="menu_profile">مشخصات</string>
+    <string name="menu_contacts">اطلاعات تماس</string>
+    <string name="menu_map">نقشه</string>
+    <string name="menu_news">اخبار</string>
+    <string name="menu_info">اطلاعات</string>
+    <string name="menu_add_people">اضافه کردن مردم</string>
+    <string name="title_activity_login">ورود</string>
+    <string name="title_register">ثبت نام</string>
+    <string name="title_settings">تنظیمات</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">پست الکترونیک</string>
+    <string name="prompt_password">کلمه عبور </string>
+    <string name="action_sign_in">ورود</string>
+    <string name="action_register">ثبت نام</string>
+    <string name="action_sign_in_short">ورود</string>
+    <string name="error_invalid_email">این آدرس ایمیل نامعتبر است</string>
+    <string name="error_invalid_password">این گذرواژه خیلی کوتاه است</string>
+    <string name="error_incorrect_password">این رمز عبور اشتباه است</string>
+    <string name="error_field_required">این فیلد الزامی است</string>
+    <string name="permission_rationale">اطلاعات تماس مجوز برای ارائه تکمیل ایمیل مورد نیاز
+    </string>
+
+    <!-- PREFERENCES -->
+    <string name="pref_wifi_connection">اتصال وای فای</string>
+    <string name="pref_wifi_comment">اجازه می دهد تا اتصال فای برای دانلود محتوا (به عنوان نقشه). گزینه توصیه می شود.</string>
+    <string name="pref_mobile_connection">اتصال به تلفن همراه (4G، 3G، ...)</string>
+    <string name="pref_mobile_comment">مهم: استفاده از اتصال به تلفن همراه آنلاین دریافت نقشه ها را می بیش از حد از هزینه اینترنت خود را مصرف می کند.</string>
+    <string name="title_activity_preferences">تنظیمات</string>
+    <string name="pref_position_share">ارسال و موقعیت خود</string>
+    <string name="pref_position_comment">این خواهد شد و موقعیت خود را به اشتراک گذاری با دوستان خود</string>
+    <string name="pref_external_pois">اضافه کردن نقاط نقشه های خارجی</string>
+    <string name="pref_external_pois_comment">دانلود و اضافه کردن امتیاز خارجی از علاقه به در نقشه نمایش داده می شود</string>
+
+    <!-- INITIAL STATE -->
+    <string name="splash_advice_unocmpresing">نقشه حالت فشرده خارج</string>
+    <string name="splash_advice_download_info_hub">دانلود داده ها از اطلاعات بحران توپی</string>
+    <string name="splash_advice_first_use_advice">شما باید به اینترنت قبل از اولین استفاده متصل شود</string>
+    <string name="splash_advice_initializing">مقدار دهی اولیه</string>
+    <string name="splash_advice_sharing_info">Sبه اشتراک گذاری اطلاعات با Safegees</string>
+
+    //CONNECTION STRINGS/////////////////////////////////////////////////
+    //POST keys
+    <!-- Connection controller messages (get - post) -->
+    <string name="KEY_CONTACTS_DATA">friends</string>
+    <string name="KEY_AUTHORIZED">authorized</string>
+    <string name="KEY_USER_BASIC">user</string>
+    <string name="KEY_POINTS_OF_INTEREST">organitations</string>
+    <string name="KEY_IS_LOGED">isLoged</string>
+    <string name="KEY_USER_MAIL">user_mail</string>
+    <string name="KEY_USER_PASSWORD">user_password</string>
+    <string name="KEY_APP_USERS">app_users</string>
+    <string name="KEY_ADD_USERS">add_users</string>
+    <string name="KEY_DELETE_USERS">delete_users</string>
+    <string name="KEY_USER_POSITIONS">user_position</string>
+    <string name="KEY_USER_BASIC_DATA">user_basic_data</string>
+
+    <!-- Map strings -->
+    <string name="MAP_LAST_LAT">LAST_LAT</string>
+    <string name="MAP_LAST_LON">LAST_LON</string>
+    <string name="MAP_LAST_ZOOM">LAST_ZOOM</string>
+    ////////////////////////////////////////////////////////////////
+
+
+</resources>
