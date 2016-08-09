@@ -23,15 +23,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Toast;
 
-
-import org.osmdroid.DefaultResourceProxyImpl;
-import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.kml.KmlDocument;
 import org.osmdroid.bonuspack.kml.KmlFeature;
@@ -40,10 +33,10 @@ import org.osmdroid.bonuspack.kml.KmlPlacemark;
 import org.osmdroid.bonuspack.kml.KmlPoint;
 import org.osmdroid.bonuspack.kml.KmlPolygon;
 import org.osmdroid.bonuspack.kml.Style;
-import org.osmdroid.bonuspack.overlays.FolderOverlay;
-import org.osmdroid.bonuspack.overlays.Marker;
-import org.osmdroid.bonuspack.overlays.Polygon;
-import org.osmdroid.bonuspack.overlays.Polyline;
+import org.osmdroid.views.overlay.FolderOverlay;
+import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.Polygon;
+import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -191,7 +184,7 @@ public class MapFragment extends Fragment {
 
 
         // My Location Overlay
-        myLocationOverlay = new MyLocationNewOverlay(getContext(), mapView);
+        myLocationOverlay = new MyLocationNewOverlay(mapView);
         myLocationOverlay.enableMyLocation(); // not on by default
 
         if (myLocationOverlay.getMyLocation() == null){
@@ -386,7 +379,7 @@ public class MapFragment extends Fragment {
                 public boolean onItemLongPress(int index, Object item) {
                     return false;
                 }
-            }, new DefaultResourceProxyImpl(getContext()));
+            }, getContext());
 
 
             ItemizedIconOverlay contactOverlay = new ItemizedIconOverlay(contactList, contactDrawable, new ItemizedIconOverlay.OnItemGestureListener() {
@@ -423,7 +416,7 @@ public class MapFragment extends Fragment {
                 public boolean onItemLongPress(int index, Object item) {
                     return false;
                 }
-            }, new DefaultResourceProxyImpl(getContext()));
+            }, getContext());
 
 
 

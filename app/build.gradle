@@ -21,15 +21,18 @@ android {
 
 }
 
+repositories {
+    maven { url "https://jitpack.io" }
+}
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
     compile 'com.android.support:support-v4:23.1.1'
-    compile 'org.osmdroid:osmdroid-android:5.1@aar'
-    compile 'com.github.MKergall.osmbonuspack:OSMBonusPack:v5.7'
-
+    compile 'org.osmdroid:osmdroid-android:5.2@aar'
+    compile 'com.github.MKergall:osmbonuspack:v5.8.1'
 }
 
 
