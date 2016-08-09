@@ -55,7 +55,7 @@ public class InfoFragment extends Fragment {
     public static WebView webView;
 
 
-    public static final String CRISIS_HUB_DEFAULT_URL = "https://www.refugeeinfo.eu/";
+    public static final String CRISIS_HUB_DEFAULT_URL = CRISIS_HUB_DEFAULT_URL + "";
 
     // TODO: Rename and change types of parameters
     private String mParam1;

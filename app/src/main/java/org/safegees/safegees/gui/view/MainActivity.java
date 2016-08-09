@@ -167,6 +167,9 @@ import java.util.ArrayList;
 
                 final MainActivity mainActivity = this;
 
+                //Download data
+                this.adviceUser.setText("Download data from Crisis Info Hub");
+
                 //Test
                 //Not here at final
                 final WebView webView = (WebView) this.findViewById(R.id.webview_info_pre_cache);
@@ -197,7 +200,7 @@ import java.util.ArrayList;
 
             }else{
                 final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage("You must  be connected to interet before the first use")
+                builder.setMessage("You must  be connected to internet before the first use")
                         .setCancelable(false)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
