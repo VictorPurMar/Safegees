@@ -56,8 +56,6 @@ public class InfoFragment extends Fragment {
 
 
     public static final String CRISIS_HUB_DEFAULT_URL = "https://www.refugeeinfo.eu/";
-    public static final String CRISIS_HUB_SECOND_URL = "https://refugeeinfo.eu/slavonski-brod/es/";
-    public static final String CRISIS_HUB_THIRD_URL = "https://refugeeinfo.eu/germany/es/";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -85,14 +83,15 @@ public class InfoFragment extends Fragment {
 
 
         webView = (WebView) view.findViewById(R.id.webview_info);
-        webView.getSettings().setAppCachePath( this.getActivity().getApplicationContext().getCacheDir().getAbsolutePath() );
-        webView.getSettings().setAppCacheEnabled( true );
+        //webView.getSettings().setAppCachePath( this.getActivity().getApplicationContext().getCacheDir().getAbsolutePath() );
+        //webView.getSettings().setAppCacheEnabled( true );
         webView.getSettings().setJavaScriptEnabled( true );
         webView.getSettings().setCacheMode( WebSettings.LOAD_DEFAULT ); // load online by default
 
         if ( !Connectivity.isNetworkAvaiable(getContext()) ) { // loading offline
             webView.getSettings().setCacheMode( WebSettings.LOAD_CACHE_ELSE_NETWORK );
         }
+
 
         webView.setWebViewClient(new WebViewClient() {
             @Override
@@ -116,6 +115,7 @@ public class InfoFragment extends Fragment {
                 progressBar.setVisibility(View.GONE);
             }
         });
+
 
 
         webView.loadUrl(CRISIS_HUB_DEFAULT_URL);

@@ -39,6 +39,7 @@ import android.view.WindowManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,8 +50,11 @@ import org.safegees.safegees.util.StorageDataManager;
 import org.safegees.safegees.util.SafegeesDAO;
 import org.safegees.safegees.util.ShareDataController;
 import org.safegees.safegees.util.StoredDataQuequesManager;
+import org.safegees.safegees.util.WebViewInfoWebDownloadController;
 
 import java.io.FilenameFilter;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 /**
  * Created by victor on 25/12/15.
@@ -73,6 +77,8 @@ import java.io.FilenameFilter;
                 startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
             }
             */
+
+
 
             //Manain the splash screen on
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -158,9 +164,37 @@ import java.io.FilenameFilter;
             shareDataWithServer();
         }else{
             if (Connectivity.isNetworkAvaiable(this) || StoredDataQuequesManager.getAppUsersMap(this).size() != 0) {
-                //Start the loggin for result
-                Intent loginInt = new Intent(this, LoginActivity.class);
-                startActivityForResult(loginInt, 1);
+
+                final MainActivity mainActivity = this;
+
+                //Test
+                //Not here at final
+                final WebView webView = (WebView) this.findViewById(R.id.webview_info_pre_cache);
+                final ArrayList<String> infoWebUrls = WebViewInfoWebDownloadController.getInfoUrlsArrayList();
+                webView.setWebViewClient(new WebViewClient() {
+
+                    @Override
+                    public void onPageFinished(WebView view, String url) {
+                        if (infoWebUrls.size()>0){
+                            String nextUrl = infoWebUrls.get(0);
+                            infoWebUrls.remove(nextUrl);
+                            webView.loadUrl(nextUrl);
+                        }else{
+                            //Start the loggin for result
+                            Intent loginInt = new Intent(mainActivity, LoginActivity.class);
+                            startActivityForResult(loginInt, 1);
+                        }
+                    }
+                });
+                String nextUrl = infoWebUrls.get(0);
+                infoWebUrls.remove(nextUrl);
+                webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
+                webView.getSettings().setJavaScriptEnabled( true );
+                webView.loadUrl(nextUrl);
+
+
+
+
             }else{
                 final AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage("You must  be connected to interet before the first use")

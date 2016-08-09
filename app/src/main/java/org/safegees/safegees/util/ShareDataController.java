@@ -109,6 +109,7 @@ public class ShareDataController {
                 //User public data if new
                 sendUserDataQueque(scc);
 
+
                 //Get and store the contacts data from all the app users queque
                 getAppUsersData(scc);
 
@@ -135,7 +136,6 @@ public class ShareDataController {
 
             return false;
         }
-
 
 
 
