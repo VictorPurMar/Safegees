@@ -72,7 +72,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -91,6 +90,7 @@ public class PrincipalMapActivity extends AppCompatActivity
 
     private MapFragment mapFragment;
     private ProfileUserFragment profileFragment;
+    private InfoFragment infoFragment;
     private ContactsFragment contactsFragment;
     private FloatingActionButton floatingUpdateButton;      //update map button
     private FloatingActionButton floatingAddContactButton;
@@ -360,7 +360,7 @@ public class PrincipalMapActivity extends AppCompatActivity
 
             this.connectivityOn();
         } else if (id == R.id.nav_info) {
-            Fragment fg = InfoFragment.newInstance();
+            this.infoFragment = InfoFragment.newInstance();
             //Fragment acFrag = getActiveFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
@@ -370,7 +370,7 @@ public class PrincipalMapActivity extends AppCompatActivity
                 transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
 
             }
-            transaction.replace(R.id.map, fg, "news").addToBackStack("news");
+            transaction.replace(R.id.map, infoFragment, "news").addToBackStack("news");
             transaction.commit();
 
             mapFragment.onPause();
@@ -465,7 +465,8 @@ public class PrincipalMapActivity extends AppCompatActivity
      */
     public void connectivityOn(){
         this.floatingUpdateButton.show();
-        //if (mapFragment != null) mapFragment.setMapViewDependingConnection();
+        if (mapFragment != null) mapFragment.setMapViewDependingConnection();
+        if (infoFragment!=null) infoFragment.setLoaderDependingConnectivity(true);
     }
 
     /**
@@ -475,7 +476,8 @@ public class PrincipalMapActivity extends AppCompatActivity
     public void connectivityOff(){
         //The floating button will be used to update content if exists internet connection
         floatingUpdateButton.hide();
-        //if (mapFragment != null) mapFragment.setMapViewDependingConnection();
+        if (mapFragment != null) mapFragment.setMapViewDependingConnection();
+        if (infoFragment != null) infoFragment.setLoaderDependingConnectivity(false);
     }
 
 

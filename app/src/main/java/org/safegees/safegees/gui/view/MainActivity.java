@@ -168,7 +168,7 @@ import java.util.ArrayList;
                 final MainActivity mainActivity = this;
 
                 //Download data
-                this.adviceUser.setText(getResources().getString(R.string.splash_advice_unocmpresing));
+                this.adviceUser.setText(getResources().getString(R.string.splash_advice_download_info_hub));
 
                 //Test
                 //Not here at final
@@ -178,7 +178,6 @@ import java.util.ArrayList;
 
                     @Override
                     public void onPageFinished(WebView view, String url) {
-                        if (Connectivity.isNetworkAvaiable(mainActivity) || StoredDataQuequesManager.getAppUsersMap(mainActivity).size() != 0) {
                             if (infoWebUrls.size()>0){
                                 String nextUrl = infoWebUrls.get(0);
                                 infoWebUrls.remove(nextUrl);
@@ -188,19 +187,26 @@ import java.util.ArrayList;
                                 Intent loginInt = new Intent(mainActivity, LoginActivity.class);
                                 startActivityForResult(loginInt, 1);
                             }
-                        }else{
-                            setNoInternetAdvice(mainActivity);
-                        }
                     }
                 });
+
                 String nextUrl = infoWebUrls.get(0);
                 infoWebUrls.remove(nextUrl);
                 webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
                 webView.getSettings().setJavaScriptEnabled( true );
-                webView.loadUrl(nextUrl);
+                webView.setWebChromeClient(new WebChromeClient());
 
-
-
+                if (StoredDataQuequesManager.getAppUsersMap(mainActivity).size() == 0) {
+                    webView.loadUrl(nextUrl);
+                }else{
+                    if(DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)) != null && DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)).length()>0){
+                        launchMainActivity();
+                    }else{
+                        //Start the loggin for result
+                        Intent loginInt = new Intent(mainActivity, LoginActivity.class);
+                        startActivityForResult(loginInt, 1);
+                    }
+                }
 
             }else{
                 setNoInternetAdvice(this);

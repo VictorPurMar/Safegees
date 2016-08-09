@@ -8,6 +8,7 @@ import java.util.ArrayList;
 public class WebViewInfoWebDownloadController {
 
     public static final String CRISIS_HUB_DEFAULT_URL = "https://www.refugeeinfo.eu/";
+    public static final String CRISIS_HUB_DEFAULT_URL_EN = CRISIS_HUB_DEFAULT_URL + "?language=en";
     public static final String CRISIS_HUB_DEFAULT_URL_AR = CRISIS_HUB_DEFAULT_URL + "?language=ar";
     public static final String CRISIS_HUB_DEFAULT_URL_FA = CRISIS_HUB_DEFAULT_URL + "?language=fa";
 
@@ -34,7 +35,7 @@ public class WebViewInfoWebDownloadController {
     //GERMANY
     public static final String CH_GERMANY_GENERAL_URL = CRISIS_HUB_DEFAULT_URL + "germany/";
     //MACEDONIA
-    public static final String CH_MACEDONIA_GENERAL_URL = CRISIS_HUB_DEFAULT_URL + "macedonia/";
+    public static final String CH_MACEDONIA_GENERAL_URL = CRISIS_HUB_DEFAULT_URL + "fyrm/";
     public static final String CH_MACEDONIA_TABANOVCE_URL = CRISIS_HUB_DEFAULT_URL + "tabanovce/";
     public static final String CH_MACEDONIA_GEVGELIJA_URL = CRISIS_HUB_DEFAULT_URL + "gevgelija/";
     //GREECE
@@ -53,9 +54,9 @@ public class WebViewInfoWebDownloadController {
 
 
     //GENERAL
-    public static final String CH_STAYING_SAFE = CRISIS_HUB_DEFAULT_URL + "common-messaging-staying-safe/";
-    public static final String CH_FAMILIES = CRISIS_HUB_DEFAULT_URL + "families/";
-    public static final String CH_MINORS = CRISIS_HUB_DEFAULT_URL + "minors/";
+    public static final String CH_STAYING_SAFE = CRISIS_HUB_DEFAULT_URL + "common-messaging-staying-safe";
+    public static final String CH_FAMILIES = CRISIS_HUB_DEFAULT_URL + "families";
+    public static final String CH_MINORS = CRISIS_HUB_DEFAULT_URL + "minors";
 
 
     public static final String CH_LANGUAGE_EN = "en/";
@@ -69,6 +70,7 @@ public class WebViewInfoWebDownloadController {
         infoUrlsArray.add(CRISIS_HUB_DEFAULT_URL);
         infoUrlsArray.add(CRISIS_HUB_DEFAULT_URL_AR);
         infoUrlsArray.add(CRISIS_HUB_DEFAULT_URL_FA);
+        infoUrlsArray.add(CRISIS_HUB_DEFAULT_URL_EN);
         infoUrlsArray = addThreeLenguagesUrl(infoUrlsArray, CH_SLOVENIA_GENERAL_URL);
         infoUrlsArray = addThreeLenguagesUrl(infoUrlsArray, CH_SLOVENIA_DOBOVA_URL);
         infoUrlsArray = addThreeLenguagesUrl(infoUrlsArray, CH_CROATIA_GENERAL_URL);

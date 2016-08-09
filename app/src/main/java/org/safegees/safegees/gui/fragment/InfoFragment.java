@@ -24,6 +24,7 @@
 package org.safegees.safegees.gui.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -31,6 +32,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -88,7 +91,7 @@ public class InfoFragment extends Fragment {
         webView.getSettings().setJavaScriptEnabled( true );
         webView.getSettings().setCacheMode( WebSettings.LOAD_DEFAULT ); // load online by default
 
-        if ( !Connectivity.isNetworkAvaiable(getContext()) ) { // loading offline
+        if (!Connectivity.isNetworkAvaiable(getContext()) ) { // loading offline
             webView.getSettings().setCacheMode( WebSettings.LOAD_CACHE_ELSE_NETWORK );
         }
 
@@ -98,9 +101,12 @@ public class InfoFragment extends Fragment {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 if (url.contains(WebViewInfoWebDownloadController.CRISIS_HUB_DEFAULT_URL)){
                     view.loadUrl(url);
-                    return false;
+
+                }else{
+                    Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    startActivity(i);
                 }
-                return false;
+                return true;
             }
 
             @Override
@@ -113,6 +119,16 @@ public class InfoFragment extends Fragment {
             public void onPageFinished(WebView view, String url) {
 
                 progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                super.onReceivedError(view, request, error);
+                String url = webView.getUrl();
+                if (url.contains(WebViewInfoWebDownloadController.CRISIS_HUB_DEFAULT_URL)){
+                    webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+                    view.loadUrl(url);
+                }
             }
         });
 
@@ -128,6 +144,17 @@ public class InfoFragment extends Fragment {
         }
 
         return view;
+    }
+
+    public void setLoaderDependingConnectivity(boolean isConnected){
+        if (webView != null) {
+            if (isConnected) {
+                webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+            } else {
+                webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ONLY);
+            }
+        }
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event

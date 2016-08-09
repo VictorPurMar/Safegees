@@ -16,7 +16,7 @@
     <string name="menu_add_people">Add people</string>
     <string name="title_activity_login">Sign in</string>
     <string name="title_register">Register</string>
-    <string name="title_settings">Register</string>
+    <string name="title_settings">Settings</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
@@ -24,7 +24,7 @@
     <string name="action_sign_in">Sign in</string>
     <string name="action_register">Register</string>
     <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_email">This publicEmail address is invalid</string>
+    <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
@@ -32,23 +32,6 @@
         completions."
     </string>
 
-    //CONNECTION STRINGS/////////////////////////////////////////////////
-
-
-    //POST keys
-    <!-- Connection controller messages (get - post) -->
-    <string name="KEY_CONTACTS_DATA">friends</string>
-    <string name="KEY_AUTHORIZED">authorized</string>
-    <string name="KEY_USER_BASIC">user</string>
-    <string name="KEY_POINTS_OF_INTEREST">organitations</string>
-    <string name="KEY_IS_LOGED">isLoged</string>
-    <string name="KEY_USER_MAIL">user_mail</string>
-    <string name="KEY_USER_PASSWORD">user_password</string>
-    <string name="KEY_APP_USERS">app_users</string>
-    <string name="KEY_ADD_USERS">add_users</string>
-    <string name="KEY_DELETE_USERS">delete_users</string>
-    <string name="KEY_USER_POSITIONS">user_position</string>
-    <string name="KEY_USER_BASIC_DATA">user_basic_data</string>
 
     //Last camera position
 
@@ -113,7 +96,7 @@
 
     <!-- PREFERENCES -->
     <string name="pref_wifi_connection">Wifi connection</string>
-    <string name="pref_wifi_comment">Allows the wifi connection to download content (as maps). Recomendable.</string>
+    <string name="pref_wifi_comment">Allows the wifi connection to download content (as maps). Recomended option.</string>
     <string name="pref_mobile_connection">Mobile connection (4g, 3g, ... )</string>
     <string name="pref_mobile_comment">Important: Using mobile connection online get the maps can consume too much of your internet fee.</string>
     <string name="title_activity_preferences">PreferencesActivity</string>
@@ -122,9 +105,7 @@
     <string name="pref_external_pois">Add external map points</string>
     <string name="pref_external_pois_comment">Download and add external Points of Interest to be displayed in the map</string>
 
-    <string name="MAP_LAST_LAT">LAST_LAT</string>
-    <string name="MAP_LAST_LON">LAST_LON</string>
-    <string name="MAP_LAST_ZOOM">LAST_ZOOM</string>
+
 
     <!-- INITIAL STATE -->
     <string name="splash_advice_unocmpresing">Uncompresing maps</string>
@@ -133,5 +114,24 @@
     <string name="splash_advice_initializing">Initializing</string>
     <string name="splash_advice_sharing_info">Sharing info with Safegees</string>
 
-
+    //CONNECTION STRINGS/////////////////////////////////////////////////
+    //POST keys
+    <!-- Connection controller messages (get - post) -->
+    <string name="KEY_CONTACTS_DATA">friends</string>
+    <string name="KEY_AUTHORIZED">authorized</string>
+    <string name="KEY_USER_BASIC">user</string>
+    <string name="KEY_POINTS_OF_INTEREST">organitations</string>
+    <string name="KEY_IS_LOGED">isLoged</string>
+    <string name="KEY_USER_MAIL">user_mail</string>
+    <string name="KEY_USER_PASSWORD">user_password</string>
+    <string name="KEY_APP_USERS">app_users</string>
+    <string name="KEY_ADD_USERS">add_users</string>
+    <string name="KEY_DELETE_USERS">delete_users</string>
+    <string name="KEY_USER_POSITIONS">user_position</string>
+    <string name="KEY_USER_BASIC_DATA">user_basic_data</string>
+    //MAP
+    <string name="MAP_LAST_LAT">LAST_LAT</string>
+    <string name="MAP_LAST_LON">LAST_LON</string>
+    <string name="MAP_LAST_ZOOM">LAST_ZOOM</string>
+    /////////////////////////////////////////////////
 </resources>
