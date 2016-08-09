@@ -38,6 +38,9 @@ import android.widget.ProgressBar;
 
 import org.safegees.safegees.R;
 import org.safegees.safegees.util.Connectivity;
+import org.safegees.safegees.util.WebViewInfoWebDownloadController;
+
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -53,9 +56,6 @@ public class InfoFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     public static WebView webView;
-
-
-    public static final String CRISIS_HUB_DEFAULT_URL = CRISIS_HUB_DEFAULT_URL + "";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -96,7 +96,7 @@ public class InfoFragment extends Fragment {
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if (url.contains(CRISIS_HUB_DEFAULT_URL)){
+                if (url.contains(WebViewInfoWebDownloadController.CRISIS_HUB_DEFAULT_URL)){
                     view.loadUrl(url);
                     return false;
                 }
@@ -117,12 +117,15 @@ public class InfoFragment extends Fragment {
         });
 
 
-
-        webView.loadUrl(CRISIS_HUB_DEFAULT_URL);
-
-        // Inflate the layout for this fragment
-
-
+        //Load language
+        String language = Locale.getDefault().getDisplayLanguage();
+        if (language.equals("ar")){
+            webView.loadUrl(WebViewInfoWebDownloadController.CRISIS_HUB_DEFAULT_URL_AR);
+        }else if(language.equals("fa")){
+            webView.loadUrl(WebViewInfoWebDownloadController.CRISIS_HUB_DEFAULT_URL_FA);
+        }else{
+            webView.loadUrl(WebViewInfoWebDownloadController.CRISIS_HUB_DEFAULT_URL);
+        }
 
         return view;
     }
