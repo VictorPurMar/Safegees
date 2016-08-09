@@ -178,14 +178,18 @@ import java.util.ArrayList;
 
                     @Override
                     public void onPageFinished(WebView view, String url) {
-                        if (infoWebUrls.size()>0){
-                            String nextUrl = infoWebUrls.get(0);
-                            infoWebUrls.remove(nextUrl);
-                            webView.loadUrl(nextUrl);
+                        if (Connectivity.isNetworkAvaiable(this) || StoredDataQuequesManager.getAppUsersMap(this).size() != 0) {
+                            if (infoWebUrls.size()>0){
+                                String nextUrl = infoWebUrls.get(0);
+                                infoWebUrls.remove(nextUrl);
+                                webView.loadUrl(nextUrl);
+                            }else{
+                                //Start the loggin for result
+                                Intent loginInt = new Intent(mainActivity, LoginActivity.class);
+                                startActivityForResult(loginInt, 1);
+                            }
                         }else{
-                            //Start the loggin for result
-                            Intent loginInt = new Intent(mainActivity, LoginActivity.class);
-                            startActivityForResult(loginInt, 1);
+                            setNoInternetAdvice(mainActivity);
                         }
                     }
                 });
@@ -199,22 +203,26 @@ import java.util.ArrayList;
 
 
             }else{
-                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage("You must  be connected to internet before the first use")
-                        .setCancelable(false)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                Intent i = getBaseContext().getPackageManager()
-                                        .getLaunchIntentForPackage(getBaseContext().getPackageName());
-                                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                startActivity(i);
-                                //finish();
-                            }
-                        });
-                AlertDialog alert = builder.create();
-                alert.show();
+                setNoInternetAdvice(this);
             }
         }
+    }
+
+    public void setNoInternetAdvice(Context context){
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage("You must  be connected to internet before the first use")
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent i = getBaseContext().getPackageManager()
+                                .getLaunchIntentForPackage(getBaseContext().getPackageName());
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(i);
+                        //finish();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     public void launchMainActivity(){
