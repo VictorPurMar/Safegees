@@ -45,6 +45,7 @@ import org.json.JSONObject;
 import org.safegees.safegees.R;
 import org.safegees.safegees.gui.view.MainActivity;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,6 +58,7 @@ public class StoredDataQuequesManager {
     private static int KEY_DELETE_USER_JSON = R.string.KEY_DELETE_USERS;
     private static int KEY_USER_POSITION_JSON = R.string.KEY_USER_POSITIONS;
     private static int KEY_USER_BASIC_DATA_JSON = R.string.KEY_USER_BASIC_DATA;
+    private static int KEY_USER_IMAGE_TO_UPLOAD_JSON = R.string.KEY_USER_IMAGES_TO_UPLOAD;
 
     //JSON keys
     private static String KEY_JSON_ADD_USERS_TITLE = "addUsersJSON";
@@ -64,6 +66,7 @@ public class StoredDataQuequesManager {
     private static String KEY_JSON_APP_USERS_TITLE = "appUsersJSON";
     private static String KEY_JSON_USER_POSITION_TITLE = "setUserPositionJSON";
     private static String KEY_JSON_USER_BASIC_DATA_TITLE = "setUserBasicDataJSON";
+    private static String KEY_JSON_USER_IMAGE_TO_UPLOAD_TITLE = "userImagesToUploadJSON";
 
     private static String KEY_JSON_USER_EMAIL = "userEmail";
     private static String KEY_JSON_CONTACT_TO_ADD = "contactToAdd";
@@ -71,6 +74,7 @@ public class StoredDataQuequesManager {
     private static String KEY_JSON_USER_PASSWORD = "password";
     private static String KEY_JSON_USER_POSITION = "position";
     private static String KEY_JSON_USER_BASIC_DATA = "userData";
+    private static String KEY_JSON_USER_IMAGES_TO_UPLOAD = "userImages";
 
 
     public static String getUserPassword(Context context, String userMail){
@@ -114,6 +118,7 @@ public class StoredDataQuequesManager {
         String jsonResourceKey = context.getResources().getString(KEY_USER_BASIC_DATA_JSON);
         return putInStorageJSON(userMail, jsonBasicUserData, storedJSONStringKEY, jsonResourceKey, KEY_JSON_USER_BASIC_DATA_TITLE, KEY_JSON_USER_EMAIL, KEY_JSON_USER_BASIC_DATA, true);
     }
+
 
     private static boolean putInStorageJSON(String userMail, String userValue, String storedJSONStringKEY, String jsonResourceKey, String jsonTitle_key, String jsonUserEmailKey, String jsonUserValueKey, boolean substituteStoredFieldByUserEmail) {
         boolean isAdded = false;
@@ -267,6 +272,8 @@ public class StoredDataQuequesManager {
         return getStoredMap(KEY_JSON_USER_EMAIL, KEY_JSON_USER_POSITION, KEY_JSON_USER_POSITION_TITLE, userPositions);
     }
 
+
+
     /*
     public static Map<String, String> getBasicUserMAP(Context context){
         String userPositions = MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_BASIC));
@@ -298,4 +305,7 @@ public class StoredDataQuequesManager {
         Log.i("JSON_GET_MAP", "Title:"+jsonTitle+ "Map:"+ userMap.toString());
         return userMap;
     }
+
+
+
 }

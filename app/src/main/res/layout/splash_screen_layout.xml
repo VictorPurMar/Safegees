@@ -6,13 +6,6 @@
     android:layout_weight="1"
     android:orientation="vertical"
    >
-    <WebView
-        android:id="@+id/webview_info_pre_cache"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="visible"
-        >
-    </WebView>
 
     <ImageView
         android:id="@+id/logo"
@@ -65,6 +58,13 @@
         android:textColor="@color/colorPrimaryExtraLight"
         android:layout_weight="0.10"/>
 
+    <WebView
+        android:id="@+id/webview_info_pre_cache"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        >
+    </WebView>
 
 
 </LinearLayout>

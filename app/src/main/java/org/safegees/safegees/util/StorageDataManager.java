@@ -27,6 +27,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.util.ArrayList;
+import java.util.Set;
+
 public class StorageDataManager {
     private SharedPreferences config;
     private SharedPreferences.Editor configEditor;
@@ -61,6 +64,7 @@ public class StorageDataManager {
         configEditor.putBoolean(key, value);
         configEditor.commit();
     }
+
 
     public String getString(String key) {
         return config.getString(key, "");

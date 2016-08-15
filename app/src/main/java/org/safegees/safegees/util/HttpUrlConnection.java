@@ -24,6 +24,7 @@
 package org.safegees.safegees.util;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -33,6 +34,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
@@ -40,7 +42,13 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
@@ -49,6 +57,8 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 
@@ -56,8 +66,8 @@ import java.util.Map;
  * Created by victor on 30/1/16.
  */
 public class HttpUrlConnection {
-    private static final int READ_TIMEOUT = 150000;
-    private static final int CONNECTION_TIMEOUT = 150000;
+    private static final int READ_TIMEOUT = 250000;
+    private static final int CONNECTION_TIMEOUT = 250000;
     private static String KEY_HEADER_AUTHORIZED = "auth";
 
 
@@ -128,6 +138,81 @@ public class HttpUrlConnection {
 
     }
 
+    /*
+    public String performPostFileCall(String requestURL,
+                                  HashMap<String, String> postDataParams, String userCredentials, File file) {
+
+        DefaultHttpClient httpclient = new DefaultHttpClient();
+        final HttpParams httpConnParams = httpclient.getParams();
+        HttpConnectionParams.setConnectionTimeout(httpConnParams, CONNECTION_TIMEOUT);
+        HttpConnectionParams.setSoTimeout(httpConnParams, READ_TIMEOUT);
+        HttpPost httpPost = new HttpPost(requestURL);
+
+        try {
+            String postDataParamsString = getDataString(postDataParams);
+            httpPost.setEntity(new StringEntity(postDataParamsString));
+            //Add file
+            FileEntity fileEntity = new FileEntity(file,"UTF-8");
+            httpPost.setEntity(fileEntity);
+
+            httpPost.setHeader("Accept", "application/json");
+            httpPost.setHeader("Content-type", "application/x-www-form-urlencoded; charset=UTF-8");
+            //Add the auth header
+            if (userCredentials != null) httpPost.addHeader(KEY_HEADER_AUTHORIZED, userCredentials);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        HttpResponse response = null;
+        String responseStr = null;
+        try {
+            response = httpclient.execute(httpPost);
+            StatusLine statusLine = response.getStatusLine();
+            if (statusLine.getStatusCode() == 200  || statusLine.getStatusCode() == 201 || statusLine.getStatusCode() == 204) {
+                //responseStr = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
+                responseStr = statusLine.getReasonPhrase();
+            }else{
+                Log.e("POST ERROR", response.getStatusLine().toString());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return responseStr;
+
+    }
+    */
+
+    public static String performPostFileCall(String requestURL,
+                                           HashMap<String, String> postDataParams, String userCredentials, File file) {
+        String charset = "UTF-8";
+
+        try {
+            MultipartUtility multipart = new MultipartUtility(requestURL, charset);
+
+            //multipart.addHeaderField("User-Agent", "CodeJava");
+            //multipart.addHeaderField("Test-Header", "Header-Value");
+            multipart.addHeaderField(KEY_HEADER_AUTHORIZED, userCredentials);
+
+            //multipart.addFormField("description", "Cool Pictures");
+            //multipart.addFormField("keywords", "Java,upload,Spring");
+
+            multipart.addFilePart("fileUpload", file);
+
+            List<String> response = multipart.finish();
+
+            System.out.println("SERVER REPLIED:");
+
+            for (String line : response) {
+                Log.i("RESPONSE",line);
+                System.out.println(line);
+            }
+            return "ok";
+        } catch (IOException ex) {
+            Log.i("EXCEPTION",ex.toString());
+        }
+        return null;
+    }
+
 
     private String getDataString(HashMap<String, String> params) throws UnsupportedEncodingException {
         StringBuilder result = new StringBuilder();
@@ -188,4 +273,118 @@ public class HttpUrlConnection {
         return responseStr;
     }
     */
+
+    public String multipartRequest(String urlTo, Map<String, String> parmas, String filepath, String filefield, String fileMimeType) throws Exception {
+        HttpURLConnection connection = null;
+        DataOutputStream outputStream = null;
+        InputStream inputStream = null;
+
+        String twoHyphens = "--";
+        String boundary = "*****" + Long.toString(System.currentTimeMillis()) + "*****";
+        String lineEnd = "\r\n";
+
+        String result = "";
+
+        int bytesRead, bytesAvailable, bufferSize;
+        byte[] buffer;
+        int maxBufferSize = 1 * 1024 * 1024;
+
+        String[] q = filepath.split("/");
+        int idx = q.length - 1;
+
+        try {
+            File file = new File(filepath);
+            FileInputStream fileInputStream = new FileInputStream(file);
+
+            URL url = new URL(urlTo);
+            connection = (HttpURLConnection) url.openConnection();
+
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+            connection.setUseCaches(false);
+
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Connection", "Keep-Alive");
+            connection.setRequestProperty("User-Agent", "Android Multipart HTTP Client 1.0");
+            connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+
+            outputStream = new DataOutputStream(connection.getOutputStream());
+            outputStream.writeBytes(twoHyphens + boundary + lineEnd);
+            outputStream.writeBytes("Content-Disposition: form-data; name=\"" + filefield + "\"; filename=\"" + q[idx] + "\"" + lineEnd);
+            outputStream.writeBytes("Content-Type: " + fileMimeType + lineEnd);
+            outputStream.writeBytes("Content-Transfer-Encoding: binary" + lineEnd);
+
+            outputStream.writeBytes(lineEnd);
+
+            bytesAvailable = fileInputStream.available();
+            bufferSize = Math.min(bytesAvailable, maxBufferSize);
+            buffer = new byte[bufferSize];
+
+            bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+            while (bytesRead > 0) {
+                outputStream.write(buffer, 0, bufferSize);
+                bytesAvailable = fileInputStream.available();
+                bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+            }
+
+            outputStream.writeBytes(lineEnd);
+
+            // Upload POST Data
+            Iterator<String> keys = parmas.keySet().iterator();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                String value = parmas.get(key);
+
+                outputStream.writeBytes(twoHyphens + boundary + lineEnd);
+                outputStream.writeBytes("Content-Disposition: form-data; name=\"" + key + "\"" + lineEnd);
+                outputStream.writeBytes("Content-Type: text/plain" + lineEnd);
+                outputStream.writeBytes(lineEnd);
+                outputStream.writeBytes(value);
+                outputStream.writeBytes(lineEnd);
+            }
+
+            outputStream.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+
+
+            if (200 != connection.getResponseCode()) {
+                throw new Exception("Failed to upload code:" + connection.getResponseCode() + " " + connection.getResponseMessage());
+            }
+
+            inputStream = connection.getInputStream();
+
+            result = this.convertStreamToString(inputStream);
+
+            fileInputStream.close();
+            inputStream.close();
+            outputStream.flush();
+            outputStream.close();
+
+            return result;
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
+
+    }
+
+    private String convertStreamToString(InputStream is) {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        StringBuilder sb = new StringBuilder();
+
+        String line = null;
+        try {
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return sb.toString();
+    }
 }

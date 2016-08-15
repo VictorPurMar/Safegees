@@ -68,7 +68,6 @@ package org.safegees.safegees.util;
 import android.content.Context;
 import android.util.Log;
 
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -99,6 +98,7 @@ public class SafegeesConnectionManager {
     static String SERVICE_AUTHORIZE = "authorized";
     static String SERVICE_POI = "map";
     static String SERVICE_UPDATE = "update";
+    static String SERVICE_UPLOAD_IMAGE_URL = "upload_url";
 
 
     //GET AND POST FIELDS
@@ -112,6 +112,7 @@ public class SafegeesConnectionManager {
     static String KEY_PHONE = "telephone";
     static String KEY_BIO = "topic";
     static String KEY_DELETE = "delete";
+    static String KEY_IMAGE_URL = "image_url";
 
 
 
@@ -174,6 +175,41 @@ public class SafegeesConnectionManager {
     }
     ////////////////////////////////////////////////////////////////////
 
+
+
+    public String getUserImageUrl(Context context, String userEmail, String userPassword){
+        String url = WEB_BASE + SERVICE_UPLOAD_IMAGE_URL ;
+        HashMap<String, String> mp = new HashMap<String, String>();
+        String auth = this.getAuth(userEmail, userPassword);
+        String imageUrl  = null;
+        try {
+            JSONObject  json = new JSONObject(new HttpUrlConnection().performGetCall(url, mp, auth));
+            imageUrl = json.getString("upload_url");
+            //MainActivity.DATA_STORAGE.putString(context.getResources().getString(R.string.KEY_USER_IMAGES_TO_UPLOAD) + "_" + userEmail, response);
+            return imageUrl;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+
+    }
+
+    public boolean uploadProfileImage(Context context, String userEmail, String userPassword, File file){
+        String imageURL = getUserImageUrl(context,userEmail,userPassword);
+        if (imageURL != null){
+            String auth = userEmail+":"+userPassword;
+            HashMap<String, String> mp = new HashMap<String, String>();
+            String response = new HttpUrlConnection().performPostFileCall(imageURL, mp, auth, file);
+            if (response != null){
+                Log.i("RESPONSE",response);
+                return true;
+            }else{
+                Log.e("IMAGE", "Not uploaded");
+                return false;
+            }
+        }
+        return false;
+    }
 
 
     public boolean updateUserPosition(Context context, String userEmail, String userPassword, String position){

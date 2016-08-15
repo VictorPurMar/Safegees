@@ -24,6 +24,7 @@
 package org.safegees.safegees.util;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.Gravity;
@@ -37,8 +38,10 @@ import org.safegees.safegees.model.LatLng;
 import org.safegees.safegees.model.PrivateUser;
 import org.safegees.safegees.model.PublicUser;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by victor on 8/2/16.
@@ -83,6 +86,13 @@ public class ShareDataController {
         this.publicUser = publicUser;
         sendUserBasicData = new SendUserBasicData(this.context, this.userEmail, this.publicUser);
         sendUserBasicData.execute((Void) null);
+    }
+
+    public void sendUserImageFile(Context context, String userMail, File imageFile) {
+        this.context = context;
+        this.userEmail = userMail;
+        SendUserImage sui = new SendUserImage(this.context, this.userEmail, imageFile);
+        sui.execute((Void) null);
     }
 
     /**
@@ -130,6 +140,9 @@ public class ShareDataController {
                 //Send all the PrivateUser Positions Queque
                 //In send the basic user data the position will be sended
                 sendUserPositionsQueque(scc);
+                
+                //Send the user profile image 
+                sendUserProfileImage(scc);
 
                 return true;
             }
@@ -137,6 +150,29 @@ public class ShareDataController {
             return false;
         }
 
+        private void sendUserProfileImage(SafegeesConnectionManager scc) {
+            Map<String, String> appUsersMap = StoredDataQuequesManager.getAppUsersMap(this.context);            Set<String> emailUsers = appUsersMap.keySet();
+            Iterator it = emailUsers.iterator();
+            while(it.hasNext()){
+                String userEmail = (String) it.next();
+                String userPassword = StoredDataQuequesManager.getUserPassword(this.context, userEmail);
+                try{
+                    //Try if exist
+                    if(MainActivity.DATA_STORAGE.getBoolean(context.getResources().getString(R.string.KEY_USER_IMAGES_TO_UPLOAD) + userEmail)){
+                        String filepath = ImageController.getUserImageFileNameByEmail(context, userEmail);
+                        File file = new File(filepath);
+                        if (scc.uploadProfileImage(context, userEmail, userPassword ,file)) MainActivity.DATA_STORAGE.remove(context.getResources().getString(R.string.KEY_USER_IMAGES_TO_UPLOAD) + userEmail);
+                    }
+                }catch(Exception e){
+                    //Simply the user doesn't have image to upload
+                }
+
+
+            }
+
+
+
+        }
 
 
         private void sendUserPositionsQueque(SafegeesConnectionManager scc) {
@@ -370,6 +406,59 @@ public class ShareDataController {
 
     }
 
+    /**
+     * Represents an asynchronous login/registration task used to authenticate
+     * the user.
+     */
+    public class SendUserImage extends AsyncTask<Void, Void, Boolean> {
+        private Context context;
+        private String userEmail;
+        private File file;
+
+
+        public SendUserImage(Context context, String userEmail, File file) {
+            this.context = context;
+            this.userEmail = userEmail;
+            this.file = file;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            // TODO: attempt authentication against a network service.
+
+            SafegeesConnectionManager scc = new SafegeesConnectionManager();
+
+            if (Connectivity.isNetworkAvaiable(this.context)) {
+                String userPassword = StoredDataQuequesManager.getUserPassword(this.context, this.userEmail);
+                //String latLongString = this.latLng.toString();
+                return (scc.uploadProfileImage(this.context, this.userEmail, userPassword, file));
+            }
+            return false;
+        }
+
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+
+
+            sendUPosTask = null;
+            if (success) {
+                Log.i("UPDATE_IMAGE", "The image was added correctly");
+            } else {
+                Log.i("UPDATE_IMAGE", "The image wasn't added correctly, added to shared preferences");
+                //String latLongString = this.file.toString();
+                //StoredDataQuequesManager.putUserPositionInPositionsQueque(this.context, userEmail, latLongString);
+                //Log.i("UPDATE_POSITION", "The position wasn't updated correctly");
+            }
+            // !success because it was true when the image must be sended
+            MainActivity.DATA_STORAGE.putBoolean(context.getResources().getString(R.string.KEY_USER_IMAGES_TO_UPLOAD) + userEmail,!success);
+        }
+
+        @Override
+        protected void onCancelled() {
+            sendUPosTask = null;;
+        }
+    }
 
     /**
      * Represents an asynchronous login/registration task used to authenticate

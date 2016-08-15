@@ -120,6 +120,7 @@
     <string name="KEY_CONTACTS_DATA">friends</string>
     <string name="KEY_AUTHORIZED">authorized</string>
     <string name="KEY_USER_BASIC">user</string>
+    <string name="KEY_USER_IMAGES_TO_UPLOAD">user_images_to_upload</string>
     <string name="KEY_POINTS_OF_INTEREST">organitations</string>
     <string name="KEY_IS_LOGED">isLoged</string>
     <string name="KEY_USER_MAIL">user_mail</string>

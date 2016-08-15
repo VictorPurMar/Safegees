@@ -26,6 +26,7 @@
 package org.safegees.safegees.gui.view;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -35,9 +36,6 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 
@@ -49,6 +47,7 @@ import org.safegees.safegees.gui.fragment.InfoFragment;
 import org.safegees.safegees.gui.fragment.ProfileContactFragment;
 import org.safegees.safegees.gui.fragment.ProfileUserFragment;
 import org.safegees.safegees.util.Connectivity;
+import org.safegees.safegees.util.ImageController;
 import org.safegees.safegees.util.NetworkStateReceiver;
 import org.safegees.safegees.util.SafegeesDAO;
 import org.safegees.safegees.util.ShareDataController;
@@ -173,7 +172,7 @@ public class PrincipalMapActivity extends AppCompatActivity
         mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
 
-        loadStoredStoredImage();
+        loadNavMenuProfile();
         instance = this;
     }
 
@@ -181,25 +180,13 @@ public class PrincipalMapActivity extends AppCompatActivity
         return this.floatingUpdateButton;
     }
 
-    private void loadStoredStoredImage() {
-        try {
+    private void loadNavMenuProfile() {
 
-            String filename = getUserImageFileName();
-
+        bitmap = ImageController.getUserImageBitmap(this);
+        if (bitmap!=null) {
             //View headerView = navigationView.findViewById(R.id.navigation_header_layout);
             ImageView userImageView = (ImageView) headerView.findViewById(R.id.nav_user_image);
-            Log.e("IMAGE", userImageView.toString());
-
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-            bitmap = BitmapFactory.decodeFile(filename, options);
-
-            if(bitmap!=null) {
-                userImageView.setImageBitmap(bitmap);
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            Log.e("IMAGE ERROR", e.getMessage());
+            userImageView.setImageBitmap(bitmap);
         }
 
         try{
@@ -215,14 +202,7 @@ public class PrincipalMapActivity extends AppCompatActivity
         }
     }
 
-    @NonNull
-    private String getUserImageFileName() {
-        File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), getApplicationContext().getPackageName()
-                + "/images");
-        String filename = "USER_IMAGE_" + MainActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)).replace("@","").replace(".","") + ".png";
-        filename = mediaStorageDir.getAbsolutePath()+File.separator+filename;
-        return filename;
-    }
+
 
     //Starts the google api connecting to client
     @Override
@@ -522,37 +502,14 @@ public class PrincipalMapActivity extends AppCompatActivity
     }
 
 
-    @NonNull
-    private Bitmap getBitmap(int drawable) {
-        Bitmap bitmap;
-        int px = getResources().getDimensionPixelOffset(R.dimen.map_dot_marker_size);
-        bitmap = Bitmap.createBitmap(px, px, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        Drawable shape = getResources().getDrawable(drawable);
-        shape.setBounds(0, 0, bitmap.getWidth(), bitmap.getHeight());
-        shape.draw(canvas);
-        return bitmap;
-    }
 
-    private Paint paintSurface() {
-        Paint paint = new Paint();
-        paint.setAntiAlias(true);
-        paint.setDither(true);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeJoin(Paint.Join.MITER);
-        paint.setStrokeCap(Paint.Cap.SQUARE);
-        paint.setColor(Color.RED);
-        paint.setStrokeWidth(16);
-        paint.setAlpha(100);
-        return paint;
-    }
 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
         if (requestCode == REQUEST_IMAGE_CODE && resultCode == Activity.RESULT_OK){
-            bitmap = buildBitmapFromData(data.getData());
+            bitmap = ImageController.buildBitmapFromData(this, data.getData());
         }else if(requestCode == REQUEST_CONTACTS_CODE && resultCode == Activity.RESULT_OK){
             this.floatingAddContactButton.hide();
             if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
@@ -576,139 +533,20 @@ public class PrincipalMapActivity extends AppCompatActivity
                 Log.i("ProfileFragment", "Add poto");
                 myFragment.setImageBitmap(bitmap);
                 //Store in /images
-                storeUserImage();
+                ImageController.storeUserImage(this);
+
+                //provisional
+                //sendUserImage();
+
                 //Reload the header image
-                loadStoredStoredImage();
+                loadNavMenuProfile();
             }
         }
 
         //super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void storeUserImage() {
-        File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), getApplicationContext().getPackageName()
-                + "/images");
 
-
-        /*
-                new File(Environment.getRootDirectory()
-                + File.separator + getApplicationContext().getPackageName()
-                + "/images");*/
-        String filename = "USER_IMAGE_" + MainActivity.DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)).replace("@","").replace(".","") + ".png";
-        filename = mediaStorageDir.getAbsolutePath()+File.separator+filename;
-
-        boolean success = true;
-        if (!mediaStorageDir.exists()) {
-            success = mediaStorageDir.mkdirs();
-            //success = mediaStorageDir.mkdir();
-        }
-        if (success) {
-            FileOutputStream out = null;
-            try {
-                out = new FileOutputStream(filename);
-                bitmap.compress(Bitmap.CompressFormat.PNG, 10, out); // bmp is your Bitmap instance
-
-                // PNG is a lossless format, the compression factor (100) is ignored
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    if (out != null) {
-                        out.close();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        } else {
-            Log.e("Error", "File cant be created");
-        }
-    }
-
-    public Bitmap buildBitmapFromData(Uri data){
-        try {
-            // We need to recyle unused bitmaps
-            if (bitmap != null && !bitmap.isRecycled()) {
-                bitmap.recycle();
-                bitmap = null;
-            }
-
-            InputStream stream = getContentResolver().openInputStream(
-                    data);
-            bitmap = BitmapFactory.decodeStream(stream);
-            stream.close();
-                /*
-                getSupportFragmentManager()
-                imageView.setImageBitmap(bitmap);
-                */
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        bitmap = fixBitmap(bitmap);
-        return bitmap;
-    }
-
-    private Bitmap fixBitmap(Bitmap bitmap) {
-
-        Matrix matrix = new Matrix();
-        matrix.postRotate(0);
-        //matrix.postRotate(90);
-
-
-        Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), true);
-        Bitmap rotatedBitmap = Bitmap.createBitmap(scaledBitmap , 0, 0, scaledBitmap .getWidth(), scaledBitmap .getHeight(), matrix, true);
-
-        if (bitmap.getWidth() >= bitmap.getHeight()){
-
-            bitmap = Bitmap.createBitmap(
-                    rotatedBitmap,
-                    rotatedBitmap.getWidth()/2 - rotatedBitmap.getHeight()/2,
-                    0,
-                    rotatedBitmap.getHeight(),
-                    rotatedBitmap.getHeight()
-            );
-
-        }else{
-
-            bitmap = Bitmap.createBitmap(
-                    rotatedBitmap,
-                    0,
-                    rotatedBitmap.getHeight()/2 - rotatedBitmap.getWidth()/2,
-                    rotatedBitmap.getWidth(),
-                    rotatedBitmap.getWidth()
-            );
-        }
-
-
-        //Rounded the bitmap
-        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
-                bitmap.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(output);
-
-        //final int color = 0xff424242;
-        final Paint paint = new Paint();
-        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-        final RectF rectF = new RectF(rect);
-        final float roundPx = bitmap.getWidth() / 2;
-
-
-        paint.setAntiAlias(true);
-        //canvas.drawARGB(0, 0, 0, 0);
-        //paint.setColor(color);
-        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
-
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(bitmap, rect, rect, paint);
-
-        //Scale squared
-        output = Bitmap.createScaledBitmap(output, 300, 300, true);
-
-        return output;
-
-    }
 
     public void pickImage(View View) {
         //pickImage(v);
@@ -799,6 +637,18 @@ public class PrincipalMapActivity extends AppCompatActivity
         Intent i = new Intent(this, ContactProfileActivity.class);
         i.putExtra("position", position);
         this.startActivityForResult(i,REQUEST_CONTACTS_CODE);
+    }
+
+    public void sendUserImage() {
+
+        //Bitmap bitmap = getUserImageBitmap();
+
+        File file = ImageController.getUserImageFile(this);
+
+        //Add the contact
+        ShareDataController sssdc = new ShareDataController();
+        sssdc.sendUserImageFile(getApplicationContext(), SafegeesDAO.getInstance(getApplicationContext()).getPublicUser().getPublicEmail(), file);
+
     }
 
 
