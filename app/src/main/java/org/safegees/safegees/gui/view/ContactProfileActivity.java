@@ -2,19 +2,18 @@ package org.safegees.safegees.gui.view;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.opengl.Visibility;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.GestureDetector;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewParent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.ViewGroup;
 
 import org.safegees.safegees.R;
 import org.safegees.safegees.gui.fragment.ProfileContactFragment;
@@ -23,10 +22,11 @@ import org.safegees.safegees.util.SafegeesDAO;
 
 import java.util.ArrayList;
 
-public class ContactProfileActivity extends AppCompatActivity implements ProfileContactFragment.OnFragmentInteractionListener{
+public class ContactProfileActivity extends AppCompatActivity implements ProfileContactFragment.OnFragmentInteractionListener {
 
     private int position;           //Friend position in SafegeesDAO ArrayList<Friend> friends
-    GestureDetector gestureScanner;
+    private Menu menu;
+    private MenuInflater inflater;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -47,6 +47,10 @@ public class ContactProfileActivity extends AppCompatActivity implements Profile
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("");
+
 
         Intent mIntent = getIntent();
         position = mIntent.getIntExtra("position", 0);
@@ -82,6 +86,7 @@ public class ContactProfileActivity extends AppCompatActivity implements Profile
 
 
 
+        /*
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,15 +106,48 @@ public class ContactProfileActivity extends AppCompatActivity implements Profile
                 showOnMap();
             }
         });
+        */
 
     }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.contact_profile_menu, this.menu);
+
+
+
+
+
+        ArrayList<Friend> friends = SafegeesDAO.getInstance(getBaseContext()).getFriends();
+        Friend friend = friends.get(position);
+        if (friend.getPhoneNumber() == null || friend.getPhoneNumber().equals("")){
+            this.menu.findItem(R.id.menu_call).setVisible(false);
+        }else{
+            menu.findItem(R.id.menu_call).setVisible(true);
+        }
+
+        return true;
+    }
+
 
     private void sendEmail() {
         ArrayList<Friend> friends = SafegeesDAO.getInstance(getBaseContext()).getFriends();
         Friend friend = friends.get(position);
         Intent intent = new Intent(Intent.ACTION_SENDTO);
-        intent.setData(Uri.parse("mailto:"+friend.getPublicEmail()));
+        intent.setData(Uri.parse("mailto:" + friend.getPublicEmail()));
         startActivity(intent);
+    }
+
+    private void callContact() {
+        ArrayList<Friend> friends = SafegeesDAO.getInstance(getBaseContext()).getFriends();
+        Friend friend = friends.get(position);
+        if (friend.getPhoneNumber() != null && !friend.getPhoneNumber().equals("")) {
+            Intent intent = new Intent(Intent.ACTION_DIAL);
+            intent.setData(Uri.parse("tel:" + friend.getPhoneNumber()));
+            startActivity(intent);
+        }
     }
 
     private void showOnMap(){
@@ -120,6 +158,32 @@ public class ContactProfileActivity extends AppCompatActivity implements Profile
         setResult(RESULT_OK, null);
         finish();
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.onBackPressed();
+                break;
+            case R.id.menu_call:
+                callContact();
+                break;
+            case R.id.menu_email:
+                sendEmail();
+                break;
+            case R.id.menu_show_on_map:
+                showOnMap();
+                break;
+        }
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        //overridePendingTransition(R.anim.right_to_left,R.anim.left_to_right);
+        this.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
     @Override
@@ -138,11 +202,25 @@ public class ContactProfileActivity extends AppCompatActivity implements Profile
             this.getItem(position);
         }
 
+
+        @Override
+        public void startUpdate(ViewGroup container) {
+            super.startUpdate(container);
+            if (menu != null){
+                ArrayList<Friend> friends = SafegeesDAO.getInstance(getBaseContext()).getFriends();
+                Friend friend = friends.get(position);
+                if (friend.getPhoneNumber() == null || friend.getPhoneNumber().equals("")){
+                    menu.findItem(R.id.menu_call).setVisible(false);
+                }else{
+                    menu.findItem(R.id.menu_call).setVisible(true);
+                }
+            }
+        }
+
+
+
         @Override
         public Fragment getItem(int pos) {
-
-
-
             // getItem is called to instantiate the fragment for the given page.
             return ProfileContactFragment.newInstance(pos);
         }

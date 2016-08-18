@@ -122,7 +122,7 @@ public class SafegeesConnectionManager {
         HashMap<String, String> mp = new HashMap<String, String>();
         String response = new HttpUrlConnection().performGetCall(url, mp, null);
         //Store the response in conf preferences with key : contacts_data_mailfromuser
-        if (this.isJSONValid(response)) {
+        if (response!=null && this.isJSONValid(response)) {
             //Store the response in conf preferences with key : contacts_data_mailfromuser
             MainActivity.DATA_STORAGE.putString(context.getResources().getString(R.string.KEY_POINTS_OF_INTEREST), response);
         }
@@ -134,7 +134,7 @@ public class SafegeesConnectionManager {
         String auth = userEmail+":"+password;
         String response  = new HttpUrlConnection().performGetCall(url, mp, auth);
 
-        if (this.isJSONValid(response)) {
+        if (response!=null && this.isJSONValid(response)) {
             //Store the response in conf preferences with key : contacts_data_mailfromuser
             MainActivity.DATA_STORAGE.putString(context.getResources().getString(R.string.KEY_CONTACTS_DATA) + "_" + userEmail, response);
         }
@@ -144,15 +144,15 @@ public class SafegeesConnectionManager {
     ////////////////////////////////////////////////////////////////////
     //NOT IMPLEMENTED ON SERVER
     ////////////////////////////////////////////////////////////////////
-    public void getAuthorizedByUserContacts(Context context, PrivateUser privateUser){
+    public void getAuthorizedByUserContacts(Context context, String userEmail, String userPassword){
         String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_AUTHORIZE + SEPARATOR;
         HashMap<String, String> mp = new HashMap<String, String>();
-        String auth = privateUser.getAuth();
+        String auth = this.getAuth(userEmail, userPassword);
         String response  = new HttpUrlConnection().performGetCall(url, mp, auth);
 
-        if (this.isJSONValid(response)) {
+        if (response!=null && this.isJSONValid(response)) {
             //Store the response in conf preferences with key : contacts_data_mailfromuser
-            MainActivity.DATA_STORAGE.putString(context.getResources().getString(R.string.KEY_AUTHORIZED) + "_" + privateUser.getPrivateEmail(), response);
+            MainActivity.DATA_STORAGE.putString(context.getResources().getString(R.string.KEY_AUTHORIZED) + "_" + userEmail, response);
         }
     }
     /////////////////////////////////////////////////////////////////////
@@ -167,7 +167,7 @@ public class SafegeesConnectionManager {
         String auth = this.getAuth(userEmail, userPassword);
         String response  = new HttpUrlConnection().performGetCall(url, mp, auth);
         Log.e("GET_USER_BASIC",response.toString());
-        if (this.isJSONValid(response)) {
+        if (response!=null && this.isJSONValid(response)) {
             //Store the response in conf preferences with key : contacts_data_mailfromuser
             MainActivity.DATA_STORAGE.putString(context.getResources().getString(R.string.KEY_USER_BASIC) + "_" + userEmail, response);
         }
@@ -394,6 +394,8 @@ public class SafegeesConnectionManager {
     ////////////////////////////////////////////////////////////////////
 
     public boolean isJSONValid(String test) {
+
+        boolean isValid = false;
         try {
             new JSONObject(test);
         } catch (JSONException ex) {
@@ -401,11 +403,12 @@ public class SafegeesConnectionManager {
             // e.g. in case JSONArray is valid as well...
             try {
                 new JSONArray(test);
+                isValid = true;
             } catch (JSONException ex1) {
-                return false;
+                isValid = false;
             }
         }
-        return true;
+        return isValid;
     }
 
 

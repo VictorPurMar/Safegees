@@ -108,8 +108,11 @@ public class ProfileContactFragment extends Fragment implements View.OnClickList
 
         Friend friend = friends.get(position);
 
-        ImageButton closeContact = (ImageButton) view.findViewById(R.id.close_contact);
-        closeContact.setOnClickListener(this);
+
+        //this.getActivity().onBackPressed();
+
+        //ImageButton closeContact = (ImageButton) view.findViewById(R.id.close_contact);
+        //closeContact.setOnClickListener(this);
 
         imageView = (ImageView) view.findViewById(R.id.result);
         editName = (EditText) view.findViewById(R.id.editName);
@@ -180,7 +183,6 @@ public class ProfileContactFragment extends Fragment implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        this.getActivity().onBackPressed();
     }
 
     /**

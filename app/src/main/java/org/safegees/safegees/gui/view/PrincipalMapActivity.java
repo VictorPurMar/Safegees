@@ -26,17 +26,9 @@
 package org.safegees.safegees.gui.view;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 
 import org.safegees.safegees.R;
@@ -53,8 +45,6 @@ import org.safegees.safegees.util.SafegeesDAO;
 import org.safegees.safegees.util.ShareDataController;
 
 import android.os.Bundle;
-import android.os.Environment;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -75,12 +65,6 @@ import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 
 public class PrincipalMapActivity extends AppCompatActivity
@@ -125,6 +109,8 @@ public class PrincipalMapActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
 
         this.floatingAddContactButton = (FloatingActionButton) findViewById(R.id.fab_add_contact);
         this.floatingAddContactButton.setOnClickListener(new View.OnClickListener() {
@@ -470,6 +456,10 @@ public class PrincipalMapActivity extends AppCompatActivity
      * Download new data with ShareDataController this method calls PrincipalMapActivity build method when is finished
      */
     private void update(){
+
+            //Rebuild the data
+            SafegeesDAO.refreshInstance(this);
+
             if (Connectivity.isNetworkAvaiable(this)){
                 //Download data
                 ShareDataController sddm = new ShareDataController();
@@ -638,6 +628,7 @@ public class PrincipalMapActivity extends AppCompatActivity
         Intent i = new Intent(this, ContactProfileActivity.class);
         i.putExtra("position", position);
         this.startActivityForResult(i,REQUEST_CONTACTS_CODE);
+        this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     public void sendUserImage() {

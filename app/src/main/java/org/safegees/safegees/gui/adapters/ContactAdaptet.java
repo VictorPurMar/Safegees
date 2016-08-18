@@ -1,10 +1,8 @@
 package org.safegees.safegees.gui.adapters;
 import java.util.ArrayList;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -13,12 +11,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.safegees.safegees.R;
-import org.safegees.safegees.gui.view.ContactProfileActivity;
 import org.safegees.safegees.gui.view.PrincipalMapActivity;
 import org.safegees.safegees.model.Friend;
 import org.safegees.safegees.util.ImageController;
 
-public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
+public class ContactAdaptet extends RecyclerView.Adapter<ContactAdaptet.ViewHolder> {
     private ArrayList<Friend> mDataset;
     private View view;
 
@@ -51,14 +48,14 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public MyAdapter(ArrayList<Friend> myDataset) {
+    public ContactAdaptet(ArrayList<Friend> myDataset) {
         mDataset = myDataset;
     }
 
     // Create new views (invoked by the layout manager)
     @Override
-    public MyAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                   int viewType) {
+    public ContactAdaptet.ViewHolder onCreateViewHolder(ViewGroup parent,
+                                                        int viewType) {
         // create a new view
         view = LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_listview_field_layout, parent, false);
         // set the view's size, margins, paddings and layout parameters

@@ -142,12 +142,14 @@ public class HttpUrlConnection {
         String responseStr = null;
         try {
             response = httpclient.execute(httpPost);
-            StatusLine statusLine = response.getStatusLine();
-            if (statusLine.getStatusCode() == 200  || statusLine.getStatusCode() == 201 || statusLine.getStatusCode() == 204) {
-                //responseStr = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
-                responseStr = statusLine.getReasonPhrase();
-            }else{
-                Log.e("POST ERROR", response.getStatusLine().toString());
+            if (response != null){
+                StatusLine statusLine = response.getStatusLine();
+                if (statusLine.getStatusCode() == 200  || statusLine.getStatusCode() == 201 || statusLine.getStatusCode() == 204) {
+                    //responseStr = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
+                    responseStr = statusLine.getReasonPhrase();
+                }else{
+                    Log.e("POST ERROR", response.getStatusLine().toString());
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();

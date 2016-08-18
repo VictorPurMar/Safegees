@@ -50,12 +50,15 @@ public class SafegeesDAO {
     private Context context;
  //   private PrivateUser privateUser;
     private PublicUser publicUser;
+    private ArrayList<Friend> nonMutualFriends;
+    private ArrayList<String> authorisedFriends;
     private ArrayList<Friend> friends;
     private ArrayList<POI> pois;
 
     public SafegeesDAO(Context context){
         this.pois = new ArrayList<POI>();
-        this.friends = new ArrayList<Friend>();
+        this.nonMutualFriends = new ArrayList<Friend>();
+        this.authorisedFriends = new ArrayList<String>();
         this.context = context;
         this.run();
     }
@@ -77,10 +80,47 @@ public class SafegeesDAO {
     private void run() {
 
         this.pois = this.getPoisArray();
-        this.friends = this.getContactsArray();
+        this.nonMutualFriends = this.getContactsArray();
         this.publicUser = this.getPublicUserObject();
+        this.authorisedFriends = this.getAuthorisedFriendsObject();
+        this.friends = this.getMutualFriendsObject();
   //      this.privateUser = this.getPrivateUserObjet();
 
+    }
+
+    private ArrayList<Friend> getMutualFriendsObject() {
+        friends = new ArrayList<Friend>();
+        for (int i = 0 ; i < nonMutualFriends.size(); i++){
+            Friend f = nonMutualFriends.get(i);
+            if (this.authorisedFriends.contains(f.getPublicEmail())) friends.add(f);
+        }
+        return friends;
+    }
+
+    private ArrayList<String> getAuthorisedFriendsObject() {
+        this.authorisedFriends = new ArrayList<String>();
+        String contactsData = MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_AUTHORIZED) + "_" + MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_MAIL)));
+        JSONArray jsonArray = null;
+        try {
+            jsonArray = new JSONArray(contactsData);
+            Log.i("JSON FRIENDS", jsonArray.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        if (jsonArray != null && jsonArray.length() > 0){
+            for (int i = 0 ; i < jsonArray.length() ; i++){
+                try {
+                    String authorisedEmail = jsonArray.getString(i);
+                    this.authorisedFriends.add(authorisedEmail);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+        return authorisedFriends;
     }
 
     private PrivateUser getPrivateUserObjet(){
@@ -242,10 +282,15 @@ public class SafegeesDAO {
         return publicUser;
     }
 
+    public ArrayList<Friend> getNonMutualFriends() {
+        return nonMutualFriends;
+    }
+
+    public ArrayList<String> getAuthorisedFriends() {
+        return authorisedFriends;
+    }
+
     public static void close(){
         instance = null;
     }
-
-
-
 }

@@ -301,7 +301,21 @@ public class ShareDataController {
                     } catch (Exception e) {
                         Log.e("GetContactsData", e.getMessage());
                     }
-                    itContacts.remove(); // avoids a ConcurrentModificationException
+                    //itContacts.remove(); // avoids a ConcurrentModificationException
+                }
+
+                //Get and store the authorized by user contacts in a JSON simple array
+                Iterator itAuthorisedByUsersContacts = appUsersMap.entrySet().iterator();
+                while (itAuthorisedByUsersContacts.hasNext()) {
+                    Map.Entry pair = (Map.Entry) itAuthorisedByUsersContacts.next();
+                    String userMail = (String) pair.getKey();
+                    String userPassword = (String) pair.getValue();
+                    try {
+                        scc.getAuthorizedByUserContacts(this.context, userMail, userPassword);
+                    } catch (Exception e) {
+                        Log.e("GetAuthorisedByUsersCon", e.getMessage());
+                    }
+                    itAuthorisedByUsersContacts.remove(); // avoids a ConcurrentModificationException
                 }
             }
         }

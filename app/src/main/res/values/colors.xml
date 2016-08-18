@@ -12,10 +12,15 @@
     <color name="colorAccent">#649bff</color>
     <color name="colorFriends">#3463ab</color>
     <color name="colorPosition">#19ab46</color>
-    <color name="colorCadaquesLight">#bacbe9</color>
-    <color name="colorCadaques">#89a6da</color>
-    <color name="colorCadaquesAccent">#649bff</color>
-    <color name="colorCadaquesAccentDark">#598ae4</color>
-    <color name="colorCadaquesAccentExtraDark">#36548b</color>
+    <!--<color name="colorCadaquesLight">#bacbe9</color>-->
+    <color name="colorCadaquesLight">#4c5567</color>
+    <!--<color name="colorCadaques">#89a6da</color>-->
+    <color name="colorCadaques">#4c5567</color>
+    <!--<color name="colorCadaquesAccent">#649bff</color>-->
+    <color name="colorCadaquesAccent">#4c5567</color>
+    <!--<color name="colorCadaquesAccentDark">#598ae4</color>-->
+    <color name="colorCadaquesAccentDark">#4c5567</color>
+    <!--<color name="colorCadaquesAccentExtraDark">#36548b</color>-->
+    <color name="colorCadaquesAccentExtraDark">#4c5567</color>
     <color name="colorCadaquesAccentExtraExtraDark">#4c5567</color>
 </resources>
