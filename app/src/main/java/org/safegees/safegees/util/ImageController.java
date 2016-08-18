@@ -51,6 +51,25 @@ public class ImageController {
         return null;
     }
 
+    public static Bitmap getContactImageBitmap(Context context,String email) {
+        bitmap = null; //Deallocate previous stored images
+        try {
+            String filename = getUserImageFileNameByEmail(context,email);
+
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            bitmap = BitmapFactory.decodeFile(filename, options);
+
+            if(bitmap!=null) {
+                return bitmap;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.e("IMAGE ERROR", e.getMessage());
+        }
+        return null;
+    }
+
     public static void storeUserImage(Context context) {
         File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), context.getApplicationContext().getPackageName()
                 + "/images");
@@ -61,6 +80,46 @@ public class ImageController {
                 + File.separator + getApplicationContext().getPackageName()
                 + "/images");*/
         String filename = "USER_IMAGE_" + MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_MAIL)).replace("@","_").replace(".","_") + ".png";
+        filename = mediaStorageDir.getAbsolutePath()+File.separator+filename;
+
+        boolean success = true;
+        if (!mediaStorageDir.exists()) {
+            success = mediaStorageDir.mkdirs();
+            //success = mediaStorageDir.mkdir();
+        }
+        if (success) {
+            FileOutputStream out = null;
+            try {
+                out = new FileOutputStream(filename);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 10, out); // bmp is your Bitmap instance
+
+                // PNG is a lossless format, the compression factor (100) is ignored
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (out != null) {
+                        out.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            Log.e("Error", "File cant be created");
+        }
+    }
+
+    public static void storeUserBitmapWithEmail(Context context, Bitmap bitmap, String email) {
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), context.getApplicationContext().getPackageName()
+                + "/images");
+
+
+        /*
+                new File(Environment.getRootDirectory()
+                + File.separator + getApplicationContext().getPackageName()
+                + "/images");*/
+        String filename = "USER_IMAGE_" +email.replace("@","_").replace(".","_") + ".png";
         filename = mediaStorageDir.getAbsolutePath()+File.separator+filename;
 
         boolean success = true;

@@ -24,6 +24,7 @@
 package org.safegees.safegees.gui.fragment;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -37,6 +38,7 @@ import android.widget.LinearLayout;
 
 import org.safegees.safegees.R;
 import org.safegees.safegees.model.Friend;
+import org.safegees.safegees.util.ImageController;
 import org.safegees.safegees.util.SafegeesDAO;
 
 import java.util.ArrayList;
@@ -141,6 +143,12 @@ public class ProfileContactFragment extends Fragment implements View.OnClickList
         if (friend.getPublicEmail() == null ||friend.getPublicEmail().equals("")) llMail.setVisibility(View.GONE);
         if (friend.getPhoneNumber() == null ||friend.getPhoneNumber().equals("")) llPhone.setVisibility(View.GONE);
         if (friend.getBio() == null || friend.getBio().equals("")) llBio.setVisibility(View.GONE);
+
+        //Add image from friend
+        if (friend.getPublicEmail() != null){
+            Bitmap bitmap = ImageController.getContactImageBitmap(getContext(),friend.getPublicEmail());
+            if (bitmap != null) this.imageView.setImageBitmap(bitmap);
+        }
 
         // Inflate the layout for this fragment
         return view;
