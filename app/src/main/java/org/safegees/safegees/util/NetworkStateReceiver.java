@@ -36,7 +36,7 @@ import org.safegees.safegees.gui.view.PrincipalMapActivity;
 public class NetworkStateReceiver extends BroadcastReceiver {
 
     public void onReceive(Context context, Intent intent) {
-        Log.d("Network", "Network connectivity change");
+        //Log.d("Network", "Network connectivity change");
         if(Connectivity.isNetworkAvaiable(context)) {
             if (PrincipalMapActivity.getInstance() != null) PrincipalMapActivity.getInstance().connectivityOn();
         }else {

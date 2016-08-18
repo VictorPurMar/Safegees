@@ -132,6 +132,8 @@ public class SafegeesDAO {
                     String name = json.getString("name");
                     String surname = json.getString("surname");
                     String phone = json.getString("telephone");
+                    String avatar_url = json.getString("avatar");
+                    String avatar_md5 = json.getString("avatar_md5");
                     //String email = json.getString("email");
                     String bio =null;
                     try {
@@ -142,7 +144,7 @@ public class SafegeesDAO {
                     String publicEmail = json.getString("email");
 
                     //Null values because are not implemented on server yet
-                    Friend friend = new Friend(bio,publicEmail,null,dateLastPosition, position, name, phone, surname);
+                    Friend friend = new Friend(bio,publicEmail,dateLastPosition, position, name, phone, surname,avatar_url,avatar_md5);
                     this.friends.add(friend);
                 }catch(Exception e){
                     Log.e("Caused:", e.getCause().toString());

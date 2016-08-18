@@ -11,15 +11,14 @@ public class PublicUser {
     public String name;
     public String surname;
     public String publicEmail;
-    //public String imagePath;
     public String phoneNumber;
     public String bio;
     public LatLng position;
 
+
     public PublicUser(String bio, String publicEmail,  String name, String phoneNumber, LatLng position, String surname) {
         this.bio = bio;
         this.publicEmail = publicEmail;
-        //this.imagePath = imagePath;
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.position = position;

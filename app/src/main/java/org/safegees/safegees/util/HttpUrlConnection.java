@@ -25,30 +25,48 @@ package org.safegees.safegees.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Path;
 import android.util.Log;
 import android.widget.Toast;
 
+import junit.framework.Assert;
+
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.entity.mime.content.ContentBody;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
@@ -66,8 +84,8 @@ import java.util.Map;
  * Created by victor on 30/1/16.
  */
 public class HttpUrlConnection {
-    private static final int READ_TIMEOUT = 250000;
-    private static final int CONNECTION_TIMEOUT = 250000;
+    private static final int READ_TIMEOUT = 350000;
+    private static final int CONNECTION_TIMEOUT = 350000;
     private static String KEY_HEADER_AUTHORIZED = "auth";
 
 
@@ -183,34 +201,65 @@ public class HttpUrlConnection {
     */
 
     public static String performPostFileCall(String requestURL,
-                                           HashMap<String, String> postDataParams, String userCredentials, File file) {
+                                           String userCredentials, File file) {
         String charset = "UTF-8";
+        String responseStr = "ok";
+
+        CloseableHttpClient httpClient = null;
 
         try {
-            MultipartUtility multipart = new MultipartUtility(requestURL, charset);
 
-            //multipart.addHeaderField("User-Agent", "CodeJava");
-            //multipart.addHeaderField("Test-Header", "Header-Value");
-            multipart.addHeaderField(KEY_HEADER_AUTHORIZED, userCredentials);
+            httpClient = HttpClientBuilder.create().build();
 
-            //multipart.addFormField("description", "Cool Pictures");
-            //multipart.addFormField("keywords", "Java,upload,Spring");
+            HttpPost postRequest = new HttpPost(requestURL);
+            postRequest.addHeader(KEY_HEADER_AUTHORIZED,userCredentials);
 
-            multipart.addFilePart("fileUpload", file);
+            MultipartEntityBuilder reqEntity = MultipartEntityBuilder.create();
+            reqEntity.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-            List<String> response = multipart.finish();
 
-            System.out.println("SERVER REPLIED:");
+            /*
+            ByteArrayBody bab = new ByteArrayBody(bytearray, file.getName());
+            reqEntity.addPart("file", bab);
+            postRequest.setEntity(reqEntity.build());
+            */
 
-            for (String line : response) {
-                Log.i("RESPONSE",line);
-                System.out.println(line);
+            /*
+            FileBody f = new FileBody(file);
+            reqEntity.addPart("file",f);
+            postRequest.setEntity(reqEntity.build());
+            */
+
+            reqEntity.addBinaryBody(file.getName(), file, ContentType.create("image/jpeg"), file.getName());
+
+
+            postRequest.setEntity(reqEntity.build());
+            HttpResponse response = httpClient.execute(postRequest);
+            int statusCode = response.getStatusLine().getStatusCode();
+            responseStr = response.getStatusLine().getReasonPhrase();
+
+            //httpClient.execute(postRequest);// takes time
+
+        } catch (Exception e) {
+            Log.w("uploadToBlobStore", "postToUrl Exception e = " + e);
+            e.printStackTrace();
+            return null;
+        } finally {
+            if (httpClient != null) {
+                Log.w("uploadToBlobStore", "connection.closing ");
+                try {
+                    httpClient.close();
+                } catch (IOException e) {
+                    Log.w("uploadToBlobStore", "connection.closing error e = "
+                            + e);
+                    e.printStackTrace();
+                    return null;
+                }
             }
-            return "ok";
-        } catch (IOException ex) {
-            Log.i("EXCEPTION",ex.toString());
         }
-        return null;
+
+        return "ok";
+
     }
 
 

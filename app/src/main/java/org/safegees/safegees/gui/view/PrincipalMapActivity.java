@@ -509,7 +509,10 @@ public class PrincipalMapActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
         if (requestCode == REQUEST_IMAGE_CODE && resultCode == Activity.RESULT_OK){
+            //Set selected image as bitmap
             bitmap = ImageController.buildBitmapFromData(this, data.getData());
+            //Send User Image
+            this.sendUserImage();
         }else if(requestCode == REQUEST_CONTACTS_CODE && resultCode == Activity.RESULT_OK){
             this.floatingAddContactButton.hide();
             if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
@@ -534,9 +537,6 @@ public class PrincipalMapActivity extends AppCompatActivity
                 myFragment.setImageBitmap(bitmap);
                 //Store in /images
                 ImageController.storeUserImage(this);
-
-                //provisional
-                //sendUserImage();
 
                 //Reload the header image
                 loadNavMenuProfile();
@@ -585,6 +585,7 @@ public class PrincipalMapActivity extends AppCompatActivity
         }
         transaction.replace(R.id.map, fg,  "profile").addToBackStack("profile");
         transaction.commit();
+
         //Set the imageBitMap
         this.profileFragment = (ProfileUserFragment) fg;
         profileFragment.setImageBitmap(bitmap);
@@ -640,15 +641,9 @@ public class PrincipalMapActivity extends AppCompatActivity
     }
 
     public void sendUserImage() {
-
-        //Bitmap bitmap = getUserImageBitmap();
-
-        File file = ImageController.getUserImageFile(this);
-
         //Add the contact
         ShareDataController sssdc = new ShareDataController();
-        sssdc.sendUserImageFile(getApplicationContext(), SafegeesDAO.getInstance(getApplicationContext()).getPublicUser().getPublicEmail(), file);
-
+        sssdc.sendUserImageFile(getApplicationContext(), SafegeesDAO.getInstance(getApplicationContext()).getPublicUser().getPublicEmail());
     }
 
 

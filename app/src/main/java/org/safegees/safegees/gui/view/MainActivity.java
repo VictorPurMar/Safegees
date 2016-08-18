@@ -44,7 +44,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.safegees.safegees.R;
+import org.safegees.safegees.model.Friend;
 import org.safegees.safegees.util.Connectivity;
+import org.safegees.safegees.util.DownloadContactImagesController;
 import org.safegees.safegees.util.MapFileManager;
 import org.safegees.safegees.util.StorageDataManager;
 import org.safegees.safegees.util.SafegeesDAO;
@@ -55,6 +57,7 @@ import org.safegees.safegees.util.WebViewInfoWebDownloadController;
 import java.io.FilenameFilter;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Created by victor on 25/12/15.
@@ -163,8 +166,18 @@ import java.util.ArrayList;
         if(DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)) != null && DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)).length()>0){
             shareDataWithServer();
         }else{
-            if (Connectivity.isNetworkAvaiable(this) || StoredDataQuequesManager.getAppUsersMap(this).size() != 0) {
 
+            if(DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)) != null && DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)).length()>0){
+                launchMainActivity();
+            }else{
+                //Start the loggin for result
+                Intent loginInt = new Intent(this, LoginActivity.class);
+                startActivityForResult(loginInt, 1);
+            }
+
+
+            if (Connectivity.isNetworkAvaiable(this) || StoredDataQuequesManager.getAppUsersMap(this).size() != 0) {
+                /*
                 final MainActivity mainActivity = this;
 
                 //Download data
@@ -207,6 +220,7 @@ import java.util.ArrayList;
                         startActivityForResult(loginInt, 1);
                     }
                 }
+                */
 
             }else{
                 setNoInternetAdvice(this);
@@ -267,7 +281,15 @@ import java.util.ArrayList;
     public void launchTheApp(){
         adviceUser.setText(getResources().getString(R.string.splash_advice_initializing));
         buildObjects();
+        downloadContactImages();
         launchMainActivity();
+    }
+
+    private void downloadContactImages() {
+        SafegeesDAO dao = SafegeesDAO.getInstance(this);
+        ArrayList<Friend> friends = dao.getFriends();
+        DownloadContactImagesController imageDownloader = new DownloadContactImagesController(this,friends);
+        imageDownloader.run();
     }
 
     private void buildObjects() {

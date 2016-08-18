@@ -24,7 +24,6 @@
 package org.safegees.safegees.util;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.Gravity;
@@ -88,10 +87,10 @@ public class ShareDataController {
         sendUserBasicData.execute((Void) null);
     }
 
-    public void sendUserImageFile(Context context, String userMail, File imageFile) {
+    public void sendUserImageFile(Context context, String userMail) {
         this.context = context;
         this.userEmail = userMail;
-        SendUserImage sui = new SendUserImage(this.context, this.userEmail, imageFile);
+        UserImageSender sui = new UserImageSender(this.context, this.userEmail);
         sui.execute((Void) null);
     }
 
@@ -118,7 +117,6 @@ public class ShareDataController {
                 //To do
                 //User public data if new
                 sendUserDataQueque(scc);
-
 
                 //Get and store the contacts data from all the app users queque
                 getAppUsersData(scc);
@@ -156,22 +154,13 @@ public class ShareDataController {
             while(it.hasNext()){
                 String userEmail = (String) it.next();
                 String userPassword = StoredDataQuequesManager.getUserPassword(this.context, userEmail);
-                try{
                     //Try if exist
                     if(MainActivity.DATA_STORAGE.getBoolean(context.getResources().getString(R.string.KEY_USER_IMAGES_TO_UPLOAD) + userEmail)){
                         String filepath = ImageController.getUserImageFileNameByEmail(context, userEmail);
                         File file = new File(filepath);
-                        if (scc.uploadProfileImage(context, userEmail, userPassword ,file)) MainActivity.DATA_STORAGE.remove(context.getResources().getString(R.string.KEY_USER_IMAGES_TO_UPLOAD) + userEmail);
+                        if (scc.uploadProfileImage(context, userEmail, userPassword ,file)) MainActivity.DATA_STORAGE.putBoolean(context.getResources().getString(R.string.KEY_USER_IMAGES_TO_UPLOAD) + userEmail, false);
                     }
-                }catch(Exception e){
-                    //Simply the user doesn't have image to upload
-                }
-
-
             }
-
-
-
         }
 
 
@@ -410,16 +399,14 @@ public class ShareDataController {
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class SendUserImage extends AsyncTask<Void, Void, Boolean> {
+    public class UserImageSender extends AsyncTask<Void, Void, Boolean> {
         private Context context;
         private String userEmail;
-        private File file;
 
 
-        public SendUserImage(Context context, String userEmail, File file) {
+        public UserImageSender(Context context, String userEmail) {
             this.context = context;
             this.userEmail = userEmail;
-            this.file = file;
         }
 
         @Override
@@ -427,11 +414,13 @@ public class ShareDataController {
             // TODO: attempt authentication against a network service.
 
             SafegeesConnectionManager scc = new SafegeesConnectionManager();
+            String userPassword = StoredDataQuequesManager.getUserPassword(this.context, this.userEmail);
 
             if (Connectivity.isNetworkAvaiable(this.context)) {
-                String userPassword = StoredDataQuequesManager.getUserPassword(this.context, this.userEmail);
-                //String latLongString = this.latLng.toString();
-                return (scc.uploadProfileImage(this.context, this.userEmail, userPassword, file));
+                String filepath = ImageController.getUserImageFileNameByEmail(context, userEmail);
+                File file = new File(filepath);
+                scc.uploadProfileImage(context, userEmail, userPassword ,file);
+                return true;
             }
             return false;
         }

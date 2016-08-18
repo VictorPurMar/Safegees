@@ -109,10 +109,9 @@ public class SafegeesConnectionManager {
     //Not implemented on server
     static String KEY_NAME = "name";
     static String KEY_SURNAME = "surname";
-    static String KEY_PHONE = "telephone";
+    static String KEY_PHONE = "phone";
     static String KEY_BIO = "topic";
     static String KEY_DELETE = "delete";
-    static String KEY_IMAGE_URL = "image_url";
 
 
 
@@ -199,7 +198,7 @@ public class SafegeesConnectionManager {
         if (imageURL != null){
             String auth = userEmail+":"+userPassword;
             HashMap<String, String> mp = new HashMap<String, String>();
-            String response = new HttpUrlConnection().performPostFileCall(imageURL, mp, auth, file);
+            String response = new HttpUrlConnection().performPostFileCall(imageURL, auth, file);
             if (response != null){
                 Log.i("RESPONSE",response);
                 return true;
@@ -208,7 +207,7 @@ public class SafegeesConnectionManager {
                 return false;
             }
         }
-        return false;
+         return false;
     }
 
 

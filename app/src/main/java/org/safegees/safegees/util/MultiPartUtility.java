@@ -93,7 +93,7 @@ public class MultipartUtility {
         writer.flush();
 
         FileInputStream inputStream = new FileInputStream(uploadFile);
-        byte[] buffer = new byte[4096];
+        byte[] buffer = new byte[1024];
         int bytesRead = -1;
         while ((bytesRead = inputStream.read(buffer)) != -1) {
             outputStream.write(buffer, 0, bytesRead);
@@ -143,7 +143,7 @@ public class MultipartUtility {
             throw new IOException("Server returned non-OK status: " + status);
         }
 
-        String jsonResponse = httpConn.getResponseMessage();
+        //String jsonResponse = httpConn.getResponseMessage();
 
         return response;
     }

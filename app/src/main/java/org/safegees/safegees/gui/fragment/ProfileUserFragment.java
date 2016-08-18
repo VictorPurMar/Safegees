@@ -195,9 +195,6 @@ public class ProfileUserFragment extends Fragment {
         //java.lang.RuntimeException: Canvas: trying to use a recycled bitmap android.graphics.Bitmap@38248746
         if (this.bitmap != null && this.imageView != null){
             this.imageView.setImageBitmap(this.bitmap);
-            //Send User Image
-            PrincipalMapActivity activity = (PrincipalMapActivity) getActivity();
-            activity.sendUserImage();
         }
     }
 
