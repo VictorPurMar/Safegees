@@ -166,7 +166,7 @@ public class SafegeesConnectionManager {
         HashMap<String, String> mp = new HashMap<String, String>();
         String auth = this.getAuth(userEmail, userPassword);
         String response  = new HttpUrlConnection().performGetCall(url, mp, auth);
-        Log.e("GET_USER_BASIC",response.toString());
+        Log.i("GET_USER_BASIC",response.toString());
         if (response!=null && this.isJSONValid(response)) {
             //Store the response in conf preferences with key : contacts_data_mailfromuser
             MainActivity.DATA_STORAGE.putString(context.getResources().getString(R.string.KEY_USER_BASIC) + "_" + userEmail, response);
@@ -398,6 +398,7 @@ public class SafegeesConnectionManager {
         boolean isValid = false;
         try {
             new JSONObject(test);
+            isValid = true;
         } catch (JSONException ex) {
             // edited, to include @Arthur's comment
             // e.g. in case JSONArray is valid as well...
@@ -405,9 +406,10 @@ public class SafegeesConnectionManager {
                 new JSONArray(test);
                 isValid = true;
             } catch (JSONException ex1) {
-                isValid = false;
             }
         }
+
+
         return isValid;
     }
 

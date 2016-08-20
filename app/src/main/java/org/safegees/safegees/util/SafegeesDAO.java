@@ -124,7 +124,7 @@ public class SafegeesDAO {
     }
 
     private PrivateUser getPrivateUserObjet(){
-        return new PrivateUser(null,this.publicUser.getBio(), this.friends, MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_MAIL)), null,this.publicUser.getName(),MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_PASSWORD)),this.publicUser.getPhoneNumber(), this.publicUser.getPosition(),this.publicUser.getSurname());
+        return new PrivateUser(null,this.publicUser.getBio(), this.friends, MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_MAIL)), null,this.publicUser.getName(),MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_PASSWORD)),this.publicUser.getPhoneNumber(), this.publicUser.getPosition(),this.publicUser.getSurname(), this.publicUser.getAvatar(), this.publicUser.getAvatar_md5());
     }
 
     private PublicUser getPublicUserObject() {
