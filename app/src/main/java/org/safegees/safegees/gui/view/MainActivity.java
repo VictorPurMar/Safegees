@@ -279,23 +279,11 @@ import java.util.ArrayList;
 
     public void preLauncher(){
         adviceUser.setText(getResources().getString(R.string.splash_advice_initializing));
-        buildObjects();
-        downloadContactImages();
+        launchMainActivity();
     }
 
 
-    //The image download needs the objects builded on DAO
-    private void downloadContactImages() {
-        SafegeesDAO dao = SafegeesDAO.getInstance(this);
-        ArrayList<Friend> friends = dao.getFriends();
-        //Add friends images
-        ArrayList<PublicUser> publicUsers = new ArrayList<PublicUser>();
-        //Add the user image
-        publicUsers.add(dao.getPublicUser());
-        publicUsers.addAll(friends);
-        DownloadImagesTask downloadImagesTask = new DownloadImagesTask(this,publicUsers);
-        downloadImagesTask.execute();
-    }
+
 
     private void buildObjects() {
         SafegeesDAO sDao = SafegeesDAO.getInstance(this);
@@ -350,96 +338,5 @@ import java.util.ArrayList;
         }
     }
 
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    public class DownloadImagesTask extends AsyncTask<Void, Void, Boolean> {
-        private Context context;
-        private ArrayList<PublicUser> publicUsers;
 
-
-        public DownloadImagesTask(Context context, ArrayList<PublicUser> publicUsers) {
-            this.context = context;
-            this.publicUsers = publicUsers;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: it will change the process. This one doesnt update the image. It will use the md5 key.
-            File f = new File(ImageController.getUserImageFileNameByEmail(context, publicUsers.get(0).getPublicEmail()));
-            if (!f.exists() && publicUsers.get(0).getAvatar() != null && !publicUsers.get(0).getAvatar().equals("")){
-                return  downloadBitmap(publicUsers.get(0));
-            }else{
-                publicUsers.remove(publicUsers.get(0));
-            }
-            return false;
-        }
-
-        private Boolean downloadBitmap(PublicUser publicUser) {
-
-            String url = publicUser.getAvatar();
-            // initilize the default HTTP client object
-            final DefaultHttpClient client = new DefaultHttpClient();
-
-            //forming a HttoGet request
-            final HttpGet getRequest = new HttpGet(url);
-            try {
-
-                HttpResponse response = client.execute(getRequest);
-
-                //check 200 OK for success
-                final int statusCode = response.getStatusLine().getStatusCode();
-
-                if (statusCode != HttpStatus.SC_OK) {
-                    Log.w("ImageDownloader", "Error " + statusCode +
-                            " while retrieving bitmap from " + url);
-                    return false;
-
-                }
-
-                final HttpEntity entity = response.getEntity();
-                if (entity != null) {
-                    InputStream inputStream = null;
-                    try {
-                        // getting contents from the stream
-                        inputStream = entity.getContent();
-
-                        // decoding stream data back into image Bitmap that android understands
-                        final Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                        ImageController.storeUserBitmapWithEmail(context, bitmap, publicUser.getPublicEmail());
-                        //Remove the downloaded friend from the list
-                        publicUsers.remove(publicUser);
-                        return true;
-                    } finally {
-                        if (inputStream != null) {
-                            inputStream.close();
-                        }
-                        entity.consumeContent();
-                    }
-                }
-            } catch (Exception e) {
-                // You Could provide a more explicit error message for IOException
-                getRequest.abort();
-                Log.e("ImageDownloader", "Something went wrong while" +
-                        " retrieving bitmap from " + url + e.toString());
-            }
-
-            return false;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            if (publicUsers.size()>0){
-                DownloadImagesTask sendAddContactTask = new DownloadImagesTask(context, publicUsers);
-                sendAddContactTask.execute();
-            }else{
-                launchMainActivity();
-            }
-
-        }
-
-
-
-    }
 }
