@@ -140,10 +140,7 @@ public class SafegeesConnectionManager {
         }
     }
 
-    //TO CHANGE IN SERVER
-    ////////////////////////////////////////////////////////////////////
-    //NOT IMPLEMENTED ON SERVER
-    ////////////////////////////////////////////////////////////////////
+
     public void getAuthorizedByUserContacts(Context context, String userEmail, String userPassword){
         String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_AUTHORIZE + SEPARATOR;
         HashMap<String, String> mp = new HashMap<String, String>();
@@ -155,12 +152,7 @@ public class SafegeesConnectionManager {
             MainActivity.DATA_STORAGE.putString(context.getResources().getString(R.string.KEY_AUTHORIZED) + "_" + userEmail, response);
         }
     }
-    /////////////////////////////////////////////////////////////////////
 
-    //TO CHANGE IN SERVER
-    ////////////////////////////////////////////////////////////////////
-    //NOT IMPLEMENTED ON SERVER
-    ////////////////////////////////////////////////////////////////////
     public void getUserBasic(Context context, String userEmail, String userPassword){
         String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR ;
         HashMap<String, String> mp = new HashMap<String, String>();
@@ -172,7 +164,6 @@ public class SafegeesConnectionManager {
             MainActivity.DATA_STORAGE.putString(context.getResources().getString(R.string.KEY_USER_BASIC) + "_" + userEmail, response);
         }
     }
-    ////////////////////////////////////////////////////////////////////
 
 
 
@@ -228,10 +219,6 @@ public class SafegeesConnectionManager {
 
     }
 
-    //TO CHANGE IN SERVER
-    ////////////////////////////////////////////////////////////////////
-    //NOT IMPLEMENTED ON SERVER
-    ////////////////////////////////////////////////////////////////////
 
     public boolean updateUserBasic(PrivateUser privateUser){
         String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_UPDATE + SEPARATOR ;
@@ -255,9 +242,6 @@ public class SafegeesConnectionManager {
 
     }
 
-    ////////////////////////////////////////////////////////////////////
-    //TO CHANGE IN SERVER
-    //Actually the server only stores email and passowd
     public boolean userRegister(Context context, String user, String password, String name, String surname, String telephone, String topic){
         String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR;
         HashMap<String, String> mp = new HashMap<String, String>();
@@ -277,10 +261,7 @@ public class SafegeesConnectionManager {
         }
     }
 
-    //TO CHANGE IN SERVER
-    ////////////////////////////////////////////////////////////////////
-    //NOT IMPLEMENTED ON SERVER
-    ////////////////////////////////////////////////////////////////////
+
     public boolean userUnRegister(Context context, PrivateUser privateUser){
         String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR;
         HashMap<String, String> mp = new HashMap<String, String>();
@@ -295,7 +276,6 @@ public class SafegeesConnectionManager {
             return false;
         }
     }
-    ////////////////////////////////////////////////////////////////////
 
     public boolean checkLogging(Context context, String user, String password){
         String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_LOGIN + SEPARATOR;
@@ -333,10 +313,6 @@ public class SafegeesConnectionManager {
         }
     }
 
-    //TO CHANGE IN SERVER
-    ////////////////////////////////////////////////////////////////////
-    //NOT IMPLEMENTED ON SERVER
-    ////////////////////////////////////////////////////////////////////
     public boolean deleteContact(String userMail, String userPassword, String contactEmail){
         String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_AUTHORIZE + SEPARATOR;
         HashMap<String, String> mp = new HashMap<String, String>();
@@ -352,12 +328,6 @@ public class SafegeesConnectionManager {
             return false;
         }
     }
-    ////////////////////////////////////////////////////////////////////
-
-    //TO CHANGE IN SERVER
-    ////////////////////////////////////////////////////////////////////
-    //NOT IMPLEMENTED ON SERVER
-    ////////////////////////////////////////////////////////////////////
 
     public boolean updateUserPassword(PrivateUser privateUser){
         String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_UPDATE + SEPARATOR;

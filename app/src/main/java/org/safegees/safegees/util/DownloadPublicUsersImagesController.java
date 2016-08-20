@@ -12,6 +12,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.safegees.safegees.model.Friend;
+import org.safegees.safegees.model.PublicUser;
 
 import java.io.File;
 import java.io.InputStream;
@@ -20,19 +21,19 @@ import java.util.ArrayList;
 /**
  * Created by victor on 16/8/16.
  */
-public class DownloadContactImagesController {
+public class DownloadPublicUsersImagesController {
 
     private Context context;
-    private ArrayList<Friend> friends;
+    private ArrayList<PublicUser> publicUser;
 
-    public DownloadContactImagesController(Context context, ArrayList<Friend> friends) {
+    public DownloadPublicUsersImagesController(Context context, ArrayList<PublicUser> publicUser) {
         this.context = context;
-        this.friends = friends;
+        this.publicUser = publicUser;
     }
 
     public void run(){
-        if (friends.size()>0){
-            SendAddContactTask sact = new SendAddContactTask(context,this.friends);
+        if (publicUser.size()>0){
+            SendAddContactTask sact = new SendAddContactTask(context,this.publicUser);
             sact.execute();
         }
     }
@@ -45,29 +46,29 @@ public class DownloadContactImagesController {
      */
     public class SendAddContactTask extends AsyncTask<Void, Void, Boolean> {
         private Context context;
-        private ArrayList<Friend> friends;
+        private ArrayList<PublicUser> publicUsers;
 
 
-        SendAddContactTask(Context context, ArrayList<Friend> friends) {
+        SendAddContactTask(Context context, ArrayList<PublicUser> publicUsers) {
             this.context = context;
-            this.friends = friends;
+            this.publicUsers = publicUsers;
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
             // TODO: it will change the process. This one doesnt update the image. It will use the md5 key.
-            File f = new File(ImageController.getUserImageFileNameByEmail(context,friends.get(0).getPublicEmail()));
-            if (!f.exists() && friends.get(0).getAvatar() != null && !friends.get(0).getAvatar().equals("")){
-                return  downloadBitmap(friends.get(0));
+            File f = new File(ImageController.getUserImageFileNameByEmail(context, publicUsers.get(0).getPublicEmail()));
+            if (!f.exists() && publicUsers.get(0).getAvatar() != null && !publicUsers.get(0).getAvatar().equals("")){
+                return  downloadBitmap(publicUsers.get(0));
             }else{
-                friends.remove(friends.get(0));
+                publicUsers.remove(publicUsers.get(0));
             }
             return false;
         }
 
-        private Boolean downloadBitmap(Friend friend) {
+        private Boolean downloadBitmap(PublicUser publicUser) {
 
-            String url = friend.getAvatar();
+            String url = publicUser.getAvatar();
                 // initilize the default HTTP client object
                 final DefaultHttpClient client = new DefaultHttpClient();
 
@@ -96,9 +97,9 @@ public class DownloadContactImagesController {
 
                             // decoding stream data back into image Bitmap that android understands
                             final Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                            ImageController.storeUserBitmapWithEmail(context, bitmap, friend.getPublicEmail());
+                            ImageController.storeUserBitmapWithEmail(context, bitmap, publicUser.getPublicEmail());
                             //Remove the downloaded friend from the list
-                            friends.remove(friend);
+                            publicUsers.remove(publicUser);
                             return true;
                         } finally {
                             if (inputStream != null) {
@@ -119,8 +120,8 @@ public class DownloadContactImagesController {
 
         @Override
         protected void onPostExecute(final Boolean success) {
-            if (friends.size()>0){
-                SendAddContactTask sendAddContactTask = new SendAddContactTask(context,friends);
+            if (publicUsers.size()>0){
+                SendAddContactTask sendAddContactTask = new SendAddContactTask(context, publicUsers);
                 sendAddContactTask.execute();
             }
 

@@ -330,7 +330,7 @@ public class ShareDataController {
                 //When de download is finished, launch the app
                 if (this.context.getClass().equals(MainActivity.class)) {
                     MainActivity mainActivity = (MainActivity) this.context;
-                    mainActivity.launchTheApp();
+                    mainActivity.preLauncher();
                 } else if (this.context.getClass().equals(PrincipalMapActivity.class)) {
                     PrincipalMapActivity principalMapActivity = (PrincipalMapActivity) this.context;
                     principalMapActivity.getMapFragment().refreshMap();
@@ -338,7 +338,7 @@ public class ShareDataController {
             } else {
                 Log.i("NO_CONN_START", "Starting app with no conection");
                 MainActivity mainActivity = (MainActivity) this.context;
-                mainActivity.launchTheApp();
+                mainActivity.preLauncher();
             }
         }
 

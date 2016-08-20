@@ -224,11 +224,12 @@ public class PrincipalMapActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         //Close app
         instance = null;
         SafegeesDAO.close();
         if(closeSession)closeSession();
-        super.onDestroy();
+
     }
 
     // Top App Menu
