@@ -226,6 +226,7 @@ public class ProfileUserFragment extends Fragment {
         builder.setView(dialogView);
 
         final EditText edt = (EditText) dialogView.findViewById(R.id.edit1);
+        final PublicUser pu = this.publicUser;
 
         if(v.getTag().equals("name")) {
             edt.setText(editName.getText());
@@ -237,7 +238,7 @@ public class ProfileUserFragment extends Fragment {
                     editName.setText(edt.getText());
                     editName.setHint(edt.getHint());
                     ShareDataController sssdc = new ShareDataController();
-                    PublicUser publicUser = new PublicUser(editTopic.getText().toString(),editEmail.getText().toString(), editName.getText().toString(),editPhone.getText().toString(),null,editSurname.getText().toString());
+                    PublicUser publicUser = new PublicUser(editTopic.getText().toString(),editEmail.getText().toString(), editName.getText().toString(),editPhone.getText().toString(),null,editSurname.getText().toString(), pu.getAvatar(), pu.getAvatar_md5());
                     Log.i("SEND_UBD", PublicUser.getJSONStringFromPublicUser(publicUser));
                     sssdc.sendUserBasicData(getContext(), SafegeesDAO.getInstance(getContext()).getPublicUser().getPublicEmail(), publicUser);
                 }
@@ -257,7 +258,7 @@ public class ProfileUserFragment extends Fragment {
                     editSurname.setText(edt.getText());
                     editSurname.setHint(edt.getHint());
                     ShareDataController sssdc = new ShareDataController();
-                    PublicUser publicUser = new PublicUser(editTopic.getText().toString(),editEmail.getText().toString(), editName.getText().toString(),editPhone.getText().toString(),null,editSurname.getText().toString());
+                    PublicUser publicUser = new PublicUser(editTopic.getText().toString(),editEmail.getText().toString(), editName.getText().toString(),editPhone.getText().toString(),null,editSurname.getText().toString(), pu.getAvatar(), pu.getAvatar_md5());
                     Log.i("SEND_UBD", PublicUser.getJSONStringFromPublicUser(publicUser));
                     sssdc.sendUserBasicData(getContext(), SafegeesDAO.getInstance(getContext()).getPublicUser().getPublicEmail(), publicUser);
                 }
@@ -277,7 +278,7 @@ public class ProfileUserFragment extends Fragment {
                     editEmail.setText(edt.getText());
                     editEmail.setHint(edt.getHint());
                     ShareDataController sssdc = new ShareDataController();
-                    PublicUser publicUser = new PublicUser(editTopic.getText().toString(),editEmail.getText().toString(), editName.getText().toString(),editPhone.getText().toString(),null,editSurname.getText().toString());
+                    PublicUser publicUser = new PublicUser(editTopic.getText().toString(),editEmail.getText().toString(), editName.getText().toString(),editPhone.getText().toString(),null,editSurname.getText().toString(), pu.getAvatar(), pu.getAvatar_md5());
                     Log.i("SEND_UBD", PublicUser.getJSONStringFromPublicUser(publicUser));
                     sssdc.sendUserBasicData(getContext(), SafegeesDAO.getInstance(getContext()).getPublicUser().getPublicEmail(), publicUser);
                 }
@@ -297,7 +298,7 @@ public class ProfileUserFragment extends Fragment {
                     editPhone.setText(edt.getText());
                     editPhone.setHint(edt.getHint());
                     ShareDataController sssdc = new ShareDataController();
-                    PublicUser publicUser = new PublicUser(editTopic.getText().toString(),editEmail.getText().toString(), editName.getText().toString(),editPhone.getText().toString(),null,editSurname.getText().toString());
+                    PublicUser publicUser = new PublicUser(editTopic.getText().toString(),editEmail.getText().toString(), editName.getText().toString(),editPhone.getText().toString(),null,editSurname.getText().toString(), pu.getAvatar(), pu.getAvatar_md5());
                     Log.i("SEND_UBD", PublicUser.getJSONStringFromPublicUser(publicUser));
                     sssdc.sendUserBasicData(getContext(), SafegeesDAO.getInstance(getContext()).getPublicUser().getPublicEmail(), publicUser);
                 }
@@ -317,7 +318,7 @@ public class ProfileUserFragment extends Fragment {
                     editTopic.setText(edt.getText());
                     editTopic.setHint(edt.getHint());
                     ShareDataController sssdc = new ShareDataController();
-                    PublicUser publicUser = new PublicUser(editTopic.getText().toString(),editEmail.getText().toString(), editName.getText().toString(),editPhone.getText().toString(),null,editSurname.getText().toString());
+                    PublicUser publicUser = new PublicUser(editTopic.getText().toString(),editEmail.getText().toString(), editName.getText().toString(),editPhone.getText().toString(),null,editSurname.getText().toString(), pu.getAvatar(), pu.getAvatar_md5());
                     Log.i("SEND_UBD", PublicUser.getJSONStringFromPublicUser(publicUser));
                     sssdc.sendUserBasicData(getContext(), SafegeesDAO.getInstance(getContext()).getPublicUser().getPublicEmail(), publicUser);
                 }

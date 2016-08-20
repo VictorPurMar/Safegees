@@ -14,15 +14,19 @@ public class PublicUser {
     public String phoneNumber;
     public String bio;
     public LatLng position;
+    public String avatar;
+    public String avatar_md5;
 
 
-    public PublicUser(String bio, String publicEmail,  String name, String phoneNumber, LatLng position, String surname) {
+    public PublicUser(String bio, String publicEmail,  String name, String phoneNumber, LatLng position, String surname, String avatar, String avatar_md5) {
         this.bio = bio;
         this.publicEmail = publicEmail;
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.position = position;
         this.surname = surname;
+        this.avatar = avatar;
+        this.avatar_md5 = avatar_md5;
     }
 
     public String getBio() {
@@ -83,6 +87,22 @@ public class PublicUser {
         this.surname = surname;
     }
 
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public String getAvatar_md5() {
+        return avatar_md5;
+    }
+
+    public void setAvatar_md5(String avatar_md5) {
+        this.avatar_md5 = avatar_md5;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -109,9 +129,12 @@ public class PublicUser {
             String surname = json.getString("surname")!=null && !json.getString("surname").equals("null")?json.getString("surname"):"";
             String phoneNumber = json.getString("telephone")!=null && !json.getString("telephone").equals("null")?json.getString("telephone"):"";
             LatLng position = json.getString("position")!=null && !json.getString("position").equals("null") || !json.getString("position").equals("")?new LatLng(json.getString("position")):null;
+            String avatar = json.getString("avatar")!=null && !json.getString("avatar").equals("null")?json.getString("avatar"):"";
+            String avatar_md5 = json.getString("avatar_md5")!=null && !json.getString("avatar_md5").equals("null")?json.getString("avatar_md5"):"";
+
 
             //Null values because are not implemented on server yet
-            pu = new PublicUser(bio,publicEmail,name,phoneNumber,position,surname);
+            pu = new PublicUser(bio,publicEmail,name,phoneNumber,position,surname,avatar,avatar_md5);
 
         }catch(Exception e){
             Log.e("Caused:", e.getCause().toString());
@@ -129,6 +152,8 @@ public class PublicUser {
             json.put("surname", pu.getSurname());
             json.put("telephone", pu.getPhoneNumber());
             json.put("position", pu.getPosition()!=null?pu.getPosition().toString():"");
+            json.put("avatar", pu.getBio());
+            json.put("avatar_md5", pu.getBio());
             publicObjectStr = json.toString();
         }catch(Exception e){
             Log.e("Caused:", e.getCause().toString());

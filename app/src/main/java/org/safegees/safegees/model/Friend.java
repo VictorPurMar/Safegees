@@ -32,24 +32,12 @@ import java.util.Date;
 public class Friend extends PublicUser {
 
     private Date last_connection_date; //millis
-    private String avatar;
-    private String avatar_md5;
 
     public Friend(String bio, String publicEmail, Date last_connection_date, LatLng position, String name, String phoneNumber, String surname, String avatar, String avatar_md5) {
-        super(bio, publicEmail,name,phoneNumber,position,surname);
-        this.last_connection_date = last_connection_date;
-        this.avatar = avatar;
-        this.avatar_md5 = avatar_md5;
-    }
-
-
-    public Date getLast_connection_date() {
-        return last_connection_date;
-    }
-
-    public void setLast_connection_date(Date last_connection_date) {
+        super(bio, publicEmail,name,phoneNumber,position,surname,avatar,avatar_md5);
         this.last_connection_date = last_connection_date;
     }
+
 
     public String getAvatar() {
         return avatar;

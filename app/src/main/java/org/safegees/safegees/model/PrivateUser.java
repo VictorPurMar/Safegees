@@ -39,8 +39,8 @@ public class PrivateUser extends PublicUser {
     private ArrayList <Friend> friends;
     private ArrayList <AllowedContact> allowedContacts;
 
-    public PrivateUser(ArrayList<AllowedContact> allowedContacts, String bio, ArrayList<Friend> friends, String privateEmail, String imagePath, String name, String password, String phoneNumber, LatLng position,  String surname) {
-        super (bio, privateEmail, name,phoneNumber,position,surname);
+    public PrivateUser(ArrayList<AllowedContact> allowedContacts, String bio, ArrayList<Friend> friends, String privateEmail, String imagePath, String name, String password, String phoneNumber, LatLng position,  String surname, String avatar, String avatar_md5) {
+        super (bio, privateEmail, name,phoneNumber,position,surname,avatar,avatar_md5);
         this.allowedContacts = allowedContacts;
         this.friends = friends;
         this.privateEmail = privateEmail;
@@ -49,7 +49,7 @@ public class PrivateUser extends PublicUser {
 
     public PrivateUser(String privateEmail,String password, PublicUser pu) {
         //Finally privateMail and email are the same
-        super (pu.getBio(), privateEmail, pu.getName(),pu.getPhoneNumber(),pu.getPosition(),pu.getSurname());
+        super (pu.getBio(), privateEmail, pu.getName(),pu.getPhoneNumber(),pu.getPosition(),pu.getSurname(), pu.getAvatar(), pu.getAvatar_md5());
         this.privateEmail = privateEmail;
         this.password = password;
     }
