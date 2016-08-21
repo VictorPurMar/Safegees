@@ -50,15 +50,18 @@ public class SafegeesDAO {
     private Context context;
  //   private PrivateUser privateUser;
     private PublicUser publicUser;
-    private ArrayList<Friend> nonMutualFriends;
+    private ArrayList<Friend> allFriends;
     private ArrayList<String> authorisedFriends;
-    private ArrayList<Friend> friends;
+    private ArrayList<Friend> mutualFriends;
+    private ArrayList<Friend> nonAuthorisedFriends;
     private ArrayList<POI> pois;
 
     public SafegeesDAO(Context context){
         this.pois = new ArrayList<POI>();
-        this.nonMutualFriends = new ArrayList<Friend>();
+        this.allFriends = new ArrayList<Friend>();
         this.authorisedFriends = new ArrayList<String>();
+        this.nonAuthorisedFriends = new ArrayList<Friend>();
+        this.mutualFriends = new ArrayList<Friend>();
         this.context = context;
         this.run();
     }
@@ -80,21 +83,31 @@ public class SafegeesDAO {
     private void run() {
 
         this.pois = this.getPoisArray();
-        this.nonMutualFriends = this.getContactsArray();
+        this.allFriends = this.getContactsArray();
         this.publicUser = this.getPublicUserObject();
         this.authorisedFriends = this.getAuthorisedFriendsObject();
-        this.friends = this.getMutualFriendsObject();
+        this.mutualFriends = this.getMutualFriendsObject();
+        this.nonAuthorisedFriends = this.getNonAuthorisedFriends();
   //      this.privateUser = this.getPrivateUserObjet();
 
     }
 
     private ArrayList<Friend> getMutualFriendsObject() {
-        friends = new ArrayList<Friend>();
-        for (int i = 0 ; i < nonMutualFriends.size(); i++){
-            Friend f = nonMutualFriends.get(i);
-            if (this.authorisedFriends.contains(f.getPublicEmail())) friends.add(f);
+        mutualFriends = new ArrayList<Friend>();
+        for (int i = 0; i < allFriends.size(); i++){
+            Friend f = allFriends.get(i);
+            if (this.authorisedFriends.contains(f.getPublicEmail())) mutualFriends.add(f);
         }
-        return friends;
+        return mutualFriends;
+    }
+
+    private ArrayList<Friend> getNonAuthorisedFriends() {
+        nonAuthorisedFriends = new ArrayList<Friend>();
+        for (int i = 0; i < allFriends.size(); i++){
+            Friend f = allFriends.get(i);
+            if (!this.authorisedFriends.contains(f.getPublicEmail())) nonAuthorisedFriends.add(f);
+        }
+        return nonAuthorisedFriends;
     }
 
     private ArrayList<String> getAuthorisedFriendsObject() {
@@ -124,7 +137,7 @@ public class SafegeesDAO {
     }
 
     private PrivateUser getPrivateUserObjet(){
-        return new PrivateUser(null,this.publicUser.getBio(), this.friends, MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_MAIL)), null,this.publicUser.getName(),MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_PASSWORD)),this.publicUser.getPhoneNumber(), this.publicUser.getPosition(),this.publicUser.getSurname(), this.publicUser.getAvatar(), this.publicUser.getAvatar_md5());
+        return new PrivateUser(null,this.publicUser.getBio(), this.mutualFriends, MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_MAIL)), null,this.publicUser.getName(),MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_PASSWORD)),this.publicUser.getPhoneNumber(), this.publicUser.getPosition(),this.publicUser.getSurname(), this.publicUser.getAvatar(), this.publicUser.getAvatar_md5());
     }
 
     private PublicUser getPublicUserObject() {
@@ -149,7 +162,7 @@ public class SafegeesDAO {
 
 
     private ArrayList<Friend> getContactsArray() {
-        this.friends = new ArrayList<Friend>();
+        this.mutualFriends = new ArrayList<Friend>();
         String contactsData = MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_CONTACTS_DATA) + "_" + MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_MAIL)));
         JSONArray jsonArray = null;
         try {
@@ -185,7 +198,7 @@ public class SafegeesDAO {
 
                     //Null values because are not implemented on server yet
                     Friend friend = new Friend(bio,publicEmail,dateLastPosition, position, name, phone, surname,avatar_url,avatar_md5);
-                    this.friends.add(friend);
+                    this.mutualFriends.add(friend);
                 }catch(Exception e){
                     Log.e("Caused:", e.getCause().toString());
                 }
@@ -193,7 +206,7 @@ public class SafegeesDAO {
 
         }
 
-        return this.friends;
+        return this.mutualFriends;
     }
 
     private ArrayList<POI> getPoisArray() {
@@ -269,8 +282,8 @@ public class SafegeesDAO {
 
     //Getters
 
-    public ArrayList<Friend> getFriends() {
-        return friends;
+    public ArrayList<Friend> getMutualFriends() {
+        return mutualFriends;
     }
 
     public ArrayList<POI> getPois() {
@@ -282,13 +295,21 @@ public class SafegeesDAO {
         return publicUser;
     }
 
-    public ArrayList<Friend> getNonMutualFriends() {
-        return nonMutualFriends;
+    public ArrayList<Friend> getAllFriends() {
+        return allFriends;
+    }
+
+    public ArrayList<Friend> getNonAutorisedFriends(){
+        return nonAuthorisedFriends;
     }
 
     public ArrayList<String> getAuthorisedFriends() {
         return authorisedFriends;
     }
+
+
+
+
 
     public static void close(){
         instance = null;

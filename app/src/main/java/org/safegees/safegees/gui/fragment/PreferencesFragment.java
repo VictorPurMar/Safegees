@@ -113,7 +113,7 @@ public class PreferencesFragment extends Fragment {
         //mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), null));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), R.drawable.line_separator,false,true));
         SafegeesDAO sDAO = SafegeesDAO.getInstance(getActivity());
-        ArrayList<Friend> friends = sDAO.getFriends();
+        ArrayList<Friend> friends = sDAO.getMutualFriends();
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView

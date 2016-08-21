@@ -32,7 +32,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -104,7 +103,7 @@ public class ProfileContactFragment extends Fragment implements View.OnClickList
 
         View view = inflater.inflate(R.layout.fragment_profile_contact, container, false);
 
-        ArrayList<Friend> friends = SafegeesDAO.getInstance(view.getContext()).getFriends();
+        ArrayList<Friend> friends = SafegeesDAO.getInstance(view.getContext()).getMutualFriends();
 
         Friend friend = friends.get(position);
 

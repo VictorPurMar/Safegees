@@ -186,7 +186,7 @@ public class ShareDataController {
             //Build the DAO
             //It must placed after retrieve all the rest of the info
             SafegeesDAO dao = SafegeesDAO.getInstance(this.context);
-            ArrayList<Friend> friends = dao.getFriends();
+            ArrayList<Friend> friends = dao.getMutualFriends();
             //Add friends images
             ArrayList<PublicUser> publicUsers = new ArrayList<PublicUser>();
             //Add the user image

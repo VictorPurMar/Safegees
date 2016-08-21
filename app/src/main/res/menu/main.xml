@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_invitations"
+        android:icon="@android:drawable/ic_menu_myplaces"
+        android:tint="@android:color/white"
+        android:title="@string/prompt_email"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/menu_update"
+        android:icon="@android:drawable/stat_notify_sync_noanim"
+        android:tint="@android:color/white"
+        android:textColor="@android:color/white"
+        android:title="@string/menu_contacts"
+        app:showAsAction="ifRoom"/>
+
+
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"

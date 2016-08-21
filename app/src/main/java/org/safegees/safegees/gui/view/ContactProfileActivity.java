@@ -2,14 +2,12 @@ package org.safegees.safegees.gui.view;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -116,11 +114,7 @@ public class ContactProfileActivity extends AppCompatActivity implements Profile
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.contact_profile_menu, this.menu);
 
-
-
-
-
-        ArrayList<Friend> friends = SafegeesDAO.getInstance(getBaseContext()).getFriends();
+        ArrayList<Friend> friends = SafegeesDAO.getInstance(getBaseContext()).getMutualFriends();
         Friend friend = friends.get(position);
         if (friend.getPhoneNumber() == null || friend.getPhoneNumber().equals("")){
             this.menu.findItem(R.id.menu_call).setVisible(false);
@@ -133,7 +127,7 @@ public class ContactProfileActivity extends AppCompatActivity implements Profile
 
 
     private void sendEmail() {
-        ArrayList<Friend> friends = SafegeesDAO.getInstance(getBaseContext()).getFriends();
+        ArrayList<Friend> friends = SafegeesDAO.getInstance(getBaseContext()).getMutualFriends();
         Friend friend = friends.get(position);
         Intent intent = new Intent(Intent.ACTION_SENDTO);
         intent.setData(Uri.parse("mailto:" + friend.getPublicEmail()));
@@ -141,7 +135,7 @@ public class ContactProfileActivity extends AppCompatActivity implements Profile
     }
 
     private void callContact() {
-        ArrayList<Friend> friends = SafegeesDAO.getInstance(getBaseContext()).getFriends();
+        ArrayList<Friend> friends = SafegeesDAO.getInstance(getBaseContext()).getMutualFriends();
         Friend friend = friends.get(position);
         if (friend.getPhoneNumber() != null && !friend.getPhoneNumber().equals("")) {
             Intent intent = new Intent(Intent.ACTION_DIAL);
@@ -151,7 +145,7 @@ public class ContactProfileActivity extends AppCompatActivity implements Profile
     }
 
     private void showOnMap(){
-        ArrayList<Friend> friends = SafegeesDAO.getInstance(getBaseContext()).getFriends();
+        ArrayList<Friend> friends = SafegeesDAO.getInstance(getBaseContext()).getMutualFriends();
         Friend friend = friends.get(position);
         PrincipalMapActivity.getInstance().getMapFragment().centerMapViewOnFriend(friend);
         //PrincipalMapActivity.getInstance().showMapFragment();
@@ -207,7 +201,7 @@ public class ContactProfileActivity extends AppCompatActivity implements Profile
         public void startUpdate(ViewGroup container) {
             super.startUpdate(container);
             if (menu != null){
-                ArrayList<Friend> friends = SafegeesDAO.getInstance(getBaseContext()).getFriends();
+                ArrayList<Friend> friends = SafegeesDAO.getInstance(getBaseContext()).getMutualFriends();
                 Friend friend = friends.get(position);
                 if (friend.getPhoneNumber() == null || friend.getPhoneNumber().equals("")){
                     menu.findItem(R.id.menu_call).setVisible(false);
@@ -228,7 +222,7 @@ public class ContactProfileActivity extends AppCompatActivity implements Profile
 
         @Override
         public int getCount() {
-            ArrayList<Friend> friends = SafegeesDAO.getInstance(getBaseContext()).getFriends();
+            ArrayList<Friend> friends = SafegeesDAO.getInstance(getBaseContext()).getMutualFriends();
             return friends.size();
         }
 

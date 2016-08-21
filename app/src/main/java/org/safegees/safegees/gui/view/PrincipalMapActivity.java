@@ -26,6 +26,7 @@
 package org.safegees.safegees.gui.view;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -38,6 +39,7 @@ import org.safegees.safegees.gui.fragment.MapFragment;
 import org.safegees.safegees.gui.fragment.InfoFragment;
 import org.safegees.safegees.gui.fragment.ProfileContactFragment;
 import org.safegees.safegees.gui.fragment.ProfileUserFragment;
+import org.safegees.safegees.model.Friend;
 import org.safegees.safegees.util.Connectivity;
 import org.safegees.safegees.util.ImageController;
 import org.safegees.safegees.util.NetworkStateReceiver;
@@ -66,6 +68,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 
 public class PrincipalMapActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,ProfileUserFragment.OnFragmentInteractionListener, InfoFragment.OnFragmentInteractionListener, ContactsFragment.OnFragmentInteractionListener, AddContactFragment.OnFragmentInteractionListener, ProfileContactFragment.OnFragmentInteractionListener , View.OnClickListener, MapFragment.OnFragmentInteractionListener{
@@ -75,7 +79,7 @@ public class PrincipalMapActivity extends AppCompatActivity
     private ProfileUserFragment profileFragment;
     private InfoFragment infoFragment;
     private ContactsFragment contactsFragment;
-    private FloatingActionButton floatingUpdateButton;      //update map button
+    //private FloatingActionButton floatingUpdateButton;      //update map button
     private FloatingActionButton floatingAddContactButton;
     private static PrincipalMapActivity instance;               //Singleton
     //For image getting
@@ -85,6 +89,10 @@ public class PrincipalMapActivity extends AppCompatActivity
     private View headerView;
     DrawerLayout drawer;                                        //Lateral menu
     boolean closeSession = false;
+
+    //TopBar menu buttons
+    private MenuItem menuUpdate;
+    private MenuItem menuInvitations;
 
     private WebView webView;
     //---------------------------------
@@ -105,7 +113,7 @@ public class PrincipalMapActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         //init the object builder
-        SafegeesDAO.getInstance(this);
+        SafegeesDAO.getInstance(getApplicationContext());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -125,7 +133,8 @@ public class PrincipalMapActivity extends AppCompatActivity
         });
         this.floatingAddContactButton.hide();
 
-        this.floatingUpdateButton = (FloatingActionButton) findViewById(R.id.fab);
+        //this.floatingUpdateButton = (FloatingActionButton) findViewById(R.id.fab);
+        /*
         this.floatingUpdateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -134,6 +143,7 @@ public class PrincipalMapActivity extends AppCompatActivity
                 PrincipalMapActivity.getInstance().update();
             }
         });
+        */
 
         if(Connectivity.isNetworkAvaiable(this)) {
             connectivityOn();
@@ -162,9 +172,11 @@ public class PrincipalMapActivity extends AppCompatActivity
         instance = this;
     }
 
+    /*
     public View getFloatingButton(){
         return this.floatingUpdateButton;
     }
+    */
 
     private void loadNavMenuProfile() {
 
@@ -238,7 +250,68 @@ public class PrincipalMapActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+
+
+
+        this.menuUpdate = menu.findItem(R.id.menu_update);
+        this.menuInvitations = menu.findItem(R.id.menu_invitations);
+
+        showInvitations();
+
+
         return true;
+    }
+
+    private void showInvitations() {
+        SafegeesDAO dao = SafegeesDAO.getInstance(getApplicationContext());
+        ArrayList<Friend> friends = dao.getNonAutorisedFriends();
+        if (friends.size()==0){
+            this.menuInvitations.setVisible(false);
+        }else{
+            this.menuInvitations.setVisible(true);
+        }
+    }
+
+    private void launchInvitationsDialog(final Context context, final ArrayList<Friend> friends){
+
+        if (friends.size()>0){
+            final Friend friend = friends.get(0);
+            new AlertDialog.Builder(context)
+                    .setTitle("Invitation")
+                    .setMessage("You have received an invitation from \n" + friend.getName() + " " + friend.getSurname() + "\n"+friend.getPublicEmail())
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            String userEmail = MainActivity.DATA_STORAGE.getString(getApplicationContext().getString(R.string.KEY_USER_MAIL));
+                            //Add the contact
+                            ShareDataController sssdc = new ShareDataController();
+                            sssdc.addContact(getApplicationContext(), userEmail, friend.getPublicEmail());
+                            friends.remove(friend);
+
+                            if (friends.size()>0){
+                                launchInvitationsDialog(context,friends);
+                            }else{
+                                menuInvitations.setVisible(false);
+                                update();
+                            }
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            friends.remove(friend);
+                            if (friends.size()>0){
+                                launchInvitationsDialog(context,friends);
+                            }else{
+                                menuInvitations.setVisible(false);
+                                update();
+                            }
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        }else{
+            this.menuInvitations.setVisible(false);
+        }
+
     }
 
     @Override
@@ -255,8 +328,19 @@ public class PrincipalMapActivity extends AppCompatActivity
                 closeSession = true;
                 onDestroy();
                 return true;
+            case R.id.menu_invitations:
+                SafegeesDAO dao = SafegeesDAO.getInstance(getApplicationContext());
+                ArrayList<Friend> friends = dao.getNonAutorisedFriends();
+                launchInvitationsDialog(this,friends);
+                return true;
+            case R.id.menu_update:
+                Snackbar.make(this.getMapFragment().getView(), "Updating data", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                PrincipalMapActivity.getInstance().update();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
+
         }
 
     }
@@ -327,6 +411,7 @@ public class PrincipalMapActivity extends AppCompatActivity
 
             this.connectivityOn();
         } else if (id == R.id.nav_info) {
+            this.floatingAddContactButton.hide();
             this.infoFragment = InfoFragment.newInstance();
             //Fragment acFrag = getActiveFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -410,6 +495,7 @@ public class PrincipalMapActivity extends AppCompatActivity
     }
 
     public void showMapFragment(){
+        this.menuUpdate.setVisible(false);
         this.floatingAddContactButton.hide();
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -431,7 +517,8 @@ public class PrincipalMapActivity extends AppCompatActivity
      * Called by NetworkStateReceiver
      */
     public void connectivityOn(){
-        this.floatingUpdateButton.show();
+        if (this.menuUpdate != null)  this.menuUpdate.setVisible(true);
+        //this.floatingUpdateButton.show();
         if (mapFragment != null) mapFragment.setMapViewDependingConnection();
         if (infoFragment!=null) infoFragment.setLoaderDependingConnectivity(true);
     }
@@ -441,8 +528,9 @@ public class PrincipalMapActivity extends AppCompatActivity
      * Called by NetworkStateReceiver
      */
     public void connectivityOff(){
+        if (this.menuUpdate != null)  this.menuUpdate.setVisible(false);
         //The floating button will be used to update content if exists internet connection
-        floatingUpdateButton.hide();
+        //floatingUpdateButton.hide();
         if (mapFragment != null) mapFragment.setMapViewDependingConnection();
         if (infoFragment != null) infoFragment.setLoaderDependingConnectivity(false);
     }
@@ -458,17 +546,15 @@ public class PrincipalMapActivity extends AppCompatActivity
      */
     private void update(){
 
-            //Rebuild the data
-            SafegeesDAO.refreshInstance(this);
-
             if (Connectivity.isNetworkAvaiable(this)){
                 //Download data
                 ShareDataController sddm = new ShareDataController();
                 sddm.run(this);
-
+                showInvitations();
                 //Refresh Map (The map is actually refreshed diectly by ShareDataController on success
                 //mapFragment.refreshMap();
             }
+
     }
 
 

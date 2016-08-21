@@ -1,6 +1,5 @@
 package org.safegees.safegees.gui.fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,7 +11,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -60,7 +58,6 @@ import org.safegees.safegees.util.Connectivity;
 import org.safegees.safegees.util.FileManager;
 import org.safegees.safegees.util.SafegeesDAO;
 import org.safegees.safegees.util.ShareDataController;
-import org.safegees.safegees.util.StorageDataManager;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -340,7 +337,7 @@ public class MapFragment extends Fragment {
 
             Drawable contactDrawable = getResources().getDrawable(R.drawable.ic_friend);
 
-            ArrayList<Friend> friends = this.sDAO.getFriends();
+            ArrayList<Friend> friends = this.sDAO.getMutualFriends();
             if (friends != null) {
                 for (int i = 0; i < friends.size(); i++) {
                     Friend friend = friends.get(i);
@@ -394,7 +391,8 @@ public class MapFragment extends Fragment {
                     toast.show();
                     */
                     Snackbar snackbar = Snackbar
-                                .make(PrincipalMapActivity.getInstance().getFloatingButton(), overlay.getTitle(), Snackbar.LENGTH_LONG)
+                                //.make(PrincipalMapActivity.getInstance().getFloatingButton(), overlay.getTitle(), Snackbar.LENGTH_LONG)
+                                .make(PrincipalMapActivity.getInstance().getMapFragment().getView(), overlay.getTitle(), Snackbar.LENGTH_LONG)
                                 .setAction("MORE", new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
