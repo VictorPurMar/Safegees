@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Safegees</string>
-    <string name="navigation_drawer_open">باز کردن کشوی پیمایشr</string>
-    <string name="navigation_drawer_close">بستن کشوی پیمایش</string>
     <string name="action_settings">تنظیمات</string>
 
     <!-- TODO: Remove or change this placeholder text -->
@@ -49,27 +47,6 @@
     <string name="splash_advice_initializing">مقدار دهی اولیه</string>
     <string name="splash_advice_sharing_info">Sبه اشتراک گذاری اطلاعات با Safegees</string>
 
-    //CONNECTION STRINGS/////////////////////////////////////////////////
-    //POST keys
-    <!-- Connection controller messages (get - post) -->
-    <string name="KEY_CONTACTS_DATA">friends</string>
-    <string name="KEY_AUTHORIZED">authorized</string>
-    <string name="KEY_USER_BASIC">user</string>
-    <string name="KEY_POINTS_OF_INTEREST">organitations</string>
-    <string name="KEY_IS_LOGED">isLoged</string>
-    <string name="KEY_USER_MAIL">user_mail</string>
-    <string name="KEY_USER_PASSWORD">user_password</string>
-    <string name="KEY_APP_USERS">app_users</string>
-    <string name="KEY_ADD_USERS">add_users</string>
-    <string name="KEY_DELETE_USERS">delete_users</string>
-    <string name="KEY_USER_POSITIONS">user_position</string>
-    <string name="KEY_USER_BASIC_DATA">user_basic_data</string>
-
-    <!-- Map strings -->
-    <string name="MAP_LAST_LAT">LAST_LAT</string>
-    <string name="MAP_LAST_LON">LAST_LON</string>
-    <string name="MAP_LAST_ZOOM">LAST_ZOOM</string>
-    ////////////////////////////////////////////////////////////////
 
 
 </resources>

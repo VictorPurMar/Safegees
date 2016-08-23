@@ -36,6 +36,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.WindowManager;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,6 +59,7 @@ import org.safegees.safegees.util.StorageDataManager;
 import org.safegees.safegees.util.SafegeesDAO;
 import org.safegees.safegees.util.ShareDataController;
 import org.safegees.safegees.util.StoredDataQuequesManager;
+import org.safegees.safegees.util.WebViewInfoWebDownloadController;
 
 import java.io.File;
 import java.io.InputStream;
@@ -167,17 +172,17 @@ import java.util.ArrayList;
             shareDataWithServer();
         }else{
 
+            /* TEST
             if(DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)) != null && DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)).length()>0){
                 launchMainActivity();
             }else{
                 //Start the loggin for result
                 Intent loginInt = new Intent(this, LoginActivity.class);
                 startActivityForResult(loginInt, 1);
-            }
-
+            }*/
 
             if (Connectivity.isNetworkAvaiable(this) || StoredDataQuequesManager.getAppUsersMap(this).size() != 0) {
-                /*
+
                 final MainActivity mainActivity = this;
 
                 //Download data
@@ -220,7 +225,7 @@ import java.util.ArrayList;
                         startActivityForResult(loginInt, 1);
                     }
                 }
-                */
+
 
             }else{
                 setNoInternetAdvice(this);
@@ -273,6 +278,7 @@ import java.util.ArrayList;
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
+                start();
             }
         }
     }

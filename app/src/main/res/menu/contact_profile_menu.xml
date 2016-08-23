@@ -21,6 +21,12 @@
             android:title="@string/menu_contacts"
             app:showAsAction="ifRoom"/>
 
+        <item
+            android:id="@+id/menu_delete_contact"
+            android:icon="@android:drawable/ic_menu_delete"
+            android:title="@string/menu_contacts"
+            app:showAsAction="ifRoom"/>
+
         <!-- Settings, should always be in the overflow -->
         <item android:id="@+id/action_settings"
             android:title="@string/action_settings"

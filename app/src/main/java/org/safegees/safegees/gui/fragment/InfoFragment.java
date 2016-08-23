@@ -94,6 +94,7 @@ public class InfoFragment extends Fragment {
         if (!Connectivity.isNetworkAvaiable(getContext()) ) { // loading offline
             webView.getSettings().setCacheMode( WebSettings.LOAD_CACHE_ELSE_NETWORK );
         }
+        webView.getSettings().setAllowFileAccess(true);
 
 
         webView.setWebViewClient(new WebViewClient() {
@@ -117,18 +118,18 @@ public class InfoFragment extends Fragment {
 
             @Override
             public void onPageFinished(WebView view, String url) {
-
                 progressBar.setVisibility(View.GONE);
             }
 
             @Override
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                webView.loadUrl("about:blank");
+                webView.loadUrl("file:///android_asset/default_error.html");
+            }
+
+            @Override
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-                super.onReceivedError(view, request, error);
-                String url = webView.getUrl();
-                if (url.contains(WebViewInfoWebDownloadController.CRISIS_HUB_DEFAULT_URL)){
-                    webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-                    view.loadUrl(url);
-                }
+                //super.onReceivedError(view, request, error);
             }
         });
 

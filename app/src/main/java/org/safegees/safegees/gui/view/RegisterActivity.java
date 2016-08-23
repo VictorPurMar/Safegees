@@ -30,6 +30,7 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -91,6 +92,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         }else if(passwordStr.length() <= 4 ){
             Toast.makeText(this, "Password too short", Toast.LENGTH_SHORT).show();
         }else{
+            View view = this.getCurrentFocus();
+            if (view != null) {
+                //Hide keyboard
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+
             UserRegisterTask urt = new UserRegisterTask(this,email2Str,password2Str,nameStr,surnameStr,phoneStr,bioStr);
             urt.execute();
         }
@@ -98,7 +106,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
         String regex = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(email);

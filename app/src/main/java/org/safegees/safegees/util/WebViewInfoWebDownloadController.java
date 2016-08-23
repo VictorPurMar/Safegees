@@ -1,6 +1,7 @@
 package org.safegees.safegees.util;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Created by victor on 9/8/16.
@@ -64,13 +65,27 @@ public class WebViewInfoWebDownloadController {
     public static final String CH_LANGUAGE_FA = "fa/";
 
 
+    public static String language;
+
 
     public static ArrayList<String> getInfoUrlsArrayList(){
+
+        //Language
+        //Get device language
+        language = Locale.getDefault().getDisplayLanguage();
+
         ArrayList<String> infoUrlsArray = new ArrayList<String>();
         infoUrlsArray.add(CRISIS_HUB_DEFAULT_URL);
-        infoUrlsArray.add(CRISIS_HUB_DEFAULT_URL_AR);
-        infoUrlsArray.add(CRISIS_HUB_DEFAULT_URL_FA);
-        infoUrlsArray.add(CRISIS_HUB_DEFAULT_URL_EN);
+
+        if (language.equals("fa")){
+            infoUrlsArray.add(CRISIS_HUB_DEFAULT_URL_FA);
+        }else if (language.equals("ar")){
+            infoUrlsArray.add(CRISIS_HUB_DEFAULT_URL_AR);
+        }else{
+            infoUrlsArray.add(CRISIS_HUB_DEFAULT_URL_EN);
+        }
+
+
         infoUrlsArray = addThreeLenguagesUrl(infoUrlsArray, CH_SLOVENIA_GENERAL_URL);
         infoUrlsArray = addThreeLenguagesUrl(infoUrlsArray, CH_SLOVENIA_DOBOVA_URL);
         infoUrlsArray = addThreeLenguagesUrl(infoUrlsArray, CH_CROATIA_GENERAL_URL);
@@ -110,9 +125,18 @@ public class WebViewInfoWebDownloadController {
     }
 
     public static ArrayList<String> addThreeLenguagesUrl(ArrayList<String> infoUrlsArray, String url){
-        infoUrlsArray.add(url + CH_LANGUAGE_EN);
-        infoUrlsArray.add(url + CH_LANGUAGE_AR);
-        infoUrlsArray.add(url + CH_LANGUAGE_FA);
+
+        //Download info only in device language
+        if (language.equals("fa")){
+            infoUrlsArray.add(url + CH_LANGUAGE_FA);
+        }else if (language.equals("ar")){
+            infoUrlsArray.add(url + CH_LANGUAGE_AR);
+        }else{
+            infoUrlsArray.add(url + CH_LANGUAGE_EN);
+        }
+
+
+
 
         return infoUrlsArray;
     }
