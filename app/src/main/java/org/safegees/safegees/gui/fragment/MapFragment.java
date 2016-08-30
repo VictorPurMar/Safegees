@@ -417,10 +417,10 @@ public class MapFragment extends Fragment {
                     Friend friend = sDAO.getFriendWithEmail(overlay.getTitle());
                     Drawable dr = null;
                     try{
-                        dr = new BitmapDrawable(ImageController.getContactImageBitmap(getContext(),friend.getPublicEmail()));
+                        dr = new BitmapDrawable( getResources(), ImageController.getContactImageBitmap(getContext(),friend.getPublicEmail()));
                     }catch (Exception e){}
 
-                    String bio = "\n\""+ friend.getBio()+"\"";
+                    String bio = "\""+ friend.getBio()+"\"";
                     if (bio.equals("\"\"")) bio = "";
                     Snackbar snackbar = Snackbar
                                 //.make(PrincipalMapActivity.getInstance().getFloatingButton(), overlay.getTitle(), Snackbar.LENGTH_LONG)
@@ -442,8 +442,8 @@ public class MapFragment extends Fragment {
                         snackBarLayout.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorCadaquesAccentDark));
                         TextView textView = (TextView)snackBarLayout.findViewById(android.support.design.R.id.snackbar_text);
                         textView.setMaxLines(4); // Change your max lines
-                        textView.setTextSize(15);
-                        if (dr == null)dr = ContextCompat.getDrawable(getActivity().getApplicationContext(),R.drawable.default_user_rounded);
+                        textView.setTextSize(12);
+                        //if (dr == null)dr = ContextCompat.getDrawable(getActivity().getApplicationContext(),R.drawable.default_user_rounded);
                         dr.setBounds(0,0,150,150);
                         //textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.default_user_rounded, 0, 0, 0);
                         textView.setCompoundDrawables(dr, null, null, null);

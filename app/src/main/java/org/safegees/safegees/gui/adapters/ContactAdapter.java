@@ -80,7 +80,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
         //Add image from friend
         if (friend.getPublicEmail() != null){
             Bitmap bitmap = ImageController.getContactImageBitmap(view.getContext(),friend.getPublicEmail());
-            if (bitmap != null) holder.avatar.setImageBitmap(bitmap);
+            holder.avatar.setImageBitmap(bitmap);
 
         }
 

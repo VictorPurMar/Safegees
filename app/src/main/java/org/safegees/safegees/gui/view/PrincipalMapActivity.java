@@ -283,7 +283,7 @@ public class PrincipalMapActivity extends AppCompatActivity
             final Friend friend = friends.get(0);
             new AlertDialog.Builder(context)
                     .setTitle(getResources().getString(R.string.invitation_title))
-                    .setMessage(getResources().getString(R.string.invitation_text) + friend.getName() + " " + friend.getSurname() + "\n"+friend.getPublicEmail())
+                    .setMessage(getResources().getString(R.string.invitation_text) + "\n" + friend.getName() + " " + friend.getSurname() + "\n"+friend.getPublicEmail())
                     .setPositiveButton(context.getResources().getString(R.string.invitation_accept), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             String userEmail = MainActivity.DATA_STORAGE.getString(getApplicationContext().getString(R.string.KEY_USER_MAIL));
@@ -320,8 +320,6 @@ public class PrincipalMapActivity extends AppCompatActivity
                 }
             }).setIcon(R.mipmap.ic_launcher)
                     .show();
-        }else{
-            this.menuInvitations.setVisible(false);
         }
 
     }
@@ -400,7 +398,6 @@ public class PrincipalMapActivity extends AppCompatActivity
             this.connectivityOff();
 
         } else */ if (id == R.id.nav_contacts) {
-            this.menuInvitations.setVisible(false);
             this.floatingAddContactButton.show();
 
             contactsFragment = (ContactsFragment) ContactsFragment.newInstance();
@@ -435,7 +432,6 @@ public class PrincipalMapActivity extends AppCompatActivity
 
             this.connectivityOn();
         } else if (id == R.id.nav_info) {
-            this.menuInvitations.setVisible(false);
             this.floatingAddContactButton.hide();
             this.infoFragment = InfoFragment.newInstance();
             //Fragment acFrag = getActiveFragment();
@@ -623,6 +619,7 @@ public class PrincipalMapActivity extends AppCompatActivity
                 transaction.remove(getActiveFragment());
                 getSupportFragmentManager().popBackStack();
                 transaction.commitAllowingStateLoss();
+                this.floatingAddContactButton.hide();
             }
             mapFragment.onResume();
             this.connectivityOn();

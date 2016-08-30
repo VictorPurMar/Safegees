@@ -43,5 +43,25 @@
     <string name="splash_advice_initializing">تهيئة</string>
     <string name="splash_advice_sharing_info">تقاسم المعلومات مع Safegees</string>
 
+    <string name="updating_data">تحديث البيانات</string>
+    <!-- DELETE CONTACT -->
+    <string name="delete_contact_title">حذف اتصال</string>
+    <string name="delete_contact_advice_text">هل أنت متأكد أنك تريد حذف هذا الاتصال؟</string>
+    <string name="delete_contact_accept_button">حذف</string>
+    <string name="delete_contact_cancel_button">إلغاء</string>
+
+    <string name="snack_adding_contact">مضيفا اتصال</string>
+    <!-- INVITATION MENU -->
+    <string name="invitation_title">رسالة دعوة</string>
+    <string name="invitation_text">لقد تلقيت دعوة من:</string>
+    <string name="invitation_accept">ربط</string>
+    <string name="invitation_cancel" >إلغاء</string>
+    <string name="invitation_next">التالى</string>
+
+    <string name="appbar_map">عرض على الخريطة</string>
+    <string name="appbar_email">إرسال البريد الإلكتروني</string>
+    <string name="appbar_phone">الاتصال عبر الهاتف</string>
+    <string name="appbar_delete">حذف اتصال</string>
+
 
 </resources>

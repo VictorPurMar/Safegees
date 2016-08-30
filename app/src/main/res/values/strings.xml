@@ -41,16 +41,16 @@
 
     <string name="snack_adding_contact">Adding contact</string>
     <!-- INVITATION MENU -->
-    <string name="invitation_title" translatable="false">Invitation</string>
-    <string name="invitation_text" translatable="false">You have received an invitation from:\n</string>
-    <string name="invitation_accept" translatable="false">connect</string>
-    <string name="invitation_cancel" translatable="false">cancel</string>
-    <string name="invitation_next" translatable="false">next</string>
+    <string name="invitation_title">Invitation</string>
+    <string name="invitation_text">You have received an invitation from:</string>
+    <string name="invitation_accept">connect</string>
+    <string name="invitation_cancel" >cancel</string>
+    <string name="invitation_next" >next</string>
 
-    <string name="appbar_map" translatable="false">show on map</string>
-    <string name="appbar_email" translatable="false">send a email</string>
-    <string name="appbar_phone" translatable="false">call by phone</string>
-    <string name="appbar_delete" translatable="false">delete contact</string>
+    <string name="appbar_map">show on map</string>
+    <string name="appbar_email">send a email</string>
+    <string name="appbar_phone">call by phone</string>
+    <string name="appbar_delete">delete contact</string>
 
     //Last camera position
 

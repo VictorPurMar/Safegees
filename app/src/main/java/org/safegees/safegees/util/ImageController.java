@@ -71,8 +71,7 @@ public class ImageController {
         }
         //Return default grey user image
         if (bitmap == null) bitmap = getBitmapFromAsset(context);
-
-        return null;
+        return bitmap;
     }
 
     public static Bitmap getBitmapFromAsset(Context context) {

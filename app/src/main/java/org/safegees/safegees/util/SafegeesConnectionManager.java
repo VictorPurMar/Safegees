@@ -110,7 +110,7 @@ public class SafegeesConnectionManager {
     //Not implemented on server
     static String KEY_NAME = "name";
     static String KEY_SURNAME = "surname";
-    static String KEY_PHONE = "phone";
+    static String KEY_PHONE = "telephone";
     static String KEY_BIO = "topic";
     static String KEY_DELETE_CONTACT = "untrusted_email";
     static String KEY_DELETE = "delete";
@@ -230,7 +230,7 @@ public class SafegeesConnectionManager {
         mp.put(KEY_SURNAME, privateUser.getSurname());
         mp.put(KEY_PHONE, privateUser.getPhoneNumber());
         mp.put(KEY_BIO, privateUser.getBio());
-        mp.put(KEY_POSITION, privateUser.getPosition().toString());
+        //mp.put(KEY_POSITION, privateUser.getPosition().toString());
         String auth = this.getAuth(privateUser.getPrivateEmail(), privateUser.getPassword());
         String response = new HttpUrlConnection().performPostCall(url, mp, auth);
         Log.e("UPDATE_USER",response.toString());

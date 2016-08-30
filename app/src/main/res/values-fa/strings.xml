@@ -48,5 +48,24 @@
     <string name="splash_advice_sharing_info">Sبه اشتراک گذاری اطلاعات با Safegees</string>
 
 
+    <string name="updating_data">اطلاعات به روز رسانی</string>
+    <!-- DELETE CONTACT -->
+    <string name="delete_contact_title">حذف تماس</string>
+    <string name="delete_contact_advice_text">آیا شما مطمئن هستید که میخواهید این تماس را حذف کنید؟</string>
+    <string name="delete_contact_accept_button">حذف</string>
+    <string name="delete_contact_cancel_button">لغو کردن</string>
+
+    <string name="snack_adding_contact">اضافه کردن تماس</string>
+    <!-- INVITATION MENU -->
+    <string name="invitation_title">دعوت نامه</string>
+    <string name="invitation_text">شما یک دعوت نامه از دریافت کرده اند:</string>
+    <string name="invitation_accept">اتصال</string>
+    <string name="invitation_cancel" >لغو کردن</string>
+    <string name="invitation_next" >بعد</string>
+
+    <string name="appbar_map">روی نقشه نشان می</string>
+    <string name="appbar_email">ارسال یک ایمیل</string>
+    <string name="appbar_phone">تماس از طریق تلفن</string>
+    <string name="appbar_delete">حذف تماس</string>
 
 </resources>
