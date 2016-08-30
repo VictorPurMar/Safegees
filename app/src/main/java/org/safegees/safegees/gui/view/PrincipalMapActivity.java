@@ -211,6 +211,7 @@ public class PrincipalMapActivity extends AppCompatActivity
         }else{
             connectivityOff();
         }
+        showInvitations();
         SafegeesDAO.refreshInstance(this);
 
     }
@@ -269,9 +270,9 @@ public class PrincipalMapActivity extends AppCompatActivity
     public void showInvitations() {
         SafegeesDAO dao = SafegeesDAO.getInstance(getApplicationContext());
         ArrayList<Friend> friends = dao.getNonAutorisedFriends();
-        if (friends.size()==0){
+        if (friends.size()==0 && this.menuInvitations != null){
             this.menuInvitations.setVisible(false);
-        }else{
+        }else if (this.menuInvitations != null){
             this.menuInvitations.setVisible(true);
         }
     }
@@ -545,7 +546,6 @@ public class PrincipalMapActivity extends AppCompatActivity
         if (this.menuUpdate != null)  this.menuUpdate.setVisible(true);
         //this.floatingUpdateButton.show();
         if (mapFragment != null) mapFragment.setMapViewDependingConnection();
-        if (infoFragment!=null) infoFragment.setLoaderDependingConnectivity(true);
     }
 
     /**
@@ -557,7 +557,6 @@ public class PrincipalMapActivity extends AppCompatActivity
         //The floating button will be used to update content if exists internet connection
         //floatingUpdateButton.hide();
         if (mapFragment != null) mapFragment.setMapViewDependingConnection();
-        if (infoFragment != null) infoFragment.setLoaderDependingConnectivity(false);
     }
 
 

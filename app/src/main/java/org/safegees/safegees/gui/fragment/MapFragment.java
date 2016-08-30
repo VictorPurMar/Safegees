@@ -420,9 +420,11 @@ public class MapFragment extends Fragment {
                         dr = new BitmapDrawable(ImageController.getContactImageBitmap(getContext(),friend.getPublicEmail()));
                     }catch (Exception e){}
 
+                    String bio = "\n\""+ friend.getBio()+"\"";
+                    if (bio.equals("\"\"")) bio = "";
                     Snackbar snackbar = Snackbar
                                 //.make(PrincipalMapActivity.getInstance().getFloatingButton(), overlay.getTitle(), Snackbar.LENGTH_LONG)
-                                .make(PrincipalMapActivity.getInstance().getMapFragment().getView(), friend.getName() + " " + friend.getSurname() +"\n\""+ friend.getBio()+"\"", Snackbar.LENGTH_LONG)
+                                .make(PrincipalMapActivity.getInstance().getMapFragment().getView(), friend.getName() + " " + friend.getSurname() +"\n"+ bio, Snackbar.LENGTH_LONG)
                                 .setAction("MORE", new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
