@@ -27,6 +27,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
@@ -36,8 +38,11 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.safegees.safegees.R;
+import org.safegees.safegees.gui.fragment.ContactsFragment;
+import org.safegees.safegees.gui.view.ContactProfileActivity;
 import org.safegees.safegees.gui.view.MainActivity;
 import org.safegees.safegees.gui.view.PrincipalMapActivity;
 import org.safegees.safegees.model.Friend;
@@ -60,9 +65,11 @@ public class ShareDataController {
     private static SendAddContactTask addContactTask = null;
     private static SendUserPosition sendUPosTask = null;
     private static SendUserBasicData sendUserBasicData = null;
+    private static SendDeleteContact deleteContactTask = null;
     private Context context;
     private String userEmail;
     private String contactToAdd;
+    private String contactToDelete;
     private LatLng latLng;
     private PublicUser publicUser;
 
@@ -104,9 +111,14 @@ public class ShareDataController {
         sui.execute((Void) null);
     }
 
-    public void getPublicUserImages(Context context, ArrayList<PublicUser> publicUsers){
-
+    public void deleteContact(Context context, String userMail, String contactToDelete) {
+        this.context = context;
+        this.userEmail = userMail;
+        this.contactToDelete = contactToDelete;
+        deleteContactTask = new SendDeleteContact(this.context, this.userEmail, this.contactToDelete);
+        deleteContactTask.execute((Void) null);
     }
+
 
     /**
      * Represents an asynchronous login/registration task used to authenticate
@@ -251,21 +263,25 @@ public class ShareDataController {
 
         private void sendAddContactsQueque(SafegeesConnectionManager scc) {
 
-            Map<String, String> adContactsMap = StoredDataQuequesManager.getAddContactsMapQueque(this.context);
+            Map<String, ArrayList<String>> adContactsMap = StoredDataQuequesManager.getAddContactsArrayListQueque(this.context);
             if (adContactsMap != null) {
                 Iterator it = adContactsMap.entrySet().iterator();
                 while (it.hasNext()) {
                     Map.Entry pair = (Map.Entry) it.next();
                     String userMail = (String) pair.getKey();
-                    String contactEmail = (String) pair.getValue();
+                    ArrayList<String> contactEmails = (ArrayList<String>) pair.getValue();
                     String userPassword = StoredDataQuequesManager.getUserPassword(context, userMail);
-                    try {
-                        if (scc.addNewContact(userMail, userPassword, contactEmail)) {
-                            StoredDataQuequesManager.removeContactToAddInQueque(this.context, userMail, contactEmail);
+
+                    for (int i = 0 ; i < contactEmails.size() ; i++){
+                        try {
+                            if (scc.addNewContact(userMail, userPassword, contactEmails.get(i))) {
+                                StoredDataQuequesManager.removeContactToAddInQueque(this.context, userMail,  contactEmails.get(i));
+                            }
+                        } catch (Exception e) {
+                            Log.e("sendAddContactsQueque", e.getMessage());
                         }
-                    } catch (Exception e) {
-                        Log.e("sendAddContactsQueque", e.getMessage());
                     }
+
                     it.remove(); // avoids a ConcurrentModificationException
                 }
             }
@@ -277,21 +293,26 @@ public class ShareDataController {
 
         private void sendDeleteContactsQueque(SafegeesConnectionManager scc) {
 
-            Map<String, String> adContactsMap = StoredDataQuequesManager.getDeleteContactsMapQueque(this.context);
+            Map<String, ArrayList<String>> adContactsMap = StoredDataQuequesManager.getDeleteContactsArrayListQueque(this.context);
             if (adContactsMap != null) {
                 Iterator it = adContactsMap.entrySet().iterator();
                 while (it.hasNext()) {
                     Map.Entry pair = (Map.Entry) it.next();
                     String userMail = (String) pair.getKey();
-                    String contactEmail = (String) pair.getValue();
+                    ArrayList<String> contactEmails = (ArrayList<String>) pair.getValue();
                     String userPassword = StoredDataQuequesManager.getUserPassword(context, userMail);
-                    try {
-                        if (scc.deleteContact(userMail, userPassword, contactEmail)) {
-                            StoredDataQuequesManager.removeContactToDeleteInQueque(this.context, userMail, contactEmail);
+
+                    for (int i = 0 ; i < contactEmails.size() ; i++){
+                        try {
+                            if (scc.deleteContact(userMail, userPassword, contactEmails.get(i))) {
+                                StoredDataQuequesManager.removeContactToDeleteInQueque(this.context, userMail,  contactEmails.get(i));
+                            }
+
+                        } catch (Exception e) {
+                            Log.e("sendDelete", e.getMessage());
                         }
-                    } catch (Exception e) {
-                        Log.e("sendDeleteContactsQu", e.getMessage());
                     }
+
                     it.remove(); // avoids a ConcurrentModificationException
                 }
             }
@@ -361,12 +382,14 @@ public class ShareDataController {
             if (success) {
                 //If the download was on splash
                 //When de download is finished, launch the app
+                //SafegeesDAO dao = SafegeesDAO.refreshInstance(context);
                 if (this.context.getClass().equals(MainActivity.class)) {
                     MainActivity mainActivity = (MainActivity) this.context;
                     mainActivity.preLauncher();
                 } else if (this.context.getClass().equals(PrincipalMapActivity.class)) {
                     PrincipalMapActivity principalMapActivity = (PrincipalMapActivity) this.context;
                     principalMapActivity.getMapFragment().refreshMap();
+                    principalMapActivity.showInvitations();
                 }
             } else {
                 Log.i("NO_CONN_START", "Starting app with no conection");
@@ -419,6 +442,11 @@ public class ShareDataController {
                 Toast toast = Toast.makeText(context, this.contactToAdd + " was added correctly", Toast.LENGTH_LONG);
                 toast.setGravity(Gravity.CENTER, 0, 0);
                 toast.show();
+                if (this.context.getClass().equals(PrincipalMapActivity.class)) {
+                    PrincipalMapActivity principalMapActivity = (PrincipalMapActivity) this.context;
+                    principalMapActivity.getMapFragment().refreshMap();
+                    principalMapActivity.showInvitations();
+                }
             } else {
                     if (!Connectivity.isNetworkAvaiable(this.context)) {
                         Toast toast = Toast.makeText(context, "No internet connection. The contact "+ this.contactToAdd  +" will be stored and sended when do you have internet and update the app", Toast.LENGTH_LONG);
@@ -430,6 +458,74 @@ public class ShareDataController {
                         toast.setGravity(Gravity.CENTER , 0, 0);
                         toast.show();
                     }
+
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            addContactTask = null;;
+        }
+
+
+    }
+
+    /**
+     * Represents an asynchronous deleteContac task used to authenticate
+     * the user.
+     */
+    public class SendDeleteContact extends AsyncTask<Void, Void, Boolean> {
+        private Context context;
+        private String userEmail;
+        private String contactToDelete;
+
+
+        SendDeleteContact(Context context, String userEmail, String contactToDelete) {
+            this.context = context;
+            this.userEmail = userEmail;
+            this.contactToDelete = contactToDelete;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            // TODO: attempt authentication against a network service.
+
+            SafegeesConnectionManager scc = new SafegeesConnectionManager();
+            String userPassword = StoredDataQuequesManager.getUserPassword(context, this.userEmail);
+            if (Connectivity.isNetworkAvaiable(this.context)) {
+                return scc.deleteContact(userEmail, userPassword, contactToDelete);
+            }else{
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+
+
+            addContactTask = null;
+            if (success) {
+                StoredDataQuequesManager.removeContactToDeleteInQueque(this.context, userEmail, contactToAdd);
+                Toast toast = Toast.makeText(context, this.contactToDelete + " was deleted correctly", Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+                if (context.getClass().equals(ContactProfileActivity.class)){
+                    PrincipalMapActivity principalMapActivity = PrincipalMapActivity.getInstance();
+                    principalMapActivity.update();
+                    principalMapActivity.showInvitations();
+                    principalMapActivity.getMapFragment().refreshMap();
+                }
+            } else {
+                if (!Connectivity.isNetworkAvaiable(this.context)) {
+                    Toast toast = Toast.makeText(context, "No internet connection. The contact "+ this.contactToDelete  +" will be stored and deleted when do you have internet and update the app", Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    PrincipalMapActivity principalMapActivity = PrincipalMapActivity.getInstance();
+                    principalMapActivity.getMapFragment().refreshMap();
+                }else{
+                    Toast toast = Toast.makeText(context, "There was a unexpected error ", Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER , 0, 0);
+                    toast.show();
+                }
 
             }
         }

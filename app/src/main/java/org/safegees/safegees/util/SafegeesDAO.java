@@ -37,9 +37,11 @@ import org.safegees.safegees.model.POI;
 import org.safegees.safegees.model.PrivateUser;
 import org.safegees.safegees.model.PublicUser;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Created by victor on 8/2/16.
@@ -51,13 +53,15 @@ public class SafegeesDAO {
  //   private PrivateUser privateUser;
     private PublicUser publicUser;
     private ArrayList<Friend> allFriends;
-    private ArrayList<String> authorisedFriends;
     private ArrayList<Friend> mutualFriends;
     private ArrayList<Friend> nonAuthorisedFriends;
+    private ArrayList<String> authorisedFriends;
+    private ArrayList<String> contactsPendingToDelete;
     private ArrayList<POI> pois;
 
     public SafegeesDAO(Context context){
         this.pois = new ArrayList<POI>();
+        this.contactsPendingToDelete = new ArrayList<String>();
         this.allFriends = new ArrayList<Friend>();
         this.authorisedFriends = new ArrayList<String>();
         this.nonAuthorisedFriends = new ArrayList<Friend>();
@@ -81,10 +85,10 @@ public class SafegeesDAO {
 
 
     private void run() {
-
+        this.publicUser = this.getPublicUserObject();
+        this.contactsPendingToDelete = this.contactIsPendingToDelete();
         this.pois = this.getPoisArray();
         this.allFriends = this.getContactsArray();
-        this.publicUser = this.getPublicUserObject();
         this.authorisedFriends = this.getAuthorisedFriendsObject();
         this.mutualFriends = this.getMutualFriendsObject();
         this.nonAuthorisedFriends = this.getNonAuthorisedFriends();
@@ -96,7 +100,8 @@ public class SafegeesDAO {
         mutualFriends = new ArrayList<Friend>();
         for (int i = 0; i < allFriends.size(); i++){
             Friend f = allFriends.get(i);
-            if (this.authorisedFriends.contains(f.getPublicEmail())) mutualFriends.add(f);
+            //Be sure that the friend is authorized and is not pending to delete
+            if (this.authorisedFriends.contains(f.getPublicEmail()) && (!this.contactsPendingToDelete.contains(f.getPublicEmail()))) mutualFriends.add(f);
         }
         return mutualFriends;
     }
@@ -105,7 +110,7 @@ public class SafegeesDAO {
         nonAuthorisedFriends = new ArrayList<Friend>();
         for (int i = 0; i < allFriends.size(); i++){
             Friend f = allFriends.get(i);
-            if (!this.authorisedFriends.contains(f.getPublicEmail())) nonAuthorisedFriends.add(f);
+            if (!this.authorisedFriends.contains(f.getPublicEmail()) || (this.contactsPendingToDelete.contains(f.getPublicEmail())) ) nonAuthorisedFriends.add(f);
         }
         return nonAuthorisedFriends;
     }
@@ -133,7 +138,17 @@ public class SafegeesDAO {
             }
 
         }
+
+
+
         return authorisedFriends;
+    }
+
+    private ArrayList<String> contactIsPendingToDelete(){
+        Map<String, ArrayList<String>> pendingContacts = StoredDataQuequesManager.getDeleteContactsArrayListQueque(context);
+        String userEmail = this.getPublicUser().publicEmail;
+        ArrayList<String> contactsByUser = pendingContacts.get(userEmail);
+        return contactsByUser!=null?contactsByUser:new ArrayList<String>();
     }
 
     private PrivateUser getPrivateUserObjet(){
@@ -198,7 +213,8 @@ public class SafegeesDAO {
 
                     //Null values because are not implemented on server yet
                     Friend friend = new Friend(bio,publicEmail,dateLastPosition, position, name, phone, surname,avatar_url,avatar_md5);
-                    this.mutualFriends.add(friend);
+
+                    if (!contactsPendingToDelete.contains(friend.getPublicEmail()))this.mutualFriends.add(friend);
                 }catch(Exception e){
                     Log.e("Caused:", e.getCause().toString());
                 }
@@ -307,7 +323,15 @@ public class SafegeesDAO {
         return authorisedFriends;
     }
 
-
+    public Friend getFriendWithEmail(String email){
+        Boolean find = false;
+        for (int i = 0 ; i < this.mutualFriends.size() && !find; i++){
+            if (email.equals(mutualFriends.get(i).getPublicEmail())){
+                return mutualFriends.get(i);
+            }
+        }
+        return null;
+    }
 
 
 

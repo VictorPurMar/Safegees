@@ -34,7 +34,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.safegees.safegees.R;
-import org.safegees.safegees.gui.adapters.ContactAdaptet;
+import org.safegees.safegees.gui.adapters.ContactAdapter;
 import org.safegees.safegees.gui.decoration.DividerItemDecoration;
 import org.safegees.safegees.model.Friend;
 import org.safegees.safegees.util.SafegeesDAO;
@@ -124,7 +124,7 @@ public class PreferencesFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        mAdapter = new ContactAdaptet(friends);
+        mAdapter = new ContactAdapter(friends);
         mRecyclerView.setAdapter(mAdapter);
 
         return view;

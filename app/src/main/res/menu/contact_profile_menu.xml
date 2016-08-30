@@ -7,24 +7,26 @@
         <item
             android:id="@+id/menu_show_on_map"
             android:icon="@android:drawable/ic_dialog_map"
-            android:title="@string/menu_map"
+            android:title="@string/appbar_map"
+            android:titleCondensed="@string/appbar_map"
+            app:showAsAction="ifRoom"/>
+
+        <item
+            android:id="@+id/menu_call"
+            android:icon="@android:drawable/ic_menu_call"
+            android:title="@string/appbar_phone"
             app:showAsAction="ifRoom"/>
 
         <item
             android:id="@+id/menu_email"
             android:icon="@android:drawable/ic_dialog_email"
-            android:title="@string/prompt_email"
-            app:showAsAction="ifRoom"/>
-        <item
-            android:id="@+id/menu_call"
-            android:icon="@android:drawable/ic_menu_call"
-            android:title="@string/menu_contacts"
+            android:title="@string/appbar_email"
             app:showAsAction="ifRoom"/>
 
         <item
             android:id="@+id/menu_delete_contact"
             android:icon="@android:drawable/ic_menu_delete"
-            android:title="@string/menu_contacts"
+            android:title="@string/appbar_delete"
             app:showAsAction="ifRoom"/>
 
         <!-- Settings, should always be in the overflow -->

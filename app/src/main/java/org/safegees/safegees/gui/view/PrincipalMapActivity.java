@@ -51,6 +51,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -119,13 +120,15 @@ public class PrincipalMapActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
 
-
         this.floatingAddContactButton = (FloatingActionButton) findViewById(R.id.fab_add_contact);
         this.floatingAddContactButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Adding contact", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Snackbar snackbar = Snackbar.make(view, getResources().getString(R.string.snack_adding_contact), Snackbar.LENGTH_LONG)
+                        .setAction("Action", null);
+                View snackBarLayout = snackbar.getView();
+                snackBarLayout.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorCadaquesAccentDark));
+                snackbar.show();
                 //Stablish the action of contact add
                 addContactPopup();
             }
@@ -145,11 +148,7 @@ public class PrincipalMapActivity extends AppCompatActivity
         });
         */
 
-        if(Connectivity.isNetworkAvaiable(this)) {
-            connectivityOn();
-        }else{
-            connectivityOff();
-        }
+
 
         //The drawer Layout is the Lateral menu
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -169,6 +168,7 @@ public class PrincipalMapActivity extends AppCompatActivity
 
 
         loadNavMenuProfile();
+
         instance = this;
     }
 
@@ -206,9 +206,15 @@ public class PrincipalMapActivity extends AppCompatActivity
     @Override
     public void onStart() {
         super.onStart();
-
+        if(Connectivity.isNetworkAvaiable(this)) {
+            connectivityOn();
+        }else{
+            connectivityOff();
+        }
+        SafegeesDAO.refreshInstance(this);
 
     }
+
 
     @Override
     public void onStop() {
@@ -251,8 +257,6 @@ public class PrincipalMapActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
 
-
-
         this.menuUpdate = menu.findItem(R.id.menu_update);
         this.menuInvitations = menu.findItem(R.id.menu_invitations);
 
@@ -262,7 +266,7 @@ public class PrincipalMapActivity extends AppCompatActivity
         return true;
     }
 
-    private void showInvitations() {
+    public void showInvitations() {
         SafegeesDAO dao = SafegeesDAO.getInstance(getApplicationContext());
         ArrayList<Friend> friends = dao.getNonAutorisedFriends();
         if (friends.size()==0){
@@ -277,9 +281,9 @@ public class PrincipalMapActivity extends AppCompatActivity
         if (friends.size()>0){
             final Friend friend = friends.get(0);
             new AlertDialog.Builder(context)
-                    .setTitle("Invitation")
-                    .setMessage("You have received an invitation from \n" + friend.getName() + " " + friend.getSurname() + "\n"+friend.getPublicEmail())
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    .setTitle(getResources().getString(R.string.invitation_title))
+                    .setMessage(getResources().getString(R.string.invitation_text) + friend.getName() + " " + friend.getSurname() + "\n"+friend.getPublicEmail())
+                    .setPositiveButton(context.getResources().getString(R.string.invitation_accept), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             String userEmail = MainActivity.DATA_STORAGE.getString(getApplicationContext().getString(R.string.KEY_USER_MAIL));
                             //Add the contact
@@ -290,28 +294,41 @@ public class PrincipalMapActivity extends AppCompatActivity
                             if (friends.size()>0){
                                 launchInvitationsDialog(context,friends);
                             }else{
-                                menuInvitations.setVisible(false);
                                 update();
                             }
+
                         }
                     })
-                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    .setNegativeButton(context.getResources().getString(R.string.invitation_cancel), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
+                            deleteContact(context, friends);
+
                             friends.remove(friend);
                             if (friends.size()>0){
                                 launchInvitationsDialog(context,friends);
                             }else{
-                                menuInvitations.setVisible(false);
                                 update();
                             }
                         }
-                    })
-                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    }).setNeutralButton(context.getResources().getString(R.string.invitation_next), new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                        friends.remove(friend);
+                        if (friends.size()>0){
+                            launchInvitationsDialog(context,friends);
+                        }
+                }
+            }).setIcon(R.mipmap.ic_launcher)
                     .show();
         }else{
             this.menuInvitations.setVisible(false);
         }
 
+    }
+
+    private void deleteContact(Context context, ArrayList<Friend> friends) {
+        String userEmail = MainActivity.DATA_STORAGE.getString(getApplicationContext().getString(R.string.KEY_USER_MAIL));
+        ShareDataController sssdc = new ShareDataController();
+        sssdc.deleteContact(context, userEmail, friends.get(0).getPublicEmail());
     }
 
     @Override
@@ -330,12 +347,15 @@ public class PrincipalMapActivity extends AppCompatActivity
                 return true;
             case R.id.menu_invitations:
                 SafegeesDAO dao = SafegeesDAO.getInstance(getApplicationContext());
-                ArrayList<Friend> friends = dao.getNonAutorisedFriends();
+                ArrayList<Friend> friends = (ArrayList<Friend>) dao.getNonAutorisedFriends().clone();
                 launchInvitationsDialog(this,friends);
                 return true;
             case R.id.menu_update:
-                Snackbar.make(this.getMapFragment().getView(), "Updating data", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Snackbar snackbar = Snackbar.make(this.getMapFragment().getView(), getResources().getString(R.string.updating_data), Snackbar.LENGTH_LONG)
+                        .setAction("Action", null);
+                View snackBarLayout = snackbar.getView();
+                snackBarLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorCadaquesAccentDark));
+                snackbar.show();
                 PrincipalMapActivity.getInstance().update();
                 return true;
             default:
@@ -379,8 +399,10 @@ public class PrincipalMapActivity extends AppCompatActivity
             this.connectivityOff();
 
         } else */ if (id == R.id.nav_contacts) {
+            this.menuInvitations.setVisible(false);
             this.floatingAddContactButton.show();
-            Fragment fg = ContactsFragment.newInstance();
+
+            contactsFragment = (ContactsFragment) ContactsFragment.newInstance();
             //Fragment acFrag = getActiveFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
@@ -390,13 +412,14 @@ public class PrincipalMapActivity extends AppCompatActivity
                 transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
 
             }
-            transaction.replace(R.id.map, fg, "contacts").addToBackStack("contacts");
+            transaction.replace(R.id.map, contactsFragment, "contacts").addToBackStack("contacts");
             transaction.commit();
 
             mapFragment.onPause();
 
             this.connectivityOff();
         } else if (id == R.id.nav_map) {
+            showInvitations();
             this.floatingAddContactButton.hide();
             if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -411,6 +434,7 @@ public class PrincipalMapActivity extends AppCompatActivity
 
             this.connectivityOn();
         } else if (id == R.id.nav_info) {
+            this.menuInvitations.setVisible(false);
             this.floatingAddContactButton.hide();
             this.infoFragment = InfoFragment.newInstance();
             //Fragment acFrag = getActiveFragment();
@@ -496,6 +520,7 @@ public class PrincipalMapActivity extends AppCompatActivity
 
     public void showMapFragment(){
         this.menuUpdate.setVisible(false);
+        if (this.menuInvitations != null) this.showInvitations();
         this.floatingAddContactButton.hide();
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -544,15 +569,17 @@ public class PrincipalMapActivity extends AppCompatActivity
      * Updates the data
      * Download new data with ShareDataController this method calls PrincipalMapActivity build method when is finished
      */
-    private void update(){
+    public void update(){
 
             if (Connectivity.isNetworkAvaiable(this)){
                 //Download data
                 ShareDataController sddm = new ShareDataController();
                 sddm.run(this);
-                showInvitations();
+
                 //Refresh Map (The map is actually refreshed diectly by ShareDataController on success
                 //mapFragment.refreshMap();
+            }else{
+                SafegeesDAO.refreshInstance(this);
             }
 
     }
@@ -591,22 +618,26 @@ public class PrincipalMapActivity extends AppCompatActivity
             //Send User Image
             this.sendUserImage();
         }else if(requestCode == REQUEST_CONTACTS_CODE && resultCode == Activity.RESULT_OK){
-            this.floatingAddContactButton.hide();
             if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
                 transaction.remove(getActiveFragment());
                 getSupportFragmentManager().popBackStack();
                 transaction.commitAllowingStateLoss();
-                //super.onBackPressed();
             }
-
             mapFragment.onResume();
             this.connectivityOn();
+        }else if(requestCode == REQUEST_CONTACTS_CODE && resultCode == Activity.RESULT_CANCELED){
+            //Refresh the contacts fragment adapter list view
+            if (this.contactsFragment != null) {
+                this.contactsFragment.refresh();
+
+            }
+            //this.onBackPressed();
         }
 
         if (data != null){
+            //data != null when image data is received
             Log.e("DATA", data.getDataString());
             ProfileUserFragment myFragment = (ProfileUserFragment) getSupportFragmentManager().findFragmentByTag("profile");
             if (myFragment != null && myFragment.isVisible()) {
@@ -614,7 +645,6 @@ public class PrincipalMapActivity extends AppCompatActivity
                 myFragment.setImageBitmap(bitmap);
                 //Store in /images
                 ImageController.storeUserImage(this);
-
                 //Reload the header image
                 loadNavMenuProfile();
             }
@@ -649,6 +679,7 @@ public class PrincipalMapActivity extends AppCompatActivity
     }
 
     public void showProfile(View v){
+        this.floatingAddContactButton.hide();
         Fragment fg = ProfileUserFragment.newInstance();
 
         //Fragment acFrag = getActiveFragment();
@@ -723,6 +754,7 @@ public class PrincipalMapActivity extends AppCompatActivity
         ShareDataController sssdc = new ShareDataController();
         sssdc.sendUserImageFile(getApplicationContext(), SafegeesDAO.getInstance(getApplicationContext()).getPublicUser().getPublicEmail());
     }
+
 
 
 }

@@ -99,6 +99,7 @@ public class SafegeesConnectionManager {
     static String SERVICE_POI = "map";
     static String SERVICE_UPDATE = "update";
     static String SERVICE_UPLOAD_IMAGE_URL = "upload_url";
+    static String SERVICE_UNTRUST = "untrust";
 
 
     //GET AND POST FIELDS
@@ -111,6 +112,7 @@ public class SafegeesConnectionManager {
     static String KEY_SURNAME = "surname";
     static String KEY_PHONE = "phone";
     static String KEY_BIO = "topic";
+    static String KEY_DELETE_CONTACT = "untrusted_email";
     static String KEY_DELETE = "delete";
 
 
@@ -314,9 +316,9 @@ public class SafegeesConnectionManager {
     }
 
     public boolean deleteContact(String userMail, String userPassword, String contactEmail){
-        String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_AUTHORIZE + SEPARATOR;
+        String url = WEB_BASE + SERVICE_KEY_USER + SEPARATOR + SERVICE_AUTHORIZE + SEPARATOR + SERVICE_UNTRUST + SEPARATOR;
         HashMap<String, String> mp = new HashMap<String, String>();
-        mp.put(KEY_DELETE,contactEmail);
+        mp.put(KEY_DELETE_CONTACT,contactEmail);
         String auth = this.getAuth(userMail, userPassword);
         String response  = new HttpUrlConnection().performPostCall(url, mp, auth);
 

@@ -185,6 +185,7 @@ import java.util.ArrayList;
 
                 final MainActivity mainActivity = this;
 
+
                 //Download data
                 this.adviceUser.setText(getResources().getString(R.string.splash_advice_download_info_hub));
 
@@ -201,6 +202,8 @@ import java.util.ArrayList;
                                 infoWebUrls.remove(nextUrl);
                                 webView.loadUrl(nextUrl);
                             }else{
+                                //Only one time
+                                DATA_STORAGE.putBoolean(mainActivity.getResources().getString(R.string.KEY_INFO_WEB), true);
                                 //Start the loggin for result
                                 Intent loginInt = new Intent(mainActivity, LoginActivity.class);
                                 startActivityForResult(loginInt, 1);
@@ -214,7 +217,7 @@ import java.util.ArrayList;
                 webView.getSettings().setJavaScriptEnabled( true );
                 webView.setWebChromeClient(new WebChromeClient());
 
-                if (StoredDataQuequesManager.getAppUsersMap(mainActivity).size() == 0) {
+                if (StoredDataQuequesManager.getAppUsersMap(mainActivity).size() == 0 && !DATA_STORAGE.getBoolean(getResources().getString(R.string.KEY_INFO_WEB))) {
                     webView.loadUrl(nextUrl);
                 }else{
                     if(DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)) != null && DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)).length()>0){

@@ -32,6 +32,25 @@
         completions."
     </string>
 
+    <string name="updating_data">Updating data</string>
+    <!-- DELETE CONTACT -->
+    <string name="delete_contact_title">Delete contact</string>
+    <string name="delete_contact_advice_text">Are you sure you want to delete this contact?</string>
+    <string name="delete_contact_accept_button">delete</string>
+    <string name="delete_contact_cancel_button">cancel</string>
+
+    <string name="snack_adding_contact">Adding contact</string>
+    <!-- INVITATION MENU -->
+    <string name="invitation_title" translatable="false">Invitation</string>
+    <string name="invitation_text" translatable="false">You have received an invitation from:\n</string>
+    <string name="invitation_accept" translatable="false">connect</string>
+    <string name="invitation_cancel" translatable="false">cancel</string>
+    <string name="invitation_next" translatable="false">next</string>
+
+    <string name="appbar_map" translatable="false">show on map</string>
+    <string name="appbar_email" translatable="false">send a email</string>
+    <string name="appbar_phone" translatable="false">call by phone</string>
+    <string name="appbar_delete" translatable="false">delete contact</string>
 
     //Last camera position
 
@@ -130,6 +149,7 @@
     <string name="KEY_DELETE_USERS" translatable="false">delete_users</string>
     <string name="KEY_USER_POSITIONS" translatable="false">user_position</string>
     <string name="KEY_USER_BASIC_DATA" translatable="false">user_basic_data</string>
+    <string name="KEY_INFO_WEB" translatable="false">info_web</string>
     //MAP
     <string name="MAP_LAST_LAT" translatable="false">LAST_LAT</string>
     <string name="MAP_LAST_LON" translatable="false">LAST_LON</string>

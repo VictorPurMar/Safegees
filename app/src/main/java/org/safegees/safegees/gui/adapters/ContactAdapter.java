@@ -15,9 +15,14 @@ import org.safegees.safegees.gui.view.PrincipalMapActivity;
 import org.safegees.safegees.model.Friend;
 import org.safegees.safegees.util.ImageController;
 
-public class ContactAdaptet extends RecyclerView.Adapter<ContactAdaptet.ViewHolder> {
+public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHolder> {
     private ArrayList<Friend> mDataset;
     private View view;
+
+    public void setFriendsDataArrayList(ArrayList<Friend> mDataset){
+        this.mDataset = mDataset;
+        notifyDataSetChanged();
+    }
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -48,13 +53,13 @@ public class ContactAdaptet extends RecyclerView.Adapter<ContactAdaptet.ViewHold
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public ContactAdaptet(ArrayList<Friend> myDataset) {
+    public ContactAdapter(ArrayList<Friend> myDataset) {
         mDataset = myDataset;
     }
 
     // Create new views (invoked by the layout manager)
     @Override
-    public ContactAdaptet.ViewHolder onCreateViewHolder(ViewGroup parent,
+    public ContactAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                         int viewType) {
         // create a new view
         view = LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_listview_field_layout, parent, false);
@@ -76,6 +81,7 @@ public class ContactAdaptet extends RecyclerView.Adapter<ContactAdaptet.ViewHold
         if (friend.getPublicEmail() != null){
             Bitmap bitmap = ImageController.getContactImageBitmap(view.getContext(),friend.getPublicEmail());
             if (bitmap != null) holder.avatar.setImageBitmap(bitmap);
+
         }
 
         holder.itemView.setOnClickListener(new OnClickListener() {

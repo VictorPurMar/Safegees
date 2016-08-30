@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -14,13 +16,17 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableStringBuilder;
+import android.text.style.ImageSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.osmdroid.api.IMapController;
@@ -56,6 +62,7 @@ import org.safegees.safegees.model.LatLng;
 import org.safegees.safegees.model.POI;
 import org.safegees.safegees.util.Connectivity;
 import org.safegees.safegees.util.FileManager;
+import org.safegees.safegees.util.ImageController;
 import org.safegees.safegees.util.SafegeesDAO;
 import org.safegees.safegees.util.ShareDataController;
 
@@ -343,7 +350,7 @@ public class MapFragment extends Fragment {
                     Friend friend = friends.get(i);
                     LatLng latLng = friend.getPosition();
                     GeoPoint geopoint = new GeoPoint(latLng.getLatitude(), latLng.getLongitude());
-                    OverlayItem item = new OverlayItem(""+i,friend.getName() + " " + friend.getSurname(), friend.getName().substring(0,1)+"."+friend.getSurname().substring(0,1), geopoint);
+                    OverlayItem item = new OverlayItem(""+i,friend.getPublicEmail(), friend.getBio(), geopoint);
                     item.setMarker(contactDrawable);
                     contactList.add(item);
                 }
@@ -390,23 +397,59 @@ public class MapFragment extends Fragment {
                     toast.setGravity(Gravity.TOP | Gravity.RIGHT, 5, actionBarHeight + 10);
                     toast.show();
                     */
+                    /*
+                    SpannableStringBuilder builder = new SpannableStringBuilder();
+                    builder.setSpan(new ImageSpan(getActivity(), R.drawable.default_user_rounded), builder.length() - 1, builder.length(), 0);
+                    builder.append(" ").append(overlay.getTitle());
+                    Snackbar.make(PrincipalMapActivity.getInstance().getMapFragment().getView(), builder, Snackbar.LENGTH_LONG).setAction("MORE", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            int friendPosition = Integer.parseInt(overlay.getUid());
+                            Intent i = new Intent(view.getContext(), ContactProfileActivity.class);
+                            i.putExtra("position", friendPosition);
+                            view.getContext().startActivity(i);
+                        }
+                    }).show();
+                    */
+
+                    SafegeesDAO DAO = SafegeesDAO.getInstance(getContext());
+                    Friend friend = sDAO.getFriendWithEmail(overlay.getTitle());
+                    Drawable dr = null;
+                    try{
+                        dr = new BitmapDrawable(ImageController.getContactImageBitmap(getContext(),friend.getPublicEmail()));
+                    }catch (Exception e){}
+
                     Snackbar snackbar = Snackbar
                                 //.make(PrincipalMapActivity.getInstance().getFloatingButton(), overlay.getTitle(), Snackbar.LENGTH_LONG)
-                                .make(PrincipalMapActivity.getInstance().getMapFragment().getView(), overlay.getTitle(), Snackbar.LENGTH_LONG)
+                                .make(PrincipalMapActivity.getInstance().getMapFragment().getView(), friend.getName() + " " + friend.getSurname() +"\n\""+ friend.getBio()+"\"", Snackbar.LENGTH_LONG)
                                 .setAction("MORE", new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                    /*
-                                    Snackbar snackbar1 = Snackbar.make(PrincipalMapActivity.getInstance().getFloatingButton(), "Message is restored!", Snackbar.LENGTH_SHORT);
-                                    snackbar1.show();
-                                    */
+
                                         int friendPosition = Integer.parseInt(overlay.getUid());
                                         Intent i = new Intent(view.getContext(), ContactProfileActivity.class);
                                         i.putExtra("position", friendPosition);
                                         view.getContext().startActivity(i);
                                     }
                                 });
+
+
+
+                        View snackBarLayout = snackbar.getView();
+                        snackBarLayout.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorCadaquesAccentDark));
+                        TextView textView = (TextView)snackBarLayout.findViewById(android.support.design.R.id.snackbar_text);
+                        textView.setMaxLines(4); // Change your max lines
+                        textView.setTextSize(15);
+                        if (dr == null)dr = ContextCompat.getDrawable(getActivity().getApplicationContext(),R.drawable.default_user_rounded);
+                        dr.setBounds(0,0,150,150);
+                        //textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.default_user_rounded, 0, 0, 0);
+                        textView.setCompoundDrawables(dr, null, null, null);
+                        textView.setCompoundDrawablePadding(getResources().getDimensionPixelOffset(R.dimen.snackbar_contact_image));
+
                         snackbar.show();
+
+
                         return false;
                 }
 

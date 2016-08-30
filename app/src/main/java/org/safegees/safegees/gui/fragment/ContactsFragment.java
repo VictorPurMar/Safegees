@@ -34,7 +34,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.safegees.safegees.R;
-import org.safegees.safegees.gui.adapters.ContactAdaptet;
+import org.safegees.safegees.gui.adapters.ContactAdapter;
 import org.safegees.safegees.gui.decoration.DividerItemDecoration;
 import org.safegees.safegees.model.Friend;
 import org.safegees.safegees.util.SafegeesDAO;
@@ -66,8 +66,9 @@ public class ContactsFragment extends Fragment {
 
     //List view (Recicler) implementation
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private View view;
+    private ContactAdapter cAdapter;
 
     public ContactsFragment() {
         // Required empty public constructor
@@ -81,15 +82,7 @@ public class ContactsFragment extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment ProfileUserFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static ContactsFragment newInstance(String param1, String param2) {
-        ContactsFragment fragment = new ContactsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -104,7 +97,7 @@ public class ContactsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_contacts, container, false);
+        view = inflater.inflate(R.layout.fragment_contacts, container, false);
         // Inflate the layout for this fragment
 
 
@@ -126,8 +119,8 @@ public class ContactsFragment extends Fragment {
 
         // specify an adapter (see also next example)
         if (friends != null && friends.size() != 0) {
-            mAdapter = new ContactAdaptet(friends);
-            mRecyclerView.setAdapter(mAdapter);
+            this.cAdapter = new ContactAdapter(friends);
+            mRecyclerView.setAdapter(cAdapter);
         }
 
         return view;
@@ -167,6 +160,16 @@ public class ContactsFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
+
+    public void refresh(){
+        SafegeesDAO sDAO = SafegeesDAO.refreshInstance(getActivity());
+        ArrayList<Friend> friends = sDAO.getMutualFriends();
+        if (friends != null && friends.size() != 0) {
+            cAdapter.setFriendsDataArrayList(friends);
+        }
+
+    }
+
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);

@@ -1,6 +1,7 @@
 package org.safegees.safegees.util;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -11,6 +12,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
@@ -67,7 +69,16 @@ public class ImageController {
             e.printStackTrace();
             Log.e("IMAGE ERROR", e.getMessage());
         }
+        //Return default i
+        if (bitmap == null) bitmap = getBitmapFromAsset(context);
+
         return null;
+    }
+
+    public static Bitmap getBitmapFromAsset(Context context) {
+        Drawable myDrawable = context.getResources().getDrawable(R.drawable.default_user_rounded);
+        Bitmap bitmap = ((BitmapDrawable) myDrawable).getBitmap();
+        return bitmap;
     }
 
     public static void storeUserImage(Context context) {

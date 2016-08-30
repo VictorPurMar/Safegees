@@ -66,7 +66,6 @@ public class StoredDataQuequesManager {
     private static String KEY_JSON_APP_USERS_TITLE = "appUsersJSON";
     private static String KEY_JSON_USER_POSITION_TITLE = "setUserPositionJSON";
     private static String KEY_JSON_USER_BASIC_DATA_TITLE = "setUserBasicDataJSON";
-    private static String KEY_JSON_USER_IMAGE_TO_UPLOAD_TITLE = "userImagesToUploadJSON";
 
     private static String KEY_JSON_USER_EMAIL = "userEmail";
     private static String KEY_JSON_CONTACT_TO_ADD = "contactToAdd";
@@ -74,7 +73,6 @@ public class StoredDataQuequesManager {
     private static String KEY_JSON_USER_PASSWORD = "password";
     private static String KEY_JSON_USER_POSITION = "position";
     private static String KEY_JSON_USER_BASIC_DATA = "userData";
-    private static String KEY_JSON_USER_IMAGES_TO_UPLOAD = "userImages";
 
 
     public static String getUserPassword(Context context, String userMail){
@@ -117,6 +115,12 @@ public class StoredDataQuequesManager {
         String storedJSONStringKEY = context.getResources().getString(R.string.KEY_USER_BASIC_DATA);
         String jsonResourceKey = context.getResources().getString(KEY_USER_BASIC_DATA_JSON);
         return putInStorageJSON(userMail, jsonBasicUserData, storedJSONStringKEY, jsonResourceKey, KEY_JSON_USER_BASIC_DATA_TITLE, KEY_JSON_USER_EMAIL, KEY_JSON_USER_BASIC_DATA, true);
+    }
+
+    public static boolean putUserContactToDeleteInQueque(Context context, String userMail, String emailToDelete){
+        String storedJSONStringKEY = context.getResources().getString(R.string.KEY_DELETE_USERS);
+        String jsonResourceKey = context.getResources().getString(KEY_DELETE_USER_JSON);
+        return putInStorageJSON(userMail, emailToDelete, storedJSONStringKEY, jsonResourceKey, KEY_JSON_DELETE_USERS_TITLE, KEY_JSON_USER_EMAIL, KEY_JSON_CONTACT_TO_DELETE, false);
     }
 
 
@@ -271,6 +275,94 @@ public class StoredDataQuequesManager {
         String userPositions = MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_USER_POSITIONS));
         return getStoredMap(KEY_JSON_USER_EMAIL, KEY_JSON_USER_POSITION, KEY_JSON_USER_POSITION_TITLE, userPositions);
     }
+
+    public static HashMap<String,ArrayList<String>>  getAddContactsArrayListQueque(Context context){
+        HashMap<String,ArrayList<String>> addContacts = new HashMap<String, ArrayList<String>>();
+        String addContact = MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_ADD_USERS));
+        ArrayList<String> allKeys = new ArrayList<String>();
+
+        try{
+            JSONObject json = new JSONObject(addContact);
+            JSONArray ja = json.getJSONArray(KEY_JSON_ADD_USERS_TITLE);
+            for(int i = 0 ; i < ja.length() ; i++){
+                JSONObject value= ja.getJSONObject(i);
+                String uMail = value.getString(KEY_JSON_USER_EMAIL);
+                allKeys.add(uMail);
+                //String userValueParametter = value.getString(KEY_JSON_CONTACT_TO_DELETE);
+                //userMap.put(uMail, userValueParametter);
+            }
+
+        } catch (JSONException e) {
+            //e.printStackTrace();
+            Log.e("StoredDataQuequesManage", "getStoredMap" + " failed to parse a JSON " + KEY_JSON_ADD_USERS_TITLE);
+        }
+
+        if (allKeys!= null && allKeys.size()>0){
+            for (int i = 0 ; i < allKeys.size() ; i++){
+                String key = allKeys.get(i);
+                try{
+                    ArrayList <String> addMails = new ArrayList<String>();
+                    JSONObject json = new JSONObject(addContact);
+                    JSONArray ja = json.getJSONArray(KEY_JSON_ADD_USERS_TITLE);
+                    for(int j = 0 ; j < ja.length() ; j++){
+                        JSONObject value= ja.getJSONObject(j);
+                        String uMail = value.getString(KEY_JSON_USER_EMAIL);
+                        if (uMail.equals(key)){
+                            String userValueParametter = value.getString(KEY_JSON_CONTACT_TO_ADD);
+                            if (!addMails.contains(userValueParametter))addMails.add(userValueParametter);
+                        }
+                    }
+                    addContacts.put(key,addMails);
+                }catch (Exception e){}
+            }
+        }
+        return addContacts;
+    }
+
+    public static HashMap<String,ArrayList<String>>  getDeleteContactsArrayListQueque(Context context){
+        HashMap<String,ArrayList<String>> addContacts = new HashMap<String, ArrayList<String>>();
+        String addContact = MainActivity.DATA_STORAGE.getString(context.getResources().getString(R.string.KEY_DELETE_USERS));
+        ArrayList<String> allKeys = new ArrayList<String>();
+
+        try{
+            JSONObject json = new JSONObject(addContact);
+            JSONArray ja = json.getJSONArray(KEY_JSON_DELETE_USERS_TITLE);
+            for(int i = 0 ; i < ja.length() ; i++){
+                JSONObject value= ja.getJSONObject(i);
+                String uMail = value.getString(KEY_JSON_USER_EMAIL);
+                allKeys.add(uMail);
+                //String userValueParametter = value.getString(KEY_JSON_CONTACT_TO_DELETE);
+                //userMap.put(uMail, userValueParametter);
+            }
+
+        } catch (JSONException e) {
+            //e.printStackTrace();
+            Log.e("StoredDataQuequesManage", "getStoredMap" + " failed to parse a JSON " + KEY_JSON_DELETE_USERS_TITLE);
+        }
+
+        if (allKeys!= null && allKeys.size()>0){
+            for (int i = 0 ; i < allKeys.size() ; i++){
+                String key = allKeys.get(i);
+                try{
+                    ArrayList <String> addMails = new ArrayList<String>();
+                    JSONObject json = new JSONObject(addContact);
+                    JSONArray ja = json.getJSONArray(KEY_JSON_DELETE_USERS_TITLE);
+                    for(int j = 0 ; j < ja.length() ; j++){
+                        JSONObject value= ja.getJSONObject(j);
+                        String uMail = value.getString(KEY_JSON_USER_EMAIL);
+                        if (uMail.equals(key)){
+                            String userValueParametter = value.getString(KEY_JSON_CONTACT_TO_DELETE);
+
+                            if (!addMails.contains(userValueParametter))addMails.add(userValueParametter);
+                        }
+                    }
+                    addContacts.put(key,addMails);
+                }catch (Exception e){}
+            }
+        }
+        return addContacts;
+    }
+
 
 
 
