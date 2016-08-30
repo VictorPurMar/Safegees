@@ -69,7 +69,7 @@ public class ImageController {
             e.printStackTrace();
             Log.e("IMAGE ERROR", e.getMessage());
         }
-        //Return default i
+        //Return default grey user image
         if (bitmap == null) bitmap = getBitmapFromAsset(context);
 
         return null;
