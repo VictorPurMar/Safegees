@@ -5,45 +5,23 @@
     tools:context="org.safegees.safegees.gui.fragment.ProfileUserFragment"
     android:background="@color/colorPrimaryBright">
 
-   <!-- <ImageButton
-        android:id="@+id/close_contact"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:src="@drawable/ic_close_black_24dp"
-        android:layout_margin="0dp"
-        android:layout_gravity="end"
-        android:background="@android:color/transparent"/>-->
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
         <LinearLayout
-            android:id="@+id/contact_left"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true">
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:background="@drawable/ic_chevron_left_black_24dp"
-                android:layout_gravity="center_vertical"
-                android:backgroundTint="@color/colorCadaques"
-                android:tint="@color/colorCadaques"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_marginTop="@dimen/fab_margin"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_toRightOf="@+id/contact_left"
-            android:layout_toLeftOf="@+id/contact_right"
-            android:paddingBottom="@dimen/activity_vertical_margin"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_vertical_margin">
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/contact_left"
+                android:layout_width="0dp"
+                android:layout_height="24dp"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/ic_chevron_left_black_24dp"
+                android:backgroundTint="@color/colorCadaques"
+                android:tint="@color/colorCadaques">
+            </ImageView>
             <ScrollView
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="12"
                 android:layout_margin="@dimen/fab_margin">
 
                 <LinearLayout
@@ -60,6 +38,23 @@
                         android:scaleType="centerCrop"
                         android:layout_gravity="center"/>
 
+                        <TextView
+                            android:id="@+id/editTopic"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textStyle="italic"
+                            android:text="your public message"
+                            android:selectAllOnFocus="false"
+                            android:singleLine="false"
+                            android:focusable="false"
+                            android:background="@drawable/text_view_border"
+                            android:textColor="@color/colorCadaquesAccentExtraDark"
+                            android:padding="@dimen/fab_margin"
+                            android:tag="topic"
+                            android:textDirection="locale"
+                            android:textAlignment="gravity"
+                            />
+
                     <LinearLayout
                         android:id="@+id/lay_name"
                         android:layout_width="match_parent"
@@ -68,26 +63,29 @@
                         android:tag="name"
                         android:layout_marginTop="10dp">
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Name"
+                            android:text="@string/profile_name"
                             android:layout_marginTop="5dp"
-                            android:textColor="@color/colorAccent"
+                            android:textColor="@color/colorCadaquesAccentDark"
+                            android:textDirection="locale"
+                            android:textAlignment="gravity"
                             />
                         <EditText
                             android:id="@+id/editName"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:capitalize="words"
                             android:maxLines="1"
                             android:hint="your name"
-                            android:editable="false"
                             android:selectAllOnFocus="false"
                             android:singleLine="true"
-                            android:inputType="textFilter"                             android:focusable="false"
+                            android:focusable="false"
+                            android:inputType="none|textNoSuggestions"
                             android:background="@android:color/transparent"
                             android:textColor="@color/colorPrimaryExtraDark"
-                            android:tag="name"/>
+                            android:tag="name"
+                            android:textDirection="locale"
+                            android:textAlignment="gravity"/>
 
                     </LinearLayout>
                     <LinearLayout
@@ -96,29 +94,32 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:tag="surname"
-                        android:layout_marginTop="10dp">
+                        android:layout_marginTop="10dp"
+                        >
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Surname"
+                            android:text="@string/profile_surname"
                             android:layout_marginTop="5dp"
-                            android:textColor="@color/colorAccent"
+                            android:textColor="@color/colorCadaquesAccentDark"
+                            android:textDirection="locale"
+                            android:textAlignment="gravity"
                             />
                         <EditText
-                            android:inputType="textFilter"
+                            android:inputType="none|textNoSuggestions"
                             android:id="@+id/editSurname"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:capitalize="words"
                             android:maxLines="1"
                             android:hint="your surname"
-                            android:editable="false"
                             android:selectAllOnFocus="false"
                             android:singleLine="true"
                             android:focusable="false"
                             android:background="@android:color/transparent"
                             android:textColor="@color/colorPrimaryExtraDark"
-                            android:tag="surname"/>
+                            android:tag="surname"
+                            android:textDirection="locale"
+                            android:textAlignment="gravity"/>
 
                     </LinearLayout>
                     <LinearLayout
@@ -129,28 +130,28 @@
                         android:tag="publicEmail"
                         android:layout_marginTop="10dp">
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Email"
+                            android:text="@string/profile_email"
                             android:layout_marginTop="5dp"
-                            android:textColor="@color/colorAccent"
-                            />
+                            android:textColor="@color/colorCadaquesAccentDark"
+                            android:textDirection="locale"
+                            android:textAlignment="gravity"/>
                         <EditText
-                            android:inputType="textFilter"
+                            android:inputType="none|textNoSuggestions"
                             android:id="@+id/editEmail"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:capitalize="words"
                             android:maxLines="1"
                             android:hint="your email"
-                            android:editable="false"
                             android:selectAllOnFocus="false"
                             android:singleLine="true"
                             android:focusable="false"
                             android:background="@android:color/transparent"
                             android:textColor="@color/colorPrimaryExtraDark"
-                            android:tag="publicEmail"/>
-
+                            android:tag="publicEmail"
+                            android:textDirection="locale"
+                            android:textAlignment="gravity"/>
                     </LinearLayout>
                     <LinearLayout
                         android:id="@+id/lay_phone"
@@ -160,76 +161,42 @@
                         android:tag="phone"
                         android:layout_marginTop="10dp">
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Phone"
+                            android:text="@string/profile_phone"
                             android:layout_marginTop="5dp"
-                            android:textColor="@color/colorAccent"
+                            android:textColor="@color/colorCadaquesAccentDark"
+                            android:textDirection="locale"
+                            android:textAlignment="gravity"
                             />
                         <EditText
-                            android:inputType="textFilter"
+                            android:inputType="none|textNoSuggestions"
                             android:id="@+id/editPhone"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:capitalize="words"
                             android:maxLines="1"
                             android:hint="your phone"
-                            android:editable="false"
                             android:selectAllOnFocus="false"
                             android:singleLine="true"
                             android:focusable="false"
                             android:background="@android:color/transparent"
                             android:textColor="@color/colorPrimaryExtraDark"
-                            android:tag="phone"/>
+                            android:tag="phone"
+                            android:textDirection="locale"
+                            android:textAlignment="gravity"/>
                     </LinearLayout>
-                    <LinearLayout
-                        android:id="@+id/lay_topic"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:tag="topic"
-                        android:layout_marginTop="10dp">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Public message"
-                            android:layout_marginTop="5dp"
-                            android:textColor="@color/colorAccent"
-                            />
-                        <EditText
-                            android:inputType="textFilter"
-                            android:id="@+id/editTopic"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:capitalize="sentences"
-                            android:maxLines="5"
-                            android:hint="your public message"
-                            android:editable="false"
-                            android:selectAllOnFocus="false"
-                            android:singleLine="false"
-                            android:focusable="false"
-                            android:background="@android:color/transparent"
-                            android:textColor="@color/colorPrimaryExtraDark"
-                            android:tag="topic"
-                            />
-                    </LinearLayout>
+
                 </LinearLayout>
             </ScrollView>
-        </LinearLayout>
-        <LinearLayout
-            android:id="@+id/contact_right"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true">
             <ImageView
-                android:layout_width="24dp"
+                android:id="@+id/contact_right"
+                android:layout_width="0dp"
                 android:layout_height="24dp"
-                android:background="@drawable/ic_chevron_right_black_24dp"
+                android:layout_weight="1"
                 android:layout_gravity="center_vertical"
+                android:background="@drawable/ic_chevron_right_black_24dp"
                 android:backgroundTint="@color/colorCadaques"
-                android:tint="@color/colorCadaques"/>
+                android:tint="@color/colorCadaques">
+                </ImageView>
         </LinearLayout>
-    </RelativeLayout>
-
 </FrameLayout>

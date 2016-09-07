@@ -2,6 +2,11 @@
 <resources>
     <string name="app_name">Safegees</string>
     <string name="action_settings">إعدادات</string>
+    <string name="action_close_session">جلسة قريبة</string>
+    <string name="settings_map">رسم خريطة</string>
+    <string name="settings_data_transmission">نقل البيانات</string>
+    <string name="more">أكثر</string>
+
     <!-- LATERAL MENU -->
     <string name="menu_profile">الملف الشخصي</string>
     <string name="menu_contacts">جهات الاتصال</string>
@@ -62,6 +67,18 @@
     <string name="appbar_email">إرسال البريد الإلكتروني</string>
     <string name="appbar_phone">الاتصال عبر الهاتف</string>
     <string name="appbar_delete">حذف اتصال</string>
+
+    //Profile fields
+    <string name="profile_name">اسم</string>
+    <string name="profile_surname">لقب العائلة</string>
+    <string name="profile_email">البريد الإلكتروني</string>
+    <string name="profile_phone">هاتف</string>
+    <string name="profile_topic">الرسالة</string>
+    <string name="profile_hint_name">اسمك</string>
+    <string name="profile_hint_surname">اللقب الخاص بك</string>
+    <string name="profile_hint_email">بريدك الالكتروني</string>
+    <string name="profile_hint_phone">هاتفك</string>
+    <string name="profile_hint_topic">الرسائل العامة الخاصة بك</string>
 
 
 </resources>

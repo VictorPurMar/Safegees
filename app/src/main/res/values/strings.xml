@@ -3,6 +3,10 @@
     <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
     <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
     <string name="action_settings">Settings</string>
+    <string name="action_close_session">Close session</string>
+    <string name="settings_map">Map</string>
+    <string name="settings_data_transmission">Data transmission</string>
+    <string name="more">MORE</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
@@ -52,8 +56,17 @@
     <string name="appbar_phone">call by phone</string>
     <string name="appbar_delete">delete contact</string>
 
-    //Last camera position
-
+    //CONTACT PROFILE LAYOUT
+    <string name="profile_name">Name</string>
+    <string name="profile_surname">Surname</string>
+    <string name="profile_email">Email</string>
+    <string name="profile_phone">Phone</string>
+    <string name="profile_topic">Message</string>
+    <string name="profile_hint_name">your name</string>
+    <string name="profile_hint_surname">your surname</string>
+    <string name="profile_hint_email">your email</string>
+    <string name="profile_hint_phone">your phone</string>
+    <string name="profile_hint_topic">your public message</string>
 
     //SETINGS TEST
     <!-- Strings related to Settings -->

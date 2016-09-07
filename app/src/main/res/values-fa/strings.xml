@@ -2,6 +2,11 @@
 <resources>
     <string name="app_name">Safegees</string>
     <string name="action_settings">تنظیمات</string>
+    <string name="action_close_session">نزدیک جلسه</string>
+    <string name="settings_map">نقشه</string>
+    <string name="settings_data_transmission">انتقال داده ها</string>
+    <string name="more">بیش</string>
+
 
     <!-- TODO: Remove or change this placeholder text -->
 
@@ -67,5 +72,17 @@
     <string name="appbar_email">ارسال یک ایمیل</string>
     <string name="appbar_phone">تماس از طریق تلفن</string>
     <string name="appbar_delete">حذف تماس</string>
+
+    //Contact profile layout
+    <string name="profile_name">نام</string>
+    <string name="profile_surname">نام خانوادگی</string>
+    <string name="profile_email">پست الکترونیک</string>
+    <string name="profile_phone">تلفن</string>
+    <string name="profile_topic">پیام</string>
+    <string name="profile_hint_name">اسم شما</string>
+    <string name="profile_hint_surname">نام خانوادگی شما</string>
+    <string name="profile_hint_email">ایمیل شما</string>
+    <string name="profile_hint_phone">گوشی خود را</string>
+    <string name="profile_hint_topic">پیام های عمومی خود را</string>
 
 </resources>

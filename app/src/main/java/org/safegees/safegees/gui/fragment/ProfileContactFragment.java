@@ -24,16 +24,21 @@
 package org.safegees.safegees.gui.fragment;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.text.TextUtilsCompat;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import org.safegees.safegees.R;
 import org.safegees.safegees.model.Friend;
@@ -41,6 +46,7 @@ import org.safegees.safegees.util.ImageController;
 import org.safegees.safegees.util.SafegeesDAO;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -60,7 +66,7 @@ public class ProfileContactFragment extends Fragment implements View.OnClickList
     private EditText editSurname;   //Tag surname
     private EditText editEmail;     //Tag email
     private EditText editPhone;     //Tag phone
-    private EditText editTopic;     //Tag topic
+    private TextView editTopic;     //Tag topic
 
     //Image selector
     private ImageView imageView;
@@ -118,33 +124,45 @@ public class ProfileContactFragment extends Fragment implements View.OnClickList
         editSurname = (EditText) view.findViewById(R.id.editSurname);
         editEmail = (EditText) view.findViewById(R.id.editEmail);
         editPhone = (EditText) view.findViewById(R.id.editPhone);
-        editTopic = (EditText) view.findViewById(R.id.editTopic);
+        editTopic = (TextView) view.findViewById(R.id.editTopic);
 
         LinearLayout llName = (LinearLayout) view.findViewById(R.id.lay_name);
         LinearLayout llSurname = (LinearLayout) view.findViewById(R.id.lay_surname);
         LinearLayout llMail = (LinearLayout) view.findViewById(R.id.lay_mail);
         LinearLayout llPhone = (LinearLayout) view.findViewById(R.id.lay_phone);
-        LinearLayout llBio = (LinearLayout) view.findViewById(R.id.lay_topic);
+        //LinearLayout llBio = (LinearLayout) view.findViewById(R.id.lay_topic);
 
         //Show arrows to reveal user if there are more contacts
-        LinearLayout arrowLeft = (LinearLayout) view.findViewById(R.id.contact_left);
-        if(position == 0) arrowLeft.setVisibility(View.INVISIBLE);
-        LinearLayout arrowRight = (LinearLayout) view.findViewById(R.id.contact_right);
-        if(position == friends.size()-1) arrowRight.setVisibility(View.INVISIBLE);
+        ImageView arrowLeft = (ImageView) view.findViewById(R.id.contact_left);
+        ImageView arrowRight = (ImageView) view.findViewById(R.id.contact_right);
+
+        //Change arrows if Language is LTR (Ar or FA)
+        //And reveal the accurate arrow
+        if (TextUtilsCompat.getLayoutDirectionFromLocale(Locale.getDefault()) == View.LAYOUT_DIRECTION_RTL){
+            arrowLeft.setBackgroundResource(R.drawable.ic_chevron_right_black_24dp);
+            arrowRight.setBackgroundResource(R.drawable.ic_chevron_left_black_24dp);
+            if(position == 0) arrowRight.setVisibility(View.INVISIBLE);
+            if(position == friends.size()-1) arrowLeft.setVisibility(View.INVISIBLE);
+        }else{
+            if(position == 0) arrowLeft.setVisibility(View.INVISIBLE);
+            if(position == friends.size()-1) arrowRight.setVisibility(View.INVISIBLE);
+        }
 
         if (friend != null) {
             this.editName.setText(friend.getName() != null ? friend.getName() : "");
             this.editSurname.setText(friend.getSurname() != null ? friend.getSurname() : "");
             this.editEmail.setText(friend.getPublicEmail() != null ? friend.getPublicEmail() : "");
             this.editPhone.setText(friend.getPhoneNumber() != null ? friend.getPhoneNumber() : "");
-            this.editTopic.setText(friend.getBio() != null ? friend.getBio() : "");
-        }
+            this.editTopic.setText(friend.getBio() != null ? "\""+friend.getBio()+"\"" : "");
+            ViewGroup.LayoutParams params = editTopic.getLayoutParams();
+            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            editTopic.setLayoutParams(params);        }
 
         if (friend.getName() == null ||friend.getName().equals("") ) llName.setVisibility(View.GONE);
         if (friend.getSurname() == null ||friend.getSurname().equals("")) llSurname.setVisibility(View.GONE);
         if (friend.getPublicEmail() == null ||friend.getPublicEmail().equals("")) llMail.setVisibility(View.GONE);
         if (friend.getPhoneNumber() == null ||friend.getPhoneNumber().equals("")) llPhone.setVisibility(View.GONE);
-        if (friend.getBio() == null || friend.getBio().equals("")) llBio.setVisibility(View.GONE);
+        if (friend.getBio() == null || friend.getBio().equals("")) editTopic.setVisibility(View.GONE);
 
         //Add image from friend
         if (friend.getPublicEmail() != null){

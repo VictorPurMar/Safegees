@@ -36,6 +36,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import org.safegees.safegees.R;
 import org.safegees.safegees.gui.view.PrincipalMapActivity;
@@ -73,7 +74,7 @@ public class ProfileUserFragment extends Fragment {
     private EditText editSurname;   //Tag surname
     private EditText editEmail;     //Tag email
     private EditText editPhone;     //Tag phone
-    private EditText editTopic;     //Tag topic
+    private TextView editTopic;     //Tag topic
 
     //Image selector
     private ImageView imageView;
@@ -121,7 +122,7 @@ public class ProfileUserFragment extends Fragment {
         editSurname = (EditText) view.findViewById(R.id.editSurname);
         editEmail = (EditText) view.findViewById(R.id.editEmail);
         editPhone = (EditText) view.findViewById(R.id.editPhone);
-        editTopic = (EditText) view.findViewById(R.id.editTopic);
+        editTopic = (TextView) view.findViewById(R.id.editTopic);
 
         SafegeesDAO sDAO = SafegeesDAO.getInstance(this.getContext());
         this.publicUser = sDAO.getPublicUser();

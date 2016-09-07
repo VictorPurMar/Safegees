@@ -19,6 +19,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.text.style.ImageSpan;
 import android.util.Log;
 import android.util.TypedValue;
@@ -73,6 +74,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by victor on 21/2/16.
@@ -425,7 +427,7 @@ public class MapFragment extends Fragment {
                     Snackbar snackbar = Snackbar
                                 //.make(PrincipalMapActivity.getInstance().getFloatingButton(), overlay.getTitle(), Snackbar.LENGTH_LONG)
                                 .make(PrincipalMapActivity.getInstance().getMapFragment().getView(), friend.getName() + " " + friend.getSurname() +"\n"+ bio, Snackbar.LENGTH_LONG)
-                                .setAction("MORE", new View.OnClickListener() {
+                                .setAction(getResources().getString(R.string.more), new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
 
@@ -448,7 +450,14 @@ public class MapFragment extends Fragment {
                         //textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.default_user_rounded, 0, 0, 0);
                         textView.setCompoundDrawables(dr, null, null, null);
                         textView.setCompoundDrawablePadding(getResources().getDimensionPixelOffset(R.dimen.snackbar_contact_image));
-
+                        /*
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                            int layoutDirection =  TextUtils.getLayoutDirectionFromLocale(Locale.getDefault());
+                            if (layoutDirection == View.TEXT_DIRECTION_RTL) {
+                                textView.setTextDirection(View.TEXT_DIRECTION_LTR);
+                                textView.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_END);
+                            }
+                        }*/
                         snackbar.show();
 
 

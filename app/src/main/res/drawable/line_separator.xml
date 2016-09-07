@@ -2,5 +2,5 @@
     android:shape="rectangle">
     <size
         android:height="1dp" />
-    <solid android:color="@color/colorAccent" />
+    <solid android:color="@color/colorCadaquesAccentExtraDark" />
 </shape>

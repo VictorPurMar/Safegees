@@ -34,22 +34,60 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:onClick="setProfileField"
+                android:tag="topic">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_topic"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/colorAccent"
+                    android:textDirection="locale"
+                    android:textAlignment="gravity" />
+                <TextView
+                    android:id="@+id/editTopic"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/profile_hint_topic"
+                    android:selectAllOnFocus="false"
+                    android:singleLine="false"
+                    android:inputType="none"
+                    android:focusable="false"
+                    android:background="@android:color/transparent"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/colorPrimaryExtraDark"
+                    android:onClick="setProfileField"
+                    android:tag="topic"
+                    android:textDirection="locale"
+                    android:textAlignment="gravity" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#c0c0c0"
+                android:layout_marginTop="5dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:onClick="setProfileField"
                 android:tag="name">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Name"
+                    android:text="@string/profile_name"
                     android:layout_marginTop="5dp"
                     android:textColor="@color/colorAccent"
+                    android:textDirection="locale"
+                    android:textAlignment="gravity"
                     />
                 <EditText
                     android:id="@+id/editName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:capitalize="words"
                     android:maxLines="1"
-                    android:hint="your name"
-                    android:editable="false"
+                    android:hint="@string/profile_hint_name"
                     android:selectAllOnFocus="false"
                     android:singleLine="true"
                     android:inputType="none"
@@ -58,7 +96,9 @@
                     android:layout_marginTop="10dp"
                     android:textColor="@color/colorPrimaryExtraDark"
                     android:onClick="setProfileField"
-                    android:tag="name"/>
+                    android:tag="name"
+                    android:textDirection="locale"
+                    android:textAlignment="gravity"/>
 
             </LinearLayout>
 
@@ -77,18 +117,17 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Surname"
+                    android:text="@string/profile_surname"
                     android:layout_marginTop="5dp"
                     android:textColor="@color/colorAccent"
-                    />
+                    android:textDirection="locale"
+                    android:textAlignment="gravity" />
                 <EditText
                     android:id="@+id/editSurname"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:capitalize="words"
                     android:maxLines="1"
-                    android:hint="your surname"
-                    android:editable="false"
+                    android:hint="@string/profile_hint_surname"
                     android:selectAllOnFocus="false"
                     android:singleLine="true"
                     android:inputType="none"
@@ -97,7 +136,9 @@
                     android:layout_marginTop="10dp"
                     android:textColor="@color/colorPrimaryExtraDark"
                     android:onClick="setProfileField"
-                    android:tag="surname"/>
+                    android:tag="surname"
+                    android:textDirection="locale"
+                    android:textAlignment="gravity" />
 
             </LinearLayout>
 
@@ -116,18 +157,17 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Email"
+                    android:text="@string/profile_email"
                     android:layout_marginTop="5dp"
                     android:textColor="@color/colorAccent"
-                    />
+                    android:textDirection="locale"
+                    android:textAlignment="gravity" />
                 <EditText
                     android:id="@+id/editEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:capitalize="words"
                     android:maxLines="1"
-                    android:hint="your email"
-                    android:editable="false"
+                    android:hint="@string/profile_hint_surname"
                     android:selectAllOnFocus="false"
                     android:singleLine="true"
                     android:inputType="none"
@@ -136,7 +176,9 @@
                     android:layout_marginTop="10dp"
                     android:textColor="@color/colorPrimaryExtraDark"
                     android:onClick="setProfileField"
-                    android:tag="publicEmail"/>
+                    android:tag="publicEmail"
+                    android:textDirection="locale"
+                    android:textAlignment="gravity" />
 
             </LinearLayout>
 
@@ -155,18 +197,17 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Phone"
+                    android:text="@string/profile_phone"
                     android:layout_marginTop="5dp"
                     android:textColor="@color/colorAccent"
-                    />
+                    android:textDirection="locale"
+                    android:textAlignment="gravity" />
                 <EditText
                     android:id="@+id/editPhone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:capitalize="words"
                     android:maxLines="1"
-                    android:hint="your phone"
-                    android:editable="false"
+                    android:hint="@string/profile_hint_surname"
                     android:selectAllOnFocus="false"
                     android:singleLine="true"
                     android:inputType="none"
@@ -175,7 +216,9 @@
                     android:layout_marginTop="10dp"
                     android:textColor="@color/colorPrimaryExtraDark"
                     android:onClick="setProfileField"
-                    android:tag="phone"/>
+                    android:tag="phone"
+                    android:textDirection="locale"
+                    android:textAlignment="gravity" />
             </LinearLayout>
 
             <TextView
@@ -184,44 +227,7 @@
                 android:background="#c0c0c0"
                 android:layout_marginTop="5dp" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:onClick="setProfileField"
-                android:tag="topic">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Public message"
-                    android:layout_marginTop="5dp"
-                    android:textColor="@color/colorAccent"
-                    />
-                <EditText
-                    android:id="@+id/editTopic"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:capitalize="sentences"
-                    android:maxLines="5"
-                    android:hint="your public message"
-                    android:editable="false"
-                    android:selectAllOnFocus="false"
-                    android:singleLine="false"
-                    android:inputType="none"
-                    android:focusable="false"
-                    android:background="@android:color/transparent"
-                    android:layout_marginTop="10dp"
-                    android:textColor="@color/colorPrimaryExtraDark"
-                    android:onClick="setProfileField"
-                    android:tag="topic"
-                    />
-            </LinearLayout>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#c0c0c0"
-                android:layout_marginTop="5dp" />
 
 
 

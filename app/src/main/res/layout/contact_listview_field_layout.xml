@@ -18,7 +18,7 @@
 
     <LinearLayout
         android:id="@+id/principal_text"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_centerVertical="true"
@@ -26,23 +26,27 @@
         <!--android:layout_toLeftOf="@+id/arrow"-->
         <TextView
             android:id="@+id/name_listview_field"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:text="Example application example example example example"
             android:textSize="16sp"
-            android:textColor="@color/colorPrimaryExtraDark"
+            android:textColor="@color/colorCadaquesAccentExtraDark"
             android:ellipsize="end"
-            android:singleLine="true"/>
+            android:singleLine="true"
+            android:textDirection="locale"
+            android:textAlignment="gravity"/>
         <TextView
             android:id="@+id/email_listview_field"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Description"
             android:textSize="12sp"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/colorPrimary"
             android:ellipsize="end"
-            android:singleLine="true"/>
+            android:singleLine="true"
+            android:textDirection="locale"
+            android:textAlignment="gravity"/>
     </LinearLayout>
 
 
