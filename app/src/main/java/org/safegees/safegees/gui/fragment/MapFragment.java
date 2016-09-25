@@ -1,5 +1,6 @@
 package org.safegees.safegees.gui.fragment;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -37,7 +38,12 @@ import org.osmdroid.bonuspack.kml.KmlLineString;
 import org.osmdroid.bonuspack.kml.KmlPlacemark;
 import org.osmdroid.bonuspack.kml.KmlPoint;
 import org.osmdroid.bonuspack.kml.KmlPolygon;
+import org.osmdroid.bonuspack.kml.KmlTrack;
 import org.osmdroid.bonuspack.kml.Style;
+import org.osmdroid.tileprovider.IRegisterReceiver;
+import org.osmdroid.tileprovider.modules.OfflineTileProvider;
+import org.osmdroid.tileprovider.tilesource.ITileSource;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.views.overlay.FolderOverlay;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polygon;
@@ -52,6 +58,7 @@ import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.compass.CompassOverlay;
 import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import org.safegees.safegees.R;
 import org.safegees.safegees.gui.gui_utils.MapInfoWindow;
@@ -190,17 +197,18 @@ public class MapFragment extends Fragment {
 
 
         // My Location Overlay
-        myLocationOverlay = new MyLocationNewOverlay(mapView);
+        //myLocationOverlay = new MyLocationNewOverlay(mapView);
+        myLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(getContext()),
+                mapView);
         myLocationOverlay.enableMyLocation(); // not on by default
+        myLocationOverlay.setPersonIcon(getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_user_position)));
 
         if (myLocationOverlay.getMyLocation() == null){
             myLocationOverlay.runOnFirstFix(new Runnable() {
                 public void run() {
                     try {
-                        mapViewController.animateTo(myLocationOverlay.getMyLocation());
-                        //myLocationOverlay.enableFollowLocation();
-                        myLocationOverlay.setPersonIcon(getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_user_position)));
                         mapView.getOverlays().add(myLocationOverlay);
+                        mapViewController.animateTo(myLocationOverlay.getMyLocation());
                         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
                         boolean mobileAllowed = prefs.getBoolean("pref_position_share", true);
                         if (Connectivity.isNetworkAvaiable(getContext()) && mobileAllowed) {
@@ -216,10 +224,8 @@ public class MapFragment extends Fragment {
                 }
             });
         }else{
-            mapViewController.animateTo(myLocationOverlay.getMyLocation());
-            //myLocationOverlay.enableFollowLocation();
-            myLocationOverlay.setPersonIcon(getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_user_position)));
             mapView.getOverlays().add(myLocationOverlay);
+            mapViewController.animateTo(myLocationOverlay.getMyLocation());
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
             boolean mobileAllowed = prefs.getBoolean("pref_position_share", true);
             if(Connectivity.isNetworkAvaiable(getContext()) && mobileAllowed) {
@@ -244,27 +250,48 @@ public class MapFragment extends Fragment {
             mCompassOverlay.enableCompass();
             mapView.getOverlays().add(mCompassOverlay);
         }
+
+
+
     }
 
     public void setMapViewDependingConnection() {
 
+        try {
+            final ITileSource tileSource = TileSourceFactory.getTileSource("Mapnik");
+            mapView.setTileSource(tileSource);
+        } catch (final IllegalArgumentException e) {
+            mapView.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE);
+        }
+
+        /*
+
             if (Connectivity.isNetworkAvaiable(getContext())) {
-                mapView.setTileSource(new XYTileSource("Mapnik",
-                        2, 18, TILE_PX_SIZE, ".png", new String[]{
-                        "http://a.tile.openstreetmap.org/",
-                        "http://b.tile.openstreetmap.org/",
-                        "http://c.tile.openstreetmap.org/"}));
+                final ITileSource tileSource = TileSourceFactory.getTileSource("Mapnik");
+                mapView.setTileSource(tileSource);
                 mapView.setUseDataConnection(true);
 
             } else {
+                final ITileSource tileSource = TileSourceFactory.getTileSource("Mapnik");
                 //String externalStorageDirectory =  MapFileManager.getUserStorageriority();
                 //String destination = externalStorageDirectory + File.separator + "osmdroid" + File.separator + "tiles" + File.separator + "Mapnik"+File.separator;
                 //mapView.setTileSource(new XYTileSource("Mapnik", 2, 18, 384, ".png", new String[]{}));
-                mapView.setTileSource(new XYTileSource("Mapnik", 0, 18, TILE_PX_SIZE, ".png", new String[]{}));
+                //mapView.setTileSource(new XYTileSource("Mapnik", 0, 18, TILE_PX_SIZE, ".png", new String[]{}));
+                mapView.setTileSource(tileSource);
                 mapView.setUseDataConnection(false);
 
             }
 
+    */
+
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private void setHardwareAccelerationOff() {
+        // Turn off hardware acceleration here, or in manifest
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            mapView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        }
     }
 
 
@@ -610,6 +637,10 @@ public class MapFragment extends Fragment {
         public void onPolygon(Polygon polygon, KmlPlacemark kmlPlacemark, KmlPolygon kmlPolygon) {
             //Keeping default styling:
             kmlPolygon.applyDefaultStyling(polygon, mDefaultStyle, kmlPlacemark, mKmlDocument, mapView);
+        }
+
+        @Override
+        public void onTrack(Polyline polyline, KmlPlacemark kmlPlacemark, KmlTrack kmlTrack) {
         }
 
         @Override

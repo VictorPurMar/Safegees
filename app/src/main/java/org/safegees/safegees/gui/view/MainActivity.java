@@ -23,14 +23,20 @@
 
 package org.safegees.safegees.gui.view;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -64,6 +70,9 @@ import org.safegees.safegees.util.WebViewInfoWebDownloadController;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by victor on 25/12/15.
@@ -72,6 +81,10 @@ import java.util.ArrayList;
     public static StorageDataManager DATA_STORAGE;
     private FileManagerTask fileManagerTask;
     private TextView adviceUser;
+
+    private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
+    private static final int MY_PERMISSIONS_REQUEST_ACCESS_LOCATION = 2;
+
 
         @Override
         protected void onCreate(final Bundle savedInstanceState) {
@@ -94,27 +107,46 @@ import java.util.ArrayList;
             //Activate the stored data
             this.DATA_STORAGE = new StorageDataManager(this);
 
+            /*
             boolean moovedAssetsZip = DATA_STORAGE.getBoolean("movedAssetsZip");
             if (!moovedAssetsZip){
-                //Set the maps from assets to osmdroid folder
-                DATA_STORAGE.putBoolean("movedAssetsZip", MapFileManager.buildAssetsMap(this));
-                moovedAssetsZip = DATA_STORAGE.getBoolean("movedAssetsZip");
-            }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (ContextCompat.checkSelfPermission(this,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                != PackageManager.PERMISSION_GRANTED) {
+                            if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+                                ActivityCompat.requestPermissions(MainActivity.this,
+                                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_CONTACTS);
 
 
-            if (moovedAssetsZip) {
-                if (MapFileManager.isNewMapZip()) {
-                    adviceUser.setText(getResources().getString(R.string.splash_advice_unocmpresing));
-                    this.DATA_STORAGE.putBoolean("isNewMap", true);
-                    FileManagerTask fmt = new FileManagerTask(this);
-                    fmt.execute();
 
-                } else {
-                    start();
+                            } else {
+                                DATA_STORAGE.putBoolean("movedAssetsZip", MapFileManager.buildAssetsMap(this));
+                                moovedAssetsZip = DATA_STORAGE.getBoolean("movedAssetsZip");
+                                startAfterPermissions(moovedAssetsZip);
+                            }
+
+                    }else{
+                        DATA_STORAGE.putBoolean("movedAssetsZip", MapFileManager.buildAssetsMap(this));
+                        moovedAssetsZip = DATA_STORAGE.getBoolean("movedAssetsZip");
+                        startAfterPermissions(moovedAssetsZip);
+
+                    }
+                }else{
+                    //Set the maps from assets to osmdroid folder
+                    DATA_STORAGE.putBoolean("movedAssetsZip", MapFileManager.buildAssetsMap(this));
+                    moovedAssetsZip = DATA_STORAGE.getBoolean("movedAssetsZip");
+                    startAfterPermissions(moovedAssetsZip);
                 }
+
             }else{
-                Log.e("MainActivity", "The assets wasnt dont mooved");
+                startAfterPermissions(moovedAssetsZip);
             }
+
+
+            */
 
             /*
             if( StoredDataQuequesManager.getAppUsersMap(this).size() == 0) {
@@ -124,48 +156,36 @@ import java.util.ArrayList;
                 fmt.execute();
             }
             */
+
+            boolean moovedAssetsZip = DATA_STORAGE.getBoolean("movedAssetsZip");
+            // Request permissions to support Android Marshmallow and above devices (api-23)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                checkPermissions();
+            }else{
+                startAfterPermissions();
+            }
         }
 
-    /*
-    private void storageUserSelect() {
-
-        //To do the storage selector
-        //Is neccessary to compile the whole OSMProject and touch OpenStreetMapTileProviderConstants.java
-        //Concretly this variable public static final File OSMDROID_PATH = new File("/mnt/sdcard/osmdroid");
-        //
-        //By this reason this development will stopped by now
-
-        final FileManagerTask fmt = new FileManagerTask(this);
-            if(MapFileManager.isSDCard(this)) {
-                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case DialogInterface.BUTTON_POSITIVE:
-                                DATA_STORAGE.putBoolean("Sdcard",true);
-                                fmt.execute();
-                                break;
-
-                            case DialogInterface.BUTTON_NEGATIVE:
-                                DATA_STORAGE.putBoolean("Sdcard",false);
-                                fmt.execute();
-                                break;
-                        }
-                    }
-                };
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage("Welcome to Safegees!\n\n\nWe detect that you have an external storage (sdcard1). Do you want use this external card to store the maps?").setPositiveButton("Yes", dialogClickListener)
-                        .setNegativeButton("No", dialogClickListener).show();
-            }else{
-                DATA_STORAGE.putBoolean("Sdcard",false);
+    private void startAfterPermissions() {
+        boolean moovedAssetsZip = DATA_STORAGE.getBoolean("movedAssetsZip");
+            if (MapFileManager.isNewMapZip()) {
+                adviceUser.setText(getResources().getString(R.string.splash_advice_unocmpresing));
+                this.DATA_STORAGE.putBoolean("isNewMap", true);
+                FileManagerTask fmt = new FileManagerTask(this);
                 fmt.execute();
+            } else {
+                start();
             }
-
-        DATA_STORAGE.putBoolean("Sdcard",false);
-        final FileManagerTask fmt = new FileManagerTask(this);
-        fmt.execute();
     }
-    */
+
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+        new android.app.AlertDialog.Builder(MainActivity.this)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("CANCEL", null)
+                .create()
+                .show();
+    }
 
     private void start() {
         if(DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)) != null && DATA_STORAGE.getString(getResources().getString(R.string.KEY_USER_MAIL)).length()>0){
@@ -211,6 +231,7 @@ import java.util.ArrayList;
                     }
                 });
 
+
                 String nextUrl = infoWebUrls.get(0);
                 infoWebUrls.remove(nextUrl);
                 webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
@@ -254,20 +275,17 @@ import java.util.ArrayList;
     }
 
     public void launchMainActivity(){
-            // Start the app
-            Intent intent = new Intent(this, PrincipalMapActivity.class);
-            startActivity(intent);
-            finish();
+        // Start the app
+        Intent intent = new Intent(this, PrincipalMapActivity.class);
 
+        startActivity(intent);
+        finish();
+    }
 
-
-        }
 
     @Override
     protected void onStart() {
         super.onStart();
-
-
 
     }
 
@@ -291,7 +309,91 @@ import java.util.ArrayList;
         launchMainActivity();
     }
 
+    // START PERMISSION CHECK
+    final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
 
+    // Request permissions to support Android Marshmallow and above devices  (api-23)
+    @TargetApi(Build.VERSION_CODES.M)
+    private void checkPermissions() {
+        List<String> permissions = new ArrayList<>();
+        String message = "OSMDroid permissions:";
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+            message += "\nStorage access to store map tiles.";
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            message += "\nLocation to show user location.";
+        }
+        if (!permissions.isEmpty()) {
+            //Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+            String[] params = permissions.toArray(new String[permissions.size()]);
+            requestPermissions(params, REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
+        }else{
+            startAfterPermissions();
+
+        }
+    }
+
+    // Request permissions to support Android Marshmallow and above devices. (api-23)
+    @TargetApi(Build.VERSION_CODES.M)
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS: {
+                Map<String, Integer> perms = new HashMap<>();
+                // Initial
+                perms.put(Manifest.permission.ACCESS_FINE_LOCATION, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                // Fill with results
+                for (int i = 0; i < permissions.length; i++)
+                    perms.put(permissions[i], grantResults[i]);
+                // Check for ACCESS_FINE_LOCATION and WRITE_EXTERNAL_STORAGE
+                Boolean location = perms.get(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+                Boolean storage = perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+                if (location && storage) {
+                    // All Permissions Granted
+                    //Toast.makeText(MainActivity.this, "All permissions granted", Toast.LENGTH_SHORT).show();
+                    //Set the maps from assets to osmdroid folder
+                    DATA_STORAGE.putBoolean("movedAssetsZip", MapFileManager.buildAssetsMap(this));
+                    startAfterPermissions();
+                } else if (location) {
+                    setPermissionsAlertDialog( "Storage permission is required to store map tiles to reduce data usage and for offline usage.");
+                } else if (storage) {
+                    setPermissionsAlertDialog( "Location permission is required to show the user's location on map.");
+                } else {
+                    setPermissionsAlertDialog( "Storage permission is required to store map tiles to reduce data usage and for offline usage.\nLocation permission is required to show the user's location on map.");
+                }
+            }
+            break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    private void setPermissionsAlertDialog(String message){
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(message)
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent i = getBaseContext().getPackageManager()
+                                .getLaunchIntentForPackage(getBaseContext().getPackageName());
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(i);
+                        //finish();
+                    }
+                }).setNegativeButton("EXIT", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                finish();
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
+
+
+    }
+    // END PERMISSION CHECK
 
 
     private void buildObjects() {
@@ -321,7 +423,9 @@ import java.util.ArrayList;
         @Override
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
-            return MapFileManager.checkAndUnZipTilesFile();
+            //Must change the ofline maps
+            //return MapFileManager.checkAndUnZipTilesFile();
+            return true;
         }
 
         @Override

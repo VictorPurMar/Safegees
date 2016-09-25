@@ -31,7 +31,7 @@ public class MapFileManager {
 
     public static boolean isNewMapZip(){
         String externalStorageDirectory =  getUserStorageriority();
-        File f = new File(externalStorageDirectory + File.separator + "osmdroid" + File.separator + "Safegees.zip");
+        File f = new File(externalStorageDirectory + File.separator + "osmdroid" + File.separator + "tiles.zip");
         if (f.exists()){
             return true;
         }
@@ -49,18 +49,18 @@ public class MapFileManager {
         File desFile = new File(destination);
         // 16788000 is the default size of maps zip
 
-            String principalDestination = externalStorageDirectory + File.separator + "osmdroid";
+            String principalDestination = externalStorageDirectory + File.separator + "osmdroid" + File.separator + "tiles";
             File principalFile = new File(principalDestination);
             principalFile.mkdirs();
             InputStream is = null;
             try {
-                is = context.getAssets().open("Safegees.zip");
+                is = context.getAssets().open("cache.db");
             } catch (IOException e) {
                 e.printStackTrace();
             }
             try {
 
-                File f = new File(principalFile.getAbsolutePath().toString() + File.separator + "Safegees.zip");
+                File f = new File(principalFile.getAbsolutePath().toString() + File.separator + "cache.db");
 
                 int size = is.available();
                 byte[] buffer = new byte[size];
@@ -105,6 +105,7 @@ public class MapFileManager {
                 }
             }
         }else{
+
             strSDCardPath = Environment.getExternalStorageDirectory().toString();
         }
 
@@ -116,10 +117,10 @@ public class MapFileManager {
     public static boolean checkAndUnZipTilesFile(){
         String externalStorageDirectory = getUserStorageriority();
         boolean zipUnfilled = false;
-        Log.i("Target" , externalStorageDirectory+File.separator+"osmdroid"+File.separator+ "Safegees.zip");
+        Log.i("Target" , externalStorageDirectory+File.separator+"osmdroid"+File.separator+ "cache.db");
         Log.i("Destination" , externalStorageDirectory+File.separator+"osmdroid"+File.separator+"tiles"+File.separator);
 
-        String target =  externalStorageDirectory+File.separator+"osmdroid"+File.separator+ "Safegees.zip";
+        String target =  externalStorageDirectory+File.separator+"osmdroid"+File.separator+ "cache.db";
         String destination = externalStorageDirectory+File.separator+"osmdroid"+File.separator+"tiles"+File.separator;
 
         File desFile = new File(destination);
@@ -136,16 +137,19 @@ public class MapFileManager {
             osmDroidFile.setWritable(true,false);
             tilesFile.setWritable(true,false);
 
-
+            //Do not unzip
+            /*
             try {
                zipUnfilled =  MapFileManager.unzip(zipFile,desFile);
             } catch (IOException e) {
                 e.printStackTrace();
 
             }
+            */
         }
         //Delete unused zip
-        zipFile.delete();
+        //Do not delete
+        //zipFile.delete();
         return zipUnfilled;
     }
 

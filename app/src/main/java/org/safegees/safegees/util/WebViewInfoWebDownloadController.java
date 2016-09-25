@@ -85,7 +85,7 @@ public class WebViewInfoWebDownloadController {
             infoUrlsArray.add(CRISIS_HUB_DEFAULT_URL_EN);
         }
 
-
+        /*
         infoUrlsArray = addThreeLenguagesUrl(infoUrlsArray, CH_SLOVENIA_GENERAL_URL);
         infoUrlsArray = addThreeLenguagesUrl(infoUrlsArray, CH_SLOVENIA_DOBOVA_URL);
         infoUrlsArray = addThreeLenguagesUrl(infoUrlsArray, CH_CROATIA_GENERAL_URL);
@@ -94,12 +94,15 @@ public class WebViewInfoWebDownloadController {
         infoUrlsArray = addThreeLenguagesUrl(infoUrlsArray, CH_ITALY_DOBOVA_URL);
         infoUrlsArray = addThreeLenguagesUrl(infoUrlsArray, CH_ITALY_POZALLO_URL);
         infoUrlsArray = addThreeLenguagesUrl(infoUrlsArray, CH_ITALY_LAMPEDUSA_URL);
+        infoUrlsArray = addThreeLenguagesUrl(infoUrlsArray, CH_GERMANY_GENERAL_URL);
+        */
+
+         /* TESTING
         infoUrlsArray = addThreeLenguagesUrl(infoUrlsArray, CH_SERBIA_GENERAL_URL);
         infoUrlsArray = addThreeLenguagesUrl(infoUrlsArray, CH_SERBIA_SID_URL);
         infoUrlsArray = addThreeLenguagesUrl(infoUrlsArray, CH_SERBIA_BELGRADE_URL);
         infoUrlsArray = addThreeLenguagesUrl(infoUrlsArray, CH_SERBIA_PRESEVO_URL);
         infoUrlsArray = addThreeLenguagesUrl(infoUrlsArray, CH_SERBIA_DIMITROVGRAD_URL);
-        infoUrlsArray = addThreeLenguagesUrl(infoUrlsArray, CH_GERMANY_GENERAL_URL);
         infoUrlsArray = addThreeLenguagesUrl(infoUrlsArray, CH_MACEDONIA_GENERAL_URL);
         infoUrlsArray = addThreeLenguagesUrl(infoUrlsArray, CH_MACEDONIA_TABANOVCE_URL);
         infoUrlsArray = addThreeLenguagesUrl(infoUrlsArray, CH_MACEDONIA_GEVGELIJA_URL);
@@ -121,6 +124,7 @@ public class WebViewInfoWebDownloadController {
         infoUrlsArray.add(CH_STAYING_SAFE);
         infoUrlsArray.add(CH_FAMILIES);
         infoUrlsArray.add(CH_MINORS);
+         */
         return  infoUrlsArray;
     }
 
