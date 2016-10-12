@@ -1,21 +1,27 @@
 package org.safegees.safegees.gui.fragment;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -28,6 +34,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,7 +47,9 @@ import org.osmdroid.bonuspack.kml.KmlPoint;
 import org.osmdroid.bonuspack.kml.KmlPolygon;
 import org.osmdroid.bonuspack.kml.KmlTrack;
 import org.osmdroid.bonuspack.kml.Style;
+import org.osmdroid.events.MapEventsReceiver;
 import org.osmdroid.tileprovider.IRegisterReceiver;
+import org.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants;
 import org.osmdroid.tileprovider.modules.OfflineTileProvider;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -58,7 +67,10 @@ import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.compass.CompassOverlay;
 import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
+import org.osmdroid.views.overlay.infowindow.InfoWindow;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
+import org.osmdroid.views.overlay.mylocation.IMyLocationConsumer;
+import org.osmdroid.views.overlay.mylocation.IMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import org.safegees.safegees.R;
 import org.safegees.safegees.gui.gui_utils.MapInfoWindow;
@@ -86,7 +98,7 @@ import java.util.Locale;
 /**
  * Created by victor on 21/2/16.
  */
-public class MapFragment extends Fragment {
+public class MapFragment extends Fragment implements LocationListener, MapEventsReceiver {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -114,10 +126,14 @@ public class MapFragment extends Fragment {
    // private ArrayList<OverlayItem> poisList ;
     //private ArrayList<OverlayItem> contactList ;
     private IMapController mapViewController;
-    //This fragment view
     private View view;
     private KmlDocument mKmlDocument;
     private LatLng actualPosition;
+    private ImageButton btCenterMap;
+    private LocationManager lm;
+    private Location currentLocation = null;
+    private CompassOverlay mCompassOverlay;
+
 
     final private static int TILE_PX_SIZE = 512;
 
@@ -157,6 +173,9 @@ public class MapFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        //Provisional
+        //this will set the disk cache size in MB to 1GB , 900MB trim size
+        //OpenStreetMapTileProviderConstants.setCacheSizes(1000L, 900L);
 
         this.view = inflater.inflate(R.layout.fragment_map, container, false);
         sDAO = SafegeesDAO.getInstance(getContext());
@@ -164,9 +183,22 @@ public class MapFragment extends Fragment {
         mKmlDocument = new KmlDocument();
 
         mapView = (MapView) this.view.findViewById(R.id.mapview);
-        mapView = (MapView) this.view.findViewById(R.id.mapview);
+
+        btCenterMap = (ImageButton) view.findViewById(R.id.ic_center_map);
+        btCenterMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (myLocationOverlay.getMyLocation() != null) {
+                    mapViewController.animateTo(myLocationOverlay.getMyLocation());
+                }
+            }
+        });
+
+
         mapView.setMultiTouchControls(true);
         mapView.setMinZoomLevel(2);
+        mapView.setTilesScaledToDpi(true);
+
 
         //Set Map Controller
         mapViewController = mapView.getController();
@@ -186,6 +218,38 @@ public class MapFragment extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            lm.removeUpdates(this);
+        }
+
+        mCompassOverlay.disableCompass();
+        myLocationOverlay.disableMyLocation();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,0l,0f,this);
+        }
+
+        //Enable compass;
+        //Compass
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.FROYO) {
+            mCompassOverlay = new CompassOverlay(getContext(), new InternalCompassOrientationProvider(getContext()),
+                    mapView);
+            mCompassOverlay.enableCompass();
+            mapView.getOverlays().add(mCompassOverlay);
+        }
+        myLocationOverlay.enableMyLocation();
+    }
+
+    @Override
     public void onDestroy() {
         MainActivity.DATA_STORAGE.putDouble(getResources().getString(R.string.MAP_LAST_LON), mapView.getMapCenter().getLongitude());
         MainActivity.DATA_STORAGE.putDouble(getResources().getString(R.string.MAP_LAST_LAT), mapView.getMapCenter().getLatitude());
@@ -202,13 +266,17 @@ public class MapFragment extends Fragment {
                 mapView);
         myLocationOverlay.enableMyLocation(); // not on by default
         myLocationOverlay.setPersonIcon(getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_user_position)));
+        mapView.getOverlays().add(myLocationOverlay);
 
+
+        //Send the position
+        /*
         if (myLocationOverlay.getMyLocation() == null){
             myLocationOverlay.runOnFirstFix(new Runnable() {
                 public void run() {
                     try {
                         mapView.getOverlays().add(myLocationOverlay);
-                        mapViewController.animateTo(myLocationOverlay.getMyLocation());
+                        //mapViewController.animateTo(myLocationOverlay.getMyLocation());
                         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
                         boolean mobileAllowed = prefs.getBoolean("pref_position_share", true);
                         if (Connectivity.isNetworkAvaiable(getContext()) && mobileAllowed) {
@@ -225,7 +293,7 @@ public class MapFragment extends Fragment {
             });
         }else{
             mapView.getOverlays().add(myLocationOverlay);
-            mapViewController.animateTo(myLocationOverlay.getMyLocation());
+            //mapViewController.animateTo(myLocationOverlay.getMyLocation());
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
             boolean mobileAllowed = prefs.getBoolean("pref_position_share", true);
             if(Connectivity.isNetworkAvaiable(getContext()) && mobileAllowed) {
@@ -236,6 +304,8 @@ public class MapFragment extends Fragment {
                 sssdc.sendUserPosition(getContext(), SafegeesDAO.getInstance(getContext()).getPublicUser().getPublicEmail(), latLng);
             }
         }
+        */
+
 
         //Rotation Gesture Overlay
         RotationGestureOverlay mRotationGestureOverlay = new RotationGestureOverlay(getContext(), mapView);
@@ -243,13 +313,7 @@ public class MapFragment extends Fragment {
         mapView.getOverlays().add(mRotationGestureOverlay);
 
 
-        //Compass
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.FROYO) {
-            CompassOverlay mCompassOverlay = new CompassOverlay(getContext(), new InternalCompassOrientationProvider(getContext()),
-                    mapView);
-            mCompassOverlay.enableCompass();
-            mapView.getOverlays().add(mCompassOverlay);
-        }
+
 
 
 
@@ -257,9 +321,15 @@ public class MapFragment extends Fragment {
 
     public void setMapViewDependingConnection() {
 
+
+
+
+
         try {
             final ITileSource tileSource = TileSourceFactory.getTileSource("Mapnik");
             mapView.setTileSource(tileSource);
+            //mapView.setTileSource(new XYTileSource("Mapnik", 2, 18, 512, ".png", new String[]{"http://a.tile.openstreetmap.org/", "http://b.tile.openstreetmap.org/", "http://c.tile.openstreetmap.org/"}));
+
         } catch (final IllegalArgumentException e) {
             mapView.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE);
         }
@@ -334,7 +404,7 @@ public class MapFragment extends Fragment {
 
         setStyles();
         mapView.getOverlays().clear(); //Clear old items
-        setInitialMapConfiguration();   //Set initial map overlays and
+
 
 
         File file = new File(FileManager.getFileStorePath("volunteers.kml", this.getContext()).getAbsolutePath());
@@ -371,7 +441,7 @@ public class MapFragment extends Fragment {
                 poiList.add(item);
             }
 
-            Drawable contactDrawable = getResources().getDrawable(R.drawable.ic_friend);
+            Drawable contactDrawable = getResources().getDrawable(R.drawable.ic_friend2);
 
             ArrayList<Friend> friends = this.sDAO.getMutualFriends();
             if (friends != null) {
@@ -507,7 +577,7 @@ public class MapFragment extends Fragment {
         //kml.execute();
         //mapView.invalidate();
 
-
+        setInitialMapConfiguration();   //Set initial map overlays and
 
         mapView.invalidate();
 
@@ -518,16 +588,16 @@ public class MapFragment extends Fragment {
         Style style = new Style(getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_info)), 0x901010AA, 3.0f, 0x2010AA10);
         mKmlDocument.putStyle("location_info",style);
 
-        style = new Style(getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_place_gray)), 0x901010AA, 3.0f, 0x2010AA10);
+        style = new Style(getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_place_camp_gray)), 0x901010AA, 3.0f, 0x2010AA10);
         mKmlDocument.putStyle("location_gray",style);
 
-        style = new Style(getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_place_green)), 0x901010AA, 3.0f, 0x2010AA10);
+        style = new Style(getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_place_camp)), 0x901010AA, 3.0f, 0x2010AA10);
         mKmlDocument.putStyle("location_green",style);
 
-        style = new Style(getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_place_red)), 0x901010AA, 3.0f, 0x2010AA10);
+        style = new Style(getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_place_camp)), 0x901010AA, 3.0f, 0x2010AA10);
         mKmlDocument.putStyle("location_red",style);
 
-        style = new Style(getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_place_orange)), 0x901010AA, 3.0f, 0x2010AA10);
+        style = new Style(getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_place_camp)), 0x901010AA, 3.0f, 0x2010AA10);
         mKmlDocument.putStyle("location_orange",style);
 
         style = new Style(getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_place_volunteers)), 0x901010AA, 3.0f, 0x2010AA10);
@@ -561,6 +631,7 @@ public class MapFragment extends Fragment {
                 defaultMarker.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(defaultBitmap);
         defaultMarker.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        //defaultMarker.setBounds(0, 0, 35, 35);
         defaultMarker.draw(canvas);
         return defaultBitmap;
     }
@@ -618,6 +689,50 @@ public class MapFragment extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onLocationChanged(Location location) {
+        currentLocation=location;
+
+        //Send location
+        /*
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        boolean mobileAllowed = prefs.getBoolean("pref_position_share", true);
+        if (Connectivity.isNetworkAvaiable(getContext()) && mobileAllowed) {
+            LatLng latLng = new LatLng(myLocationOverlay.getMyLocation().getLatitude(), myLocationOverlay.getMyLocation().getLongitude());
+            Log.i("POSITION", latLng.toString());
+            //Add the contact
+            ShareDataController sssdc = new ShareDataController();
+            sssdc.sendUserPosition(getContext(), SafegeesDAO.getInstance(getContext()).getPublicUser().getPublicEmail(), latLng);
+        }
+        */
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+
+    @Override
+    public boolean singleTapConfirmedHelper(GeoPoint geoPoint) {
+        InfoWindow.closeAllInfoWindowsOn(mapView);
+        return true;
+    }
+
+    @Override
+    public boolean longPressHelper(GeoPoint geoPoint) {
+        return false;
+    }
+
     //13.2 Loading KML content - Advanced styling with Styler
     class MyKmlStyler implements KmlFeature.Styler {
         Style mDefaultStyle;
@@ -649,7 +764,7 @@ public class MapFragment extends Fragment {
             //if (kmlPlacemark.getExtendedData("maxspeed") != null)
             //    kmlPlacemark.mStyle = "maxspeed";
             //kmlPoint.applyDefaultStyling(marker, mDefaultStyle, kmlPlacemark, mKmlDocument, mapView);
-            Drawable contactDrawable = getResources().getDrawable(R.drawable.ic_airline_seat_individual_suite_black_24dp);
+            //Drawable contactDrawable = getResources().getDrawable(R.drawable.ic_airline_seat_individual_suite_black_24dp);
             //kmlPlacemark.mStyle ="Estilo";
             try {
                 //Log.e("MARKER subdescription", marker.getSubDescription() != null ?  marker.getSubDescription() : "none");
@@ -662,6 +777,7 @@ public class MapFragment extends Fragment {
 
             if (kmlPlacemark.mStyle.equals("icon-503-F4EB37")){
                 kmlPlacemark.mStyle = "location_green";
+                marker.setImage(getResources().getDrawable(R.drawable.ic_place_camp));
             }
 
             /*else if (kmlPlacemark.mStyle.equals("icon-503-4186F0")){
@@ -670,18 +786,29 @@ public class MapFragment extends Fragment {
             */
             else if (kmlPlacemark.mStyle.equals("icon-503-DB4436")){
                 kmlPlacemark.mStyle = "location_red";
+                marker.setImage(getResources().getDrawable(R.drawable.ic_place_camp));
             }else if(kmlPlacemark.mStyle.equals("icon-1255")) {
                 kmlPlacemark.mStyle = "location_volunteers";
+                marker.setImage(getResources().getDrawable(R.drawable.ic_place_volunteers));
             }else if(kmlPlacemark.mStyle.equals("icon-503-4186F0")) {
                 kmlPlacemark.mStyle = "location_info";
+                marker.setAlpha(0f); //delete info markers
+                marker.setEnabled(false);
+                marker.setImage(getResources().getDrawable(R.drawable.ic_info));
             }else {
                 kmlPlacemark.mStyle = "location_gray";
+                marker.setImage(getResources().getDrawable(R.drawable.ic_place_camp));
             }
 
-            //marker.getInfoWindow();
-            marker.setInfoWindow(new MapInfoWindow(mapView));
-            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_TOP);
 
+
+            //kmlPoint.applyDefaultStyling(marker, null, kmlPlacemark, mKmlDocument, mapView);
+
+            //Do not add the info icons from kml
+            marker.setInfoWindow(new MapInfoWindow(mapView));
+            marker.setTitle(marker.getTitle());
+
+            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_TOP);
             kmlPoint.applyDefaultStyling(marker, null, kmlPlacemark, mKmlDocument, mapView);
 
 

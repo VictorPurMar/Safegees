@@ -5,9 +5,27 @@
     tools:context=".gui.view.PrincipalMapActivity"
     android:background="@color/colorPrimaryExtraLight">
 
-    <org.osmdroid.views.MapView
-        android:id="@+id/mapview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <org.osmdroid.views.MapView
+            android:id="@+id/mapview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ic_center_map"
+            android:src="@drawable/ic_center_map"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:background="#00ffffff"
+            android:contentDescription="center"
+            android:cropToPadding="true" />
+    </RelativeLayout>
 
 </FrameLayout>
