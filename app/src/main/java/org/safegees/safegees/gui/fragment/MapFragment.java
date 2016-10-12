@@ -225,7 +225,7 @@ public class MapFragment extends Fragment implements LocationListener, MapEvents
             lm.removeUpdates(this);
         }
 
-        mCompassOverlay.disableCompass();
+        //mCompassOverlay.disableCompass();
         myLocationOverlay.disableMyLocation();
     }
 
@@ -240,13 +240,17 @@ public class MapFragment extends Fragment implements LocationListener, MapEvents
 
         //Enable compass;
         //Compass
+
+        /*
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.FROYO) {
             mCompassOverlay = new CompassOverlay(getContext(), new InternalCompassOrientationProvider(getContext()),
                     mapView);
             mCompassOverlay.enableCompass();
             mapView.getOverlays().add(mCompassOverlay);
         }
+        */
         myLocationOverlay.enableMyLocation();
+
     }
 
     @Override
@@ -264,7 +268,7 @@ public class MapFragment extends Fragment implements LocationListener, MapEvents
         //myLocationOverlay = new MyLocationNewOverlay(mapView);
         myLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(getContext()),
                 mapView);
-        myLocationOverlay.enableMyLocation(); // not on by default
+        //myLocationOverlay.enableMyLocation(); // not on by default
         myLocationOverlay.setPersonIcon(getBitmapFromDrawable(getResources().getDrawable(R.drawable.ic_user_position)));
         mapView.getOverlays().add(myLocationOverlay);
 
@@ -311,10 +315,6 @@ public class MapFragment extends Fragment implements LocationListener, MapEvents
         RotationGestureOverlay mRotationGestureOverlay = new RotationGestureOverlay(getContext(), mapView);
         mRotationGestureOverlay.setEnabled(true);
         mapView.getOverlays().add(mRotationGestureOverlay);
-
-
-
-
 
 
     }
@@ -409,7 +409,7 @@ public class MapFragment extends Fragment implements LocationListener, MapEvents
 
         File file = new File(FileManager.getFileStorePath("volunteers.kml", this.getContext()).getAbsolutePath());
 
-        if (file.exists() && PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("pref_external_pois_map", false)) {
+        if (file.exists() && PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("pref_external_pois_map", true)) {
             mKmlDocument.parseKMLFile(FileManager.getFileStorePath("volunteers.kml", this.getContext()));
             Drawable defaultMarker = getResources().getDrawable(R.drawable.ic_add_location_black_24dp);
             FolderOverlay campaments = getFolderOverlay(defaultMarker);
@@ -418,7 +418,7 @@ public class MapFragment extends Fragment implements LocationListener, MapEvents
 
 
         file = new File(FileManager.getFileStorePath("syrian.kml", this.getContext()).getAbsolutePath());
-        if (file.exists() && PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("pref_external_pois_map", false)) {
+        if (file.exists() && PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("pref_external_pois_map", true)) {
             mKmlDocument.parseKMLFile(FileManager.getFileStorePath("syrian.kml", this.getContext()));
             Drawable defaultMarker = getResources().getDrawable(R.drawable.ic_place_gray);
             FolderOverlay syrian = getFolderOverlay(defaultMarker);
@@ -578,6 +578,14 @@ public class MapFragment extends Fragment implements LocationListener, MapEvents
         //mapView.invalidate();
 
         setInitialMapConfiguration();   //Set initial map overlays and
+
+        //Add compass
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.FROYO) {
+            mCompassOverlay = new CompassOverlay(getContext(), new InternalCompassOrientationProvider(getContext()),
+                    mapView);
+            mCompassOverlay.enableCompass();
+            mapView.getOverlays().add(mCompassOverlay);
+        }
 
         mapView.invalidate();
 

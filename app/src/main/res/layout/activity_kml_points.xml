@@ -14,11 +14,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-    <WebView
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+    <TextView
         android:layout_margin="@dimen/fab_margin"
-        android:id="@+id/webview"
+        android:id="@+id/textKml"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></WebView>
+        android:layout_height="match_parent"
+        android:linksClickable="true"
+        android:autoLink="email|phone|web"
+        android:textColorLink="@color/colorAccent"></TextView></ScrollView>
 
     <!--
     <android.support.design.widget.FloatingActionButton

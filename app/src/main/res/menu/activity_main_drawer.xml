@@ -31,7 +31,8 @@
         <item
             android:id="@+id/nav_info"
             android:icon="@drawable/ic_info_outline_black_24dp"
-            android:title="@string/menu_info" />
+            android:title="@string/menu_info"
+            android:visible="false"/>
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"

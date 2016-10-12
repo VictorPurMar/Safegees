@@ -14,6 +14,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,6 +24,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.TextView;
 
 import org.safegees.safegees.R;
 import org.safegees.safegees.gui.fragment.ProfileContactFragment;
@@ -53,21 +55,26 @@ public class KmlPointViewActivity extends AppCompatActivity implements ProfileCo
         Intent mIntent = getIntent();
         title = mIntent.getStringExtra("title");
         description = mIntent.getStringExtra("description");
+        Log.e("DESC",description);
 
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(title);
 
-        WebView wb = (WebView) findViewById(R.id.webview);
+        TextView wb = (TextView) findViewById(R.id.textKml);
+        //patch
+        description = description.replaceAll("<br>","");
+        wb.setText(description);
+        /*
         wb.setWebViewClient(new WebViewClient());    //the lines of code added
         wb.setWebChromeClient(new WebChromeClient()); //same as above
 
         WebSettings webSettings = wb.getSettings();
         webSettings.setJavaScriptEnabled(true);
+        */
 
-        String html = "<html><head></head><body>"+description+"</body></html>";
-        wb.loadData(html, "text/html; charset=utf-8", "utf-8");
-
+        //String html = "<html><head></head><body>"+description+"</body></html>";
+        //wb.loadData(html, "text/html; charset=utf-8", "utf-8");
 
 
         // Create the adapter that will return a fragment for each of the three

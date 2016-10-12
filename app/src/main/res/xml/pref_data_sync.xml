@@ -40,7 +40,7 @@
 
     <PreferenceCategory android:title="@string/settings_map">
         <SwitchPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="pref_external_pois_map"
             android:summary="@string/pref_external_pois_comment"
             android:title="@string/pref_external_pois"/>
